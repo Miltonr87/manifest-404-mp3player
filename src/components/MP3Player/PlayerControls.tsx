@@ -1,4 +1,4 @@
-import { Play, Pause, Square, SkipBack, SkipForward } from "lucide-react";
+import { Play, Pause, Square, SkipBack, SkipForward } from 'lucide-react';
 
 interface PlayerControlsProps {
   isPlaying: boolean;
@@ -8,12 +8,12 @@ interface PlayerControlsProps {
   onNext: () => void;
 }
 
-export const PlayerControls = ({ 
-  isPlaying, 
-  onPlay, 
-  onStop, 
-  onPrevious, 
-  onNext 
+export const PlayerControls = ({
+  isPlaying,
+  onPlay,
+  onStop,
+  onPrevious,
+  onNext,
 }: PlayerControlsProps) => {
   return (
     <div className="flex items-center gap-3">
@@ -28,7 +28,7 @@ export const PlayerControls = ({
       <button
         onClick={onPlay}
         className="player-button p-4 hover:neon-glow transition-all"
-        aria-label={isPlaying ? "Pause" : "Play"}
+        aria-label={isPlaying ? 'Pause' : 'Play'}
       >
         {isPlaying ? (
           <Pause className="w-6 h-6 text-foreground" />

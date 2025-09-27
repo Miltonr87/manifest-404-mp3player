@@ -79,7 +79,6 @@ export const DisplayPanel = ({
         <div className="digital-display text-3xl md:text-4xl font-bold">
           {currentTime}
         </div>
-        <div className="text-muted-foreground">/ {duration}</div>
       </div>
     </div>
   );
