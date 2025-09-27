@@ -46,41 +46,40 @@ export const Navbar = () => {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Logo and App Name */}
+            {/* Logo + App Name */}
             <motion.div
               className="flex items-center gap-3"
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="w-10 h-10 rounded-xl overflow-hidden shadow-lg">
+              {/* Logo hidden only on mobile */}
+              <div className="w-10 h-10 rounded-xl overflow-hidden shadow-lg hidden sm:block">
                 <img
                   src={logoImage}
                   alt="Manifest 404 Logo"
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div>
-                <h1 className="text-xl font-bold neon-text">Manifest 404</h1>
-              </div>
+              <h1 className="text-xl font-bold neon-text">Manifest 404</h1>
             </motion.div>
 
-            {/* Navigation Items */}
-            <div className="flex items-center gap-4">
+            {/* Navigation */}
+            <div className="flex items-center gap-3 sm:gap-4">
               {/* About Button */}
               <motion.button
                 onClick={() => setShowAbout(true)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-secondary transition-colors"
+                className="flex items-center gap-2 px-2 sm:px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-secondary transition-colors"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <Info className="w-4 h-4" />
-                About
+                <span className="hidden sm:inline">About</span>
               </motion.button>
 
               {/* Download Button */}
               <motion.button
                 onClick={handleDownload}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-lg"
+                className="flex items-center gap-2 px-2 sm:px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-lg"
                 whileHover={{
                   scale: 1.05,
                   boxShadow: '0 0 20px hsl(var(--primary) / 0.5)',
@@ -88,7 +87,8 @@ export const Navbar = () => {
                 whileTap={{ scale: 0.95 }}
               >
                 <Download className="w-4 h-4" />
-                Download
+                {/* Hide text only on mobile */}
+                <span className="hidden sm:inline">Download</span>
               </motion.button>
 
               {/* Theme Toggle */}

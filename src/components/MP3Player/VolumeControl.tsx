@@ -1,12 +1,15 @@
-import { Volume2, VolumeX } from "lucide-react";
-import { useState } from "react";
+import { Volume2, VolumeX } from 'lucide-react';
+import { useState } from 'react';
 
 interface VolumeControlProps {
   volume: number;
   onVolumeChange: (volume: number) => void;
 }
 
-export const VolumeControl = ({ volume, onVolumeChange }: VolumeControlProps) => {
+export const VolumeControl = ({
+  volume,
+  onVolumeChange,
+}: VolumeControlProps) => {
   const [isDragging, setIsDragging] = useState(false);
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -19,11 +22,11 @@ export const VolumeControl = ({ volume, onVolumeChange }: VolumeControlProps) =>
   };
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="hidden sm:flex items-center gap-4">
       <button
         onClick={toggleMute}
         className="player-button p-3 hover:neon-glow transition-all"
-        aria-label={volume > 0 ? "Mute" : "Unmute"}
+        aria-label={volume > 0 ? 'Mute' : 'Unmute'}
       >
         {volume > 0 ? (
           <Volume2 className="w-5 h-5 text-foreground" />
@@ -42,11 +45,11 @@ export const VolumeControl = ({ volume, onVolumeChange }: VolumeControlProps) =>
             value={volume}
             onChange={handleVolumeChange}
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            style={{ transform: `rotate(${(volume * 270) - 135}deg)` }}
+            style={{ transform: `rotate(${volume * 270 - 135}deg)` }}
           />
-          <div 
+          <div
             className="absolute inset-2 rounded-full bg-gradient-to-br from-secondary to-muted"
-            style={{ transform: `rotate(${(volume * 270) - 135}deg)` }}
+            style={{ transform: `rotate(${volume * 270 - 135}deg)` }}
           />
         </div>
 

@@ -1,10 +1,10 @@
-import { useState, useRef, useEffect } from "react";
-import { PlayerControls } from "./PlayerControls";
-import { Equalizer } from "./Equalizer";
-import { Playlist } from "./Playlist";
-import { VolumeControl } from "./VolumeControl";
-import { ProgressBar } from "./ProgressBar";
-import { DisplayPanel } from "./DisplayPanel";
+import { useState, useRef, useEffect } from 'react';
+import { PlayerControls } from './PlayerControls';
+import { Equalizer } from './Equalizer';
+import { Playlist } from './Playlist';
+import { VolumeControl } from './VolumeControl';
+import { ProgressBar } from './ProgressBar';
+import { DisplayPanel } from './DisplayPanel';
 
 interface Track {
   id: number;
@@ -17,18 +17,18 @@ interface Track {
 const tracks: Track[] = [
   {
     id: 1,
-    title: "Algorithmic Tyranny",
-    artist: "Manifest 404",
+    title: 'Algorithmic Tyranny',
+    artist: 'Break The Firewall',
     duration: 0,
-    filename: "1_Algorithmic_Tyranny.mp3"
+    filename: '1_Algorithmic_Tyranny.mp3',
   },
   {
     id: 2,
-    title: "Code Revolution",
-    artist: "Manifest 404", 
+    title: 'Code Revolution',
+    artist: 'Break The Firewall',
     duration: 0,
-    filename: "2_Code_Revolution.mp3"
-  }
+    filename: '2_Code_Revolution.mp3',
+  },
 ];
 
 export const MP3Player = () => {
@@ -37,27 +37,30 @@ export const MP3Player = () => {
   const analyserRef = useRef<AnalyserNode | null>(null);
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
   const animationFrameRef = useRef<number | null>(null);
-  
+
   const [currentTrack, setCurrentTrack] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.7);
-  const [equalizerData, setEqualizerData] = useState<number[]>(new Array(10).fill(0));
+  const [equalizerData, setEqualizerData] = useState<number[]>(
+    new Array(10).fill(0)
+  );
 
   // Initialize Web Audio API
   const initializeAudioContext = async () => {
     if (!audioRef.current || audioContextRef.current) return;
 
     try {
-      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      const AudioContext =
+        window.AudioContext || (window as any).webkitAudioContext;
       const audioContext = new AudioContext();
       const analyser = audioContext.createAnalyser();
       const source = audioContext.createMediaElementSource(audioRef.current);
 
       analyser.fftSize = 512;
       analyser.smoothingTimeConstant = 0.8;
-      
+
       source.connect(analyser);
       analyser.connect(audioContext.destination);
 
@@ -86,11 +89,11 @@ export const MP3Player = () => {
       const start = i * bandSize;
       const end = start + bandSize;
       let sum = 0;
-      
+
       for (let j = start; j < end; j++) {
         sum += dataArray[j];
       }
-      
+
       const average = sum / bandSize;
       const normalized = average / 255; // Normalize to 0-1
       newEqualizerData.push(normalized);
@@ -117,11 +120,11 @@ export const MP3Player = () => {
       // Gradually fade out the equalizer when stopped
       if (!isPlaying) {
         const fadeOut = () => {
-          setEqualizerData(prev => prev.map(val => val * 0.9));
+          setEqualizerData((prev) => prev.map((val) => val * 0.9));
         };
         const fadeInterval = setInterval(() => {
-          setEqualizerData(prev => {
-            const newData = prev.map(val => val * 0.85);
+          setEqualizerData((prev) => {
+            const newData = prev.map((val) => val * 0.85);
             if (Math.max(...newData) < 0.01) {
               clearInterval(fadeInterval);
               return new Array(10).fill(0);
@@ -214,7 +217,7 @@ export const MP3Player = () => {
     const nextTrack = (currentTrack + 1) % tracks.length;
     setCurrentTrack(nextTrack);
     setCurrentTime(0);
-    
+
     // Auto-play the next track if currently playing
     if (isPlaying) {
       const playNextTrack = async () => {
@@ -235,7 +238,7 @@ export const MP3Player = () => {
     const prevTrack = currentTrack === 0 ? tracks.length - 1 : currentTrack - 1;
     setCurrentTrack(prevTrack);
     setCurrentTime(0);
-    
+
     // Auto-play the previous track if currently playing
     if (isPlaying) {
       const playPrevTrack = async () => {
@@ -263,7 +266,7 @@ export const MP3Player = () => {
     const wasPlaying = isPlaying;
     setCurrentTrack(trackIndex);
     setCurrentTime(0);
-    
+
     // Auto-play the selected track if currently playing
     if (wasPlaying) {
       const playSelectedTrack = async () => {
@@ -283,7 +286,9 @@ export const MP3Player = () => {
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return `${mins.toString().padStart(2, '0')}:${secs
+      .toString()
+      .padStart(2, '0')}`;
   };
 
   return (
@@ -292,7 +297,7 @@ export const MP3Player = () => {
         {/* Main Player */}
         <div className="player-panel p-6 space-y-6">
           {/* Display Panel */}
-          <DisplayPanel 
+          <DisplayPanel
             track={tracks[currentTrack]}
             currentTime={formatTime(currentTime)}
             duration={formatTime(duration)}
@@ -300,7 +305,7 @@ export const MP3Player = () => {
           />
 
           {/* Progress Bar */}
-          <ProgressBar 
+          <ProgressBar
             currentTime={currentTime}
             duration={duration}
             onSeek={handleSeek}
@@ -316,10 +321,7 @@ export const MP3Player = () => {
               onNext={handleNext}
             />
 
-            <VolumeControl 
-              volume={volume}
-              onVolumeChange={setVolume}
-            />
+            <VolumeControl volume={volume} onVolumeChange={setVolume} />
           </div>
         </div>
 
@@ -330,7 +332,7 @@ export const MP3Player = () => {
 
         {/* Playlist */}
         <div className="player-panel p-6">
-          <Playlist 
+          <Playlist
             tracks={tracks}
             currentTrack={currentTrack}
             isPlaying={isPlaying}
