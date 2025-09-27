@@ -1,6 +1,4 @@
 import { Volume2, VolumeX } from 'lucide-react';
-import { useState } from 'react';
-
 interface VolumeControlProps {
   volume: number;
   onVolumeChange: (volume: number) => void;

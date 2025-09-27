@@ -31,7 +31,6 @@ const getArtwork = (trackId: number) => {
 export const DisplayPanel = ({
   track,
   currentTime,
-  duration,
   isPlaying,
 }: DisplayPanelProps) => {
   return (

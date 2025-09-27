@@ -50,8 +50,8 @@ export const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
             <h2 className="text-3xl font-bold neon-text mb-2">About</h2>
             <br />
             <p className="text-muted-foreground">
-              A futuristic MP3 player experience with real-time audio
-              visualization
+              A futuristic MP3 player crafted for the digital age, featuring
+              real-time audio visualization.
             </p>
             <br />
             <p>

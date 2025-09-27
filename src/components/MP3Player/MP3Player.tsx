@@ -20,14 +20,35 @@ const tracks: Track[] = [
     title: 'Algorithmic Tyranny',
     artist: 'Break The Firewall',
     duration: 0,
-    filename: '1_Algorithmic_Tyranny.mp3',
+    filename: '1_Algorithmic Tyranny.mp3',
   },
   {
     id: 2,
     title: 'Code Revolution',
     artist: 'Break The Firewall',
     duration: 0,
-    filename: '2_Code_Revolution.mp3',
+    filename: '2_Code Revolution.mp3',
+  },
+  {
+    id: 3,
+    title: 'Pixelated Love',
+    artist: 'Break The Firewall',
+    duration: 0,
+    filename: '3_Pixelated Love.mp3',
+  },
+  {
+    id: 4,
+    title: 'Synthetic Addiction',
+    artist: 'Break The Firewall',
+    duration: 0,
+    filename: '4_Synthetic Addiction.mp3',
+  },
+  {
+    id: 5,
+    title: 'Break The Firewall',
+    artist: 'Break The Firewall',
+    duration: 0,
+    filename: '5_Break_the_Firewall.mp3',
   },
 ];
 
@@ -75,12 +96,9 @@ export const MP3Player = () => {
   // Analyze audio frequencies
   const analyzeAudio = () => {
     if (!analyserRef.current) return;
-
     const bufferLength = analyserRef.current.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
     analyserRef.current.getByteFrequencyData(dataArray);
-
-    // Map frequency data to 10 equalizer bands
     const bands = 10;
     const bandSize = Math.floor(bufferLength / bands);
     const newEqualizerData: number[] = [];
@@ -95,7 +113,7 @@ export const MP3Player = () => {
       }
 
       const average = sum / bandSize;
-      const normalized = average / 255; // Normalize to 0-1
+      const normalized = average / 255;
       newEqualizerData.push(normalized);
     }
 
@@ -117,7 +135,6 @@ export const MP3Player = () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
-      // Gradually fade out the equalizer when stopped
       if (!isPlaying) {
         const fadeOut = () => {
           setEqualizerData((prev) => prev.map((val) => val * 0.9));
@@ -142,7 +159,6 @@ export const MP3Player = () => {
     };
   }, [isPlaying]);
 
-  // Update track durations when metadata loads
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -179,7 +195,6 @@ export const MP3Player = () => {
     };
   }, [currentTrack]);
 
-  // Update volume
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume;
@@ -229,7 +244,6 @@ export const MP3Player = () => {
           }
         }
       };
-      // Small delay to ensure audio source is updated
       setTimeout(playNextTrack, 200);
     }
   };
@@ -250,7 +264,6 @@ export const MP3Player = () => {
           }
         }
       };
-      // Small delay to ensure audio source is updated
       setTimeout(playPrevTrack, 200);
     }
   };
@@ -267,7 +280,6 @@ export const MP3Player = () => {
     setCurrentTrack(trackIndex);
     setCurrentTime(0);
 
-    // Auto-play the selected track if currently playing
     if (wasPlaying) {
       const playSelectedTrack = async () => {
         if (audioRef.current) {
@@ -278,7 +290,6 @@ export const MP3Player = () => {
           }
         }
       };
-      // Small delay to ensure audio source is updated
       setTimeout(playSelectedTrack, 200);
     }
   };
