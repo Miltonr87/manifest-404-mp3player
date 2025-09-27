@@ -1,15 +1,14 @@
-import { useState } from "react";
-import { Download, Info } from "lucide-react";
-import { motion } from "framer-motion";
-import { ThemeToggle } from "../MP3Player/ThemeToggle";
-import { AboutModal } from "./AboutModal";
-import logoImage from "@/assets/manifest-404-ios-logo.png";
+import { useState } from 'react';
+import { Download, Info } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ThemeToggle } from '../MP3Player/ThemeToggle';
+import { AboutModal } from './AboutModal';
+import logoImage from '@/assets/manifest-404-ios-logo.png';
 
 export const Navbar = () => {
   const [showAbout, setShowAbout] = useState(false);
 
   const handleDownload = () => {
-    // Create a simple download for the current page as HTML
     const htmlContent = `
 <!DOCTYPE html>
 <html lang="en">
@@ -25,7 +24,7 @@ export const Navbar = () => {
     <p>Visit the live version at: ${window.location.href}</p>
 </body>
 </html>`;
-    
+
     const blob = new Blob([htmlContent], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -39,30 +38,29 @@ export const Navbar = () => {
 
   return (
     <>
-      <motion.nav 
+      <motion.nav
         className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border"
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo and App Name */}
-            <motion.div 
+            <motion.div
               className="flex items-center gap-3"
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.2 }}
             >
               <div className="w-10 h-10 rounded-xl overflow-hidden shadow-lg">
-                <img 
-                  src={logoImage} 
-                  alt="Manifest 404 Logo" 
+                <img
+                  src={logoImage}
+                  alt="Manifest 404 Logo"
                   className="w-full h-full object-cover"
                 />
               </div>
               <div>
-                <h1 className="text-xl font-bold neon-text">MANIFEST 404</h1>
-                <p className="text-xs text-muted-foreground">Futuristic MP3 Player</p>
+                <h1 className="text-xl font-bold neon-text">Manifest 404</h1>
               </div>
             </motion.div>
 
@@ -83,9 +81,9 @@ export const Navbar = () => {
               <motion.button
                 onClick={handleDownload}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-lg"
-                whileHover={{ 
+                whileHover={{
                   scale: 1.05,
-                  boxShadow: "0 0 20px hsl(var(--primary) / 0.5)"
+                  boxShadow: '0 0 20px hsl(var(--primary) / 0.5)',
                 }}
                 whileTap={{ scale: 0.95 }}
               >
