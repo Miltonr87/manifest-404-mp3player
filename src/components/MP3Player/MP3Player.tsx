@@ -93,7 +93,6 @@ export const MP3Player = () => {
     }
   };
 
-  // Analyze audio frequencies
   const analyzeAudio = () => {
     if (!analyserRef.current) return;
     const bufferLength = analyserRef.current.frequencyBinCount;
@@ -124,7 +123,6 @@ export const MP3Player = () => {
     }
   };
 
-  // Start/stop audio analysis
   useEffect(() => {
     if (isPlaying && analyserRef.current) {
       if (audioContextRef.current?.state === 'suspended') {
@@ -136,9 +134,6 @@ export const MP3Player = () => {
         cancelAnimationFrame(animationFrameRef.current);
       }
       if (!isPlaying) {
-        const fadeOut = () => {
-          setEqualizerData((prev) => prev.map((val) => val * 0.9));
-        };
         const fadeInterval = setInterval(() => {
           setEqualizerData((prev) => {
             const newData = prev.map((val) => val * 0.85);
@@ -201,12 +196,22 @@ export const MP3Player = () => {
     }
   }, [volume]);
 
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.load();
+      if (isPlaying) {
+        audioRef.current
+          .play()
+          .catch((err) => console.error('Error autoplaying track:', err));
+      }
+    }
+  }, [currentTrack, isPlaying]);
+
   const handlePlay = async () => {
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.pause();
       } else {
-        // Initialize audio context on first play (required for Chrome)
         if (!audioContextRef.current) {
           await initializeAudioContext();
         }
@@ -232,40 +237,12 @@ export const MP3Player = () => {
     const nextTrack = (currentTrack + 1) % tracks.length;
     setCurrentTrack(nextTrack);
     setCurrentTime(0);
-
-    // Auto-play the next track if currently playing
-    if (isPlaying) {
-      const playNextTrack = async () => {
-        if (audioRef.current) {
-          try {
-            await audioRef.current.play();
-          } catch (error) {
-            console.error('Error playing next track:', error);
-          }
-        }
-      };
-      setTimeout(playNextTrack, 200);
-    }
   };
 
   const handlePrevious = () => {
     const prevTrack = currentTrack === 0 ? tracks.length - 1 : currentTrack - 1;
     setCurrentTrack(prevTrack);
     setCurrentTime(0);
-
-    // Auto-play the previous track if currently playing
-    if (isPlaying) {
-      const playPrevTrack = async () => {
-        if (audioRef.current) {
-          try {
-            await audioRef.current.play();
-          } catch (error) {
-            console.error('Error playing previous track:', error);
-          }
-        }
-      };
-      setTimeout(playPrevTrack, 200);
-    }
   };
 
   const handleSeek = (time: number) => {
@@ -276,22 +253,8 @@ export const MP3Player = () => {
   };
 
   const handleTrackSelect = (trackIndex: number) => {
-    const wasPlaying = isPlaying;
     setCurrentTrack(trackIndex);
     setCurrentTime(0);
-
-    if (wasPlaying) {
-      const playSelectedTrack = async () => {
-        if (audioRef.current) {
-          try {
-            await audioRef.current.play();
-          } catch (error) {
-            console.error('Error playing selected track:', error);
-          }
-        }
-      };
-      setTimeout(playSelectedTrack, 200);
-    }
   };
 
   const formatTime = (seconds: number) => {
@@ -305,24 +268,18 @@ export const MP3Player = () => {
   return (
     <div className="pt-20 pb-8 px-4 md:px-8 min-h-screen bg-background">
       <div className="max-w-4xl mx-auto space-y-6">
-        {/* Main Player */}
         <div className="player-panel p-6 space-y-6">
-          {/* Display Panel */}
           <DisplayPanel
             track={tracks[currentTrack]}
             currentTime={formatTime(currentTime)}
             duration={formatTime(duration)}
             isPlaying={isPlaying}
           />
-
-          {/* Progress Bar */}
           <ProgressBar
             currentTime={currentTime}
             duration={duration}
             onSeek={handleSeek}
           />
-
-          {/* Controls Row */}
           <div className="flex items-center justify-between gap-6">
             <PlayerControls
               isPlaying={isPlaying}
@@ -331,17 +288,12 @@ export const MP3Player = () => {
               onPrevious={handlePrevious}
               onNext={handleNext}
             />
-
             <VolumeControl volume={volume} onVolumeChange={setVolume} />
           </div>
         </div>
-
-        {/* Equalizer */}
         <div className="player-panel p-6">
           <Equalizer data={equalizerData} isActive={isPlaying} />
         </div>
-
-        {/* Playlist */}
         <div className="player-panel p-6">
           <Playlist
             tracks={tracks}
@@ -350,8 +302,6 @@ export const MP3Player = () => {
             onTrackSelect={handleTrackSelect}
           />
         </div>
-
-        {/* Hidden Audio Element */}
         <audio
           ref={audioRef}
           src={`/audio/${tracks[currentTrack].filename}`}
