@@ -12,7 +12,7 @@ export const Navbar = () => {
     const a = document.createElement('a');
     a.href =
       'https://github.com/Miltonr87/Manifest-404/archive/refs/heads/main.zip';
-    a.download = 'Manifest-404-main.zip'; // nome sugerido para salvar
+    a.download = 'Manifest-404.zip';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -38,8 +38,11 @@ export const Navbar = () => {
             <div className="flex items-center gap-3 sm:gap-4">
               <motion.button
                 onClick={() => setShowAbout(true)}
-                className="flex items-center gap-2 px-2 sm:px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-secondary transition-colors"
-                whileHover={{ scale: 1.05 }}
+                className="flex items-center gap-2 px-2 sm:px-4 py-2 rounded-lg text-sm font-medium bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors shadow-md"
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: '0 0 15px hsl(var(--secondary) / 0.5)',
+                }}
                 whileTap={{ scale: 0.95 }}
               >
                 <Info className="w-4 h-4" />
