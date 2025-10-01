@@ -48,10 +48,17 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
       transition={{ duration: 0.5, ease: 'easeInOut' }}
     >
       <motion.div
-        className="relative max-w-3xl w-full bg-zinc-900 rounded-2xl shadow-lg border border-purple-600 p-6 overflow-y-auto max-h-[90vh]"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5, duration: 0.5 }}
+        className="
+          relative w-full 
+          max-w-4xl sm:max-w-5xl lg:max-w-6xl 
+          bg-zinc-900 rounded-2xl shadow-lg border border-purple-600 
+          p-6 overflow-y-auto 
+          max-h-[70vh] sm:max-h-[80vh] lg:max-h-[85vh]
+        "
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 30 }}
+        transition={{ delay: 0.2, duration: 0.4 }}
       >
         <motion.button
           onClick={onClose}
@@ -61,11 +68,9 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
         >
           <X size={20} />
         </motion.button>
-
         <h2 className="text-2xl font-bold text-left text-gold-300 mb-9">
-          {title}
+          <b>{title}</b>
         </h2>
-
         <div className="space-y-2 text-sm leading-relaxed">
           {formattedLyrics}
         </div>
