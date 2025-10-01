@@ -87,7 +87,7 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
                 className="
                   snap-center cursor-pointer rounded-2xl shadow-lg border border-border
                   max-h-[70vh] sm:max-h-[80vh] lg:max-h-[85vh]
-                  w-auto max-w-[85vw] sm:max-w-[70vw] lg:max-w-[65vw]
+                  w-auto max-w-[75vw] sm:max-w-[70vw] lg:max-w-[65vw]
                 "
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: 'spring', stiffness: 200 }}
