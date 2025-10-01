@@ -68,7 +68,7 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
         >
           <X size={20} />
         </motion.button>
-        <h2 className="text-2xl font-bold text-left text-gold-300 mb-9">
+        <h2 className="text-2xl font-bold text-left text-purple-300 mb-9">
           <b>{title}</b>
         </h2>
         <div className="space-y-2 text-sm leading-relaxed">
