@@ -13,7 +13,7 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
       return (
         <motion.p
           key={idx}
-          className="text-pink-400 font-bold text-lg drop-shadow-md"
+          className="text-pink-400 font-bold text-lg drop-shadow-md text-center sm:text-left"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{
@@ -27,13 +27,16 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
       );
     } else if (line.match(/\[.*\]/)) {
       return (
-        <p key={idx} className="text-purple-400 font-semibold mt-4">
+        <p
+          key={idx}
+          className="text-purple-400 font-semibold mt-4 text-center sm:text-left"
+        >
           {line}
         </p>
       );
     }
     return (
-      <p key={idx} className="text-gray-200">
+      <p key={idx} className="text-gray-200 text-center sm:text-left">
         {line}
       </p>
     );
@@ -55,7 +58,7 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
           exit={{ opacity: 0 }}
         />
         <motion.div
-          className="relative w-full max-w-4xl max-h-[85vh] player-panel p-6 overflow-y-auto"
+          className="relative w-full max-w-4xl max-h-[85vh] player-panel p-4 sm:p-6 overflow-y-auto rounded-2xl"
           initial={{ scale: 0.9, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -64,14 +67,16 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
         >
           <motion.button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 rounded-lg hover:bg-secondary transition-colors"
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 rounded-lg hover:bg-secondary transition-colors"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
             <X className="w-5 h-5" />
           </motion.button>
-          <h2 className="text-2xl font-bold neon-text mb-6">{title}</h2>
-          <div className="space-y-2 text-sm leading-relaxed">
+          <h2 className="text-xl sm:text-2xl font-bold neon-text mb-4 sm:mb-6 text-center sm:text-left">
+            {title}
+          </h2>
+          <div className="space-y-2 text-sm sm:text-base leading-relaxed">
             {formattedLyrics}
           </div>
         </motion.div>
