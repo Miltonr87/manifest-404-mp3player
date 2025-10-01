@@ -55,7 +55,6 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        {/* Backdrop */}
         <motion.div
           className="absolute inset-0 bg-black/80 backdrop-blur-sm"
           initial={{ opacity: 0 }}
@@ -63,8 +62,6 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
           exit={{ opacity: 0 }}
           onClick={onClose}
         />
-
-        {/* Modal Content */}
         <motion.div
           className="relative w-full h-full max-w-5xl mx-auto flex flex-col p-6"
           initial={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -73,7 +70,6 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
           transition={{ duration: 0.3, ease: 'easeOut' }}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Botão Fechar */}
           <motion.button
             onClick={onClose}
             className="absolute top-5 right-5 z-50 bg-red-600 text-white p-2 rounded-full hover:bg-red-500 transition-all"
