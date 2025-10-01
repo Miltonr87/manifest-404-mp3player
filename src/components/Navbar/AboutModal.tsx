@@ -47,7 +47,9 @@ export const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
 
           {/* Header */}
           <div className="mb-8">
-            <h2 className="text-3xl font-bold neon-text mb-2">About</h2>
+            <h2 className="text-3xl font-bold text-center neon-text mb-2">
+              About
+            </h2>
             <br />
             <p className="text-muted-foreground">
               A futuristic MP3 player crafted for the digital age, featuring
