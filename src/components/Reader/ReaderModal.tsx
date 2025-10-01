@@ -50,20 +50,20 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-50 flex items-center justify-center"
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        onClick={onClose}
       >
         <motion.div
-          className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+          className="absolute inset-0 bg-background/80 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          onClick={onClose}
         />
         <motion.div
-          className="relative w-full h-full max-w-6xl mx-auto flex flex-col p-6"
+          className="relative w-full max-w-6xl max-h-[90vh] player-panel p-6 flex flex-col"
           initial={{ scale: 0.9, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -72,11 +72,11 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
         >
           <motion.button
             onClick={onClose}
-            className="absolute top-5 right-5 z-50 bg-red-600 text-white p-2 rounded-full hover:bg-red-500 transition-all"
-            whileTap={{ rotate: 90, scale: 0.8 }}
-            transition={{ duration: 0.3 }}
+            className="absolute top-4 right-4 p-2 rounded-lg hover:bg-secondary transition-colors"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
           >
-            <X size={20} />
+            <X className="w-5 h-5" />
           </motion.button>
           <div className="flex-1 overflow-x-scroll snap-x snap-mandatory flex gap-8 p-6">
             {images.map((item, i) => (
@@ -85,7 +85,7 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
                 src={item.src}
                 alt={item.title}
                 className="
-                  snap-center cursor-pointer rounded-2xl shadow-lg border border-purple-600
+                  snap-center cursor-pointer rounded-2xl shadow-lg border border-border
                   max-h-[70vh] sm:max-h-[80vh] lg:max-h-[85vh]
                   w-auto max-w-[85vw] sm:max-w-[70vw] lg:max-w-[65vw]
                 "
