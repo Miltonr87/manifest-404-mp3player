@@ -13,7 +13,7 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
       return (
         <motion.p
           key={idx}
-          className="text-white font-bold text-lg neon-text drop-shadow-[0_0_8px_rgba(255,0,255,0.9)] text-center sm:text-left"
+          className="text-white font-bold text-lg neon-text drop-shadow-[0_0_8px_rgba(255,0,255,0.9)] text-center sm:text-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{
@@ -29,7 +29,7 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
       return (
         <p
           key={idx}
-          className="text-purple-400 font-semibold mt-4 drop-shadow-[0_0_4px_rgba(180,100,255,0.7)] text-center sm:text-left"
+          className="text-purple-400 font-semibold mt-4 drop-shadow-[0_0_4px_rgba(180,100,255,0.7)] text-center sm:text-center"
         >
           {line}
         </p>
@@ -38,7 +38,7 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
     return (
       <p
         key={idx}
-        className="text-purple drop-shadow-[0_0_6px_rgba(255,255,255,0.8)] text-center sm:text-left"
+        className="text-purple drop-shadow-[0_0_6px_rgba(255,255,255,0.8)] text-center sm:text-center"
       >
         {line}
       </p>
@@ -76,7 +76,7 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
           >
             <X className="w-5 h-5" />
           </motion.button>
-          <h2 className="text-xl sm:text-2xl font-bold neon-text mb-4 sm:mb-6 text-center sm:text-left">
+          <h2 className="text-xl sm:text-2xl font-bold neon-text mb-4 sm:mb-6 text-center sm:text-center">
             {title}
           </h2>
           <div className="space-y-2 text-sm sm:text-base leading-relaxed">
