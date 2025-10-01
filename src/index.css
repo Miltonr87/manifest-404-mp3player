@@ -9,34 +9,34 @@
     /* Light mode (fallback) */
     --background: 240 10% 3.9%;
     --foreground: 120 100% 80%;
-    
+
     --card: 240 10% 8%;
     --card-foreground: 120 100% 85%;
-    
+
     --popover: 240 10% 8%;
     --popover-foreground: 120 100% 85%;
-    
+
     --primary: 160 100% 50%;
     --primary-foreground: 240 10% 3.9%;
-    
+
     --secondary: 240 15% 15%;
     --secondary-foreground: 120 100% 80%;
-    
+
     --muted: 240 10% 12%;
     --muted-foreground: 120 50% 60%;
-    
+
     --accent: 180 100% 50%;
     --accent-foreground: 240 10% 3.9%;
-    
+
     --destructive: 0 100% 60%;
     --destructive-foreground: 0 0% 100%;
-    
+
     --border: 240 20% 20%;
     --input: 240 15% 15%;
     --ring: 160 100% 50%;
-    
+
     --radius: 0.75rem;
-    
+
     /* Player specific tokens */
     --player-bg: 240 10% 3.9%;
     --player-panel: 240 15% 8%;
@@ -47,12 +47,24 @@
     --digital-text: 120 100% 80%;
     --equalizer-bar: 160 100% 50%;
     --glow: 160 100% 50%;
-    
+
     /* Gradients */
-    --gradient-neon: linear-gradient(45deg, hsl(160 100% 50%), hsl(180 100% 50%));
-    --gradient-panel: linear-gradient(145deg, hsl(240 15% 10%), hsl(240 20% 6%));
-    --gradient-button: linear-gradient(145deg, hsl(240 15% 15%), hsl(240 20% 10%));
-    
+    --gradient-neon: linear-gradient(
+      45deg,
+      hsl(160 100% 50%),
+      hsl(180 100% 50%)
+    );
+    --gradient-panel: linear-gradient(
+      145deg,
+      hsl(240 15% 10%),
+      hsl(240 20% 6%)
+    );
+    --gradient-button: linear-gradient(
+      145deg,
+      hsl(240 15% 15%),
+      hsl(240 20% 10%)
+    );
+
     /* Animations */
     --glow-animation: 0 0 20px hsl(160 100% 50% / 0.5);
     --panel-shadow: 0 8px 32px hsl(240 100% 0% / 0.4);
@@ -62,56 +74,56 @@
     /* Dark mode enhanced */
     --background: 240 10% 3.9%;
     --foreground: 120 100% 80%;
-    
+
     --card: 240 15% 8%;
     --card-foreground: 120 100% 85%;
-    
+
     --popover: 240 15% 8%;
     --popover-foreground: 120 100% 85%;
-    
+
     --primary: 160 100% 50%;
     --primary-foreground: 240 10% 3.9%;
-    
+
     --secondary: 240 20% 15%;
     --secondary-foreground: 120 100% 80%;
-    
+
     --muted: 240 15% 12%;
     --muted-foreground: 120 50% 60%;
-    
+
     --accent: 180 100% 50%;
     --accent-foreground: 240 10% 3.9%;
-    
+
     --destructive: 0 100% 60%;
     --destructive-foreground: 0 0% 100%;
-    
+
     --border: 240 25% 25%;
     --input: 240 20% 18%;
     --ring: 160 100% 50%;
   }
-  
+
   .light {
     /* Light mode - Bright cyan/blue theme */
     --background: 200 40% 95%;
     --foreground: 240 20% 15%;
-    
+
     --card: 200 30% 92%;
     --card-foreground: 240 20% 15%;
-    
+
     --primary: 180 80% 40%;
     --primary-foreground: 200 40% 95%;
-    
+
     --secondary: 200 25% 85%;
     --secondary-foreground: 240 20% 15%;
-    
+
     --muted: 200 20% 88%;
     --muted-foreground: 240 15% 45%;
-    
+
     --accent: 160 70% 45%;
     --accent-foreground: 200 40% 95%;
-    
+
     --border: 200 25% 75%;
     --input: 200 25% 85%;
-    
+
     /* Light mode player tokens */
     --player-bg: 200 40% 95%;
     --player-panel: 200 30% 90%;
@@ -119,11 +131,19 @@
     --digital-text: 240 30% 25%;
     --equalizer-bar: 180 80% 40%;
     --glow: 180 80% 40%;
-    
+
     /* Light mode gradients */
     --gradient-neon: linear-gradient(45deg, hsl(180 80% 40%), hsl(160 70% 45%));
-    --gradient-panel: linear-gradient(145deg, hsl(200 30% 92%), hsl(200 35% 88%));
-    --gradient-button: linear-gradient(145deg, hsl(200 25% 88%), hsl(200 30% 82%));
+    --gradient-panel: linear-gradient(
+      145deg,
+      hsl(200 30% 92%),
+      hsl(200 35% 88%)
+    );
+    --gradient-button: linear-gradient(
+      145deg,
+      hsl(200 25% 88%),
+      hsl(200 30% 82%)
+    );
     --glow-animation: 0 0 20px hsl(180 80% 40% / 0.5);
     --panel-shadow: 0 8px 32px hsl(200 50% 60% / 0.2);
   }
@@ -137,7 +157,7 @@
   body {
     @apply bg-background text-foreground font-mono transition-colors duration-500;
   }
-  
+
   html {
     transition: background-color 0.5s ease, color 0.5s ease;
   }
@@ -150,22 +170,22 @@
     background: var(--gradient-panel);
     box-shadow: var(--panel-shadow), inset 0 1px 0 hsl(var(--border) / 0.2);
   }
-  
+
   .player-button {
     @apply relative overflow-hidden rounded-lg border border-border bg-secondary;
     background: var(--gradient-button);
     transition: all 0.2s ease;
   }
-  
+
   .player-button:hover {
     box-shadow: var(--glow-animation);
     transform: translateY(-1px);
   }
-  
+
   .player-button:active {
     transform: translateY(0);
   }
-  
+
   /* Digital Display */
   .digital-display {
     @apply font-mono text-primary;
@@ -173,20 +193,19 @@
     text-shadow: 0 0 10px hsl(var(--glow) / 0.5);
     font-variant-numeric: tabular-nums;
   }
-  
+
   /* Equalizer Bars */
   .equalizer-bar {
     @apply rounded-sm;
     background: hsl(var(--equalizer-bar));
-    box-shadow: 
-      0 0 15px hsl(var(--equalizer-bar) / 0.8),
+    box-shadow: 0 0 15px hsl(var(--equalizer-bar) / 0.8),
       0 0 30px hsl(var(--equalizer-bar) / 0.4),
       inset 0 1px 0 hsl(var(--equalizer-bar) / 0.9);
     transform-origin: bottom;
     will-change: transform, height;
     position: relative;
   }
-  
+
   .equalizer-bar::before {
     content: '';
     position: absolute;
@@ -194,50 +213,49 @@
     left: 0;
     right: 0;
     height: 30%;
-    background: linear-gradient(to bottom, hsl(var(--accent) / 0.8), transparent);
+    background: linear-gradient(
+      to bottom,
+      hsl(var(--accent) / 0.8),
+      transparent
+    );
     border-radius: inherit;
   }
-  
+
   .equalizer-bar.active {
     animation: equalizer-pulse 0.1s ease-out;
   }
-  
+
   /* Neon Glow Effects */
   .neon-glow {
-    box-shadow: 
-      0 0 5px hsl(var(--glow) / 0.8),
-      0 0 10px hsl(var(--glow) / 0.6),
+    box-shadow: 0 0 5px hsl(var(--glow) / 0.8), 0 0 10px hsl(var(--glow) / 0.6),
       0 0 15px hsl(var(--glow) / 0.4);
   }
-  
+
   .neon-text {
     color: hsl(var(--glow));
-    text-shadow: 
-      0 0 5px hsl(var(--glow) / 0.8),
-      0 0 10px hsl(var(--glow) / 0.6);
+    text-shadow: 0 0 5px hsl(var(--glow) / 0.8), 0 0 10px hsl(var(--glow) / 0.6);
   }
-  
+
   /* Progress Bar */
   .progress-bar {
     @apply bg-muted rounded-full overflow-hidden;
     background: hsl(var(--muted));
   }
-  
+
   .progress-fill {
     @apply h-full rounded-full transition-all duration-100;
     background: var(--gradient-neon);
     box-shadow: 0 0 10px hsl(var(--glow) / 0.5);
   }
-  
+
   /* Volume Knob */
   .volume-knob {
     @apply relative rounded-full border-2 border-border bg-card;
     background: var(--gradient-panel);
-    box-shadow: 
-      inset 0 2px 4px hsl(var(--background) / 0.1),
+    box-shadow: inset 0 2px 4px hsl(var(--background) / 0.1),
       0 4px 8px hsl(var(--background) / 0.3);
   }
-  
+
   .volume-knob::after {
     content: '';
     position: absolute;
@@ -249,5 +267,31 @@
     transform: translateX(-50%);
     border-radius: 2px;
     box-shadow: 0 0 6px hsl(var(--glow) / 0.8);
+  }
+}
+
+.glitch {
+  position: relative;
+  animation: glitch-skew 1s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-skew {
+  0% {
+    transform: skew(0deg);
+  }
+  20% {
+    transform: skew(2deg);
+  }
+  40% {
+    transform: skew(-2deg);
+  }
+  60% {
+    transform: skew(1deg);
+  }
+  80% {
+    transform: skew(-1deg);
+  }
+  100% {
+    transform: skew(0deg);
   }
 }

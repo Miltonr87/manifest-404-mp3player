@@ -52,20 +52,6 @@ export const Navbar = () => {
                 <span className="hidden sm:inline">About</span>
               </motion.button>
 
-              {/* Download */}
-              <motion.button
-                onClick={handleDownload}
-                className="flex items-center gap-2 px-2 sm:px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-lg"
-                whileHover={{
-                  scale: 1.05,
-                  boxShadow: '0 0 20px hsl(var(--primary) / 0.5)',
-                }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Download className="w-4 h-4" />
-                <span className="hidden sm:inline">Download</span>
-              </motion.button>
-
               {/* Reader */}
               <motion.button
                 onClick={() => setShowReader(true)}
@@ -78,6 +64,20 @@ export const Navbar = () => {
               >
                 <BookOpen className="w-4 h-4" />
                 <span className="hidden sm:inline">Reader</span>
+              </motion.button>
+
+              {/* Download */}
+              <motion.button
+                onClick={handleDownload}
+                className="flex items-center gap-2 px-2 sm:px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-lg"
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: '0 0 20px hsl(var(--primary) / 0.5)',
+                }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Download className="w-4 h-4" />
+                <span className="hidden sm:inline">Download</span>
               </motion.button>
 
               <ThemeToggle />
