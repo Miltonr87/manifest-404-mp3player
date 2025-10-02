@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Music, Zap, Palette, Smartphone } from 'lucide-react';
+import { X, ExternalLink } from 'lucide-react';
 
 interface AboutModalProps {
   isOpen: boolean;
@@ -58,8 +58,8 @@ export const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
             <br />
             <p>
               <b className="text-1xl font-bold neon-text mb-2">Manifest 404</b>{' '}
-              is a Punk Rock digital band made with AI wich blend the spirit of
-              melodic hardcore with cyberpunk aesthetics.
+              is a Punk Rock digital band made with AI which blends the spirit
+              of melodic hardcore with cyberpunk aesthetics.
             </p>
           </div>
 
@@ -88,8 +88,16 @@ export const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
 
           {/* Footer */}
           <div className="pt-6 border-t border-border">
-            <p className="text-center text-sm text-muted-foreground">
-              Created by Milton Rodrigues 🎸
+            <p className="text-center text-sm text-muted-foreground flex items-center justify-center gap-1">
+              <a
+                href="https://miltonr87.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-accent transition-colors font-medium flex items-center gap-1"
+              >
+                Milton Rodrigues
+                <ExternalLink className="w-4 h-4" />
+              </a>
             </p>
           </div>
         </motion.div>
