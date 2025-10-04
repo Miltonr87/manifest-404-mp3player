@@ -133,12 +133,12 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
           >
             {images.map((item, i) => (
               <motion.img
-                key={i}
+                key={item.src}
                 src={item.src}
                 alt={item.title}
                 loading={i === currentIndex ? 'eager' : 'lazy'}
                 decoding="async"
-                fetchpriority={i === currentIndex ? 'high' : 'low'}
+                fetchPriority={i === currentIndex ? 'high' : 'low'}
                 className={`
                   snap-center cursor-pointer rounded-2xl shadow-lg border border-border
                   max-h-[70vh] sm:max-h-[80vh] lg:max-h-[85vh]
