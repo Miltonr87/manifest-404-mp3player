@@ -55,13 +55,29 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
 
   const scrollLeft = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -400, behavior: 'smooth' });
+      const container = scrollRef.current;
+      const childWidth = container.firstElementChild
+        ? (container.firstElementChild as HTMLElement).offsetWidth + 32 // 32px ≈ gap-8
+        : 0;
+
+      container.scrollBy({
+        left: -childWidth,
+        behavior: 'smooth',
+      });
     }
   };
 
   const scrollRight = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 400, behavior: 'smooth' });
+      const container = scrollRef.current;
+      const childWidth = container.firstElementChild
+        ? (container.firstElementChild as HTMLElement).offsetWidth + 32
+        : 0;
+
+      container.scrollBy({
+        left: childWidth,
+        behavior: 'smooth',
+      });
     }
   };
 
