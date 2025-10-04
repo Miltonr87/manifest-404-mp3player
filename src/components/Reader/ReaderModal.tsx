@@ -42,6 +42,7 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
     lyrics: string;
   } | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const openSong = async (item: { title: string; lyricsPath: string }) => {
     try {
@@ -53,31 +54,31 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
     }
   };
 
-  const scrollLeft = () => {
-    if (scrollRef.current) {
-      const container = scrollRef.current;
-      const childWidth = container.firstElementChild
-        ? (container.firstElementChild as HTMLElement).offsetWidth + 32 // 32px ≈ gap-8
-        : 0;
+  const scrollToIndex = (index: number) => {
+    if (!scrollRef.current) return;
 
-      container.scrollBy({
-        left: -childWidth,
-        behavior: 'smooth',
-      });
+    const container = scrollRef.current;
+    const childWidth = container.firstElementChild
+      ? (container.firstElementChild as HTMLElement).offsetWidth + 32
+      : 0;
+
+    container.scrollTo({
+      left: index * childWidth,
+      behavior: 'smooth',
+    });
+
+    setCurrentIndex(index);
+  };
+
+  const scrollLeft = () => {
+    if (currentIndex > 0) {
+      scrollToIndex(currentIndex - 1);
     }
   };
 
   const scrollRight = () => {
-    if (scrollRef.current) {
-      const container = scrollRef.current;
-      const childWidth = container.firstElementChild
-        ? (container.firstElementChild as HTMLElement).offsetWidth + 32
-        : 0;
-
-      container.scrollBy({
-        left: childWidth,
-        behavior: 'smooth',
-      });
+    if (currentIndex < images.length - 1) {
+      scrollToIndex(currentIndex + 1);
     }
   };
 
@@ -114,7 +115,7 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
           </motion.button>
           <div
             ref={scrollRef}
-            className="flex-1 overflow-x-scroll snap-x snap-mandatory flex gap-8 p-6 hide-scrollbar"
+            className="flex-1 overflow-x-hidden snap-x snap-mandatory flex gap-8 p-6 hide-scrollbar"
           >
             {images.map((item, i) => (
               <motion.img
@@ -122,10 +123,10 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
                 src={item.src}
                 alt={item.title}
                 className="
-        snap-center cursor-pointer rounded-2xl shadow-lg border border-border
-        max-h-[70vh] sm:max-h-[80vh] lg:max-h-[85vh]
-        w-auto max-w-[75vw] sm:max-w-[70vw] lg:max-w-[65vw]
-      "
+                  snap-center cursor-pointer rounded-2xl shadow-lg border border-border
+                  max-h-[70vh] sm:max-h-[80vh] lg:max-h-[85vh]
+                  w-auto max-w-[75vw] sm:max-w-[70vw] lg:max-w-[65vw]
+                "
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: 'spring', stiffness: 200 }}
                 onClick={() => openSong(item)}
@@ -136,14 +137,24 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
             <div className="flex items-center gap-2">
               <button
                 onClick={scrollLeft}
-                className="player-button p-3 hover:neon-glow transition-all"
+                disabled={currentIndex === 0}
+                className={`player-button p-3 transition-all ${
+                  currentIndex === 0
+                    ? 'opacity-30 cursor-not-allowed'
+                    : 'hover:neon-glow'
+                }`}
                 aria-label="Scroll left"
               >
                 <ChevronLeft className="w-5 h-5 text-foreground" />
               </button>
               <button
                 onClick={scrollRight}
-                className="player-button p-3 hover:neon-glow transition-all"
+                disabled={currentIndex === images.length - 1}
+                className={`player-button p-3 transition-all ${
+                  currentIndex === images.length - 1
+                    ? 'opacity-30 cursor-not-allowed'
+                    : 'hover:neon-glow'
+                }`}
                 aria-label="Scroll right"
               >
                 <ChevronRight className="w-5 h-5 text-foreground" />
