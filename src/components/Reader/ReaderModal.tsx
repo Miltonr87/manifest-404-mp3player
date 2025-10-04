@@ -132,7 +132,6 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
               />
             ))}
           </div>
-
           <div className="relative w-full flex justify-center mt-4">
             <div className="flex items-center gap-2">
               <button
@@ -153,7 +152,6 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
           </div>
         </motion.div>
       </motion.div>
-
       {activeSong && (
         <LyricsModal
           title={activeSong.title}
