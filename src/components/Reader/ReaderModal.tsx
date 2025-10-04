@@ -98,7 +98,7 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
           </motion.button>
           <div
             ref={scrollRef}
-            className="flex-1 overflow-x-scroll snap-x snap-mandatory flex gap-8 p-6"
+            className="flex-1 overflow-x-scroll snap-x snap-mandatory flex gap-8 p-6 hide-scrollbar"
           >
             {images.map((item, i) => (
               <motion.img
@@ -106,16 +106,17 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
                 src={item.src}
                 alt={item.title}
                 className="
-                  snap-center cursor-pointer rounded-2xl shadow-lg border border-border
-                  max-h-[70vh] sm:max-h-[80vh] lg:max-h-[85vh]
-                  w-auto max-w-[75vw] sm:max-w-[70vw] lg:max-w-[65vw]
-                "
+        snap-center cursor-pointer rounded-2xl shadow-lg border border-border
+        max-h-[70vh] sm:max-h-[80vh] lg:max-h-[85vh]
+        w-auto max-w-[75vw] sm:max-w-[70vw] lg:max-w-[65vw]
+      "
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: 'spring', stiffness: 200 }}
                 onClick={() => openSong(item)}
               />
             ))}
           </div>
+
           <div className="relative w-full flex justify-center mt-4">
             <div className="flex items-center gap-2">
               <button
