@@ -77,7 +77,6 @@ export const MP3Player = () => {
     new Array(10).fill(0)
   );
 
-  // ---- AUDIO CONTEXT INITIALIZATION ----
   const initializeAudioContext = async () => {
     if (!audioRef.current || audioContextRef.current) return;
     try {
@@ -100,7 +99,6 @@ export const MP3Player = () => {
     }
   };
 
-  // ---- EQUALIZER ----
   const analyzeAudio = () => {
     if (!analyserRef.current) return;
     const bufferLength = analyserRef.current.frequencyBinCount;
@@ -151,11 +149,9 @@ export const MP3Player = () => {
     };
   }, [isPlaying]);
 
-  // ---- TRACK EVENTS ----
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-
     const handleLoadedMetadata = () => {
       setDuration(audio.duration);
       tracks[currentTrack].duration = audio.duration;
@@ -165,7 +161,6 @@ export const MP3Player = () => {
     const handleCanPlay = () => {
       if (!audioContextRef.current) initializeAudioContext();
     };
-
     audio.addEventListener('loadedmetadata', handleLoadedMetadata);
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('ended', handleEnded);
@@ -179,12 +174,10 @@ export const MP3Player = () => {
     };
   }, [currentTrack]);
 
-  // ---- VOLUME ----
   useEffect(() => {
     if (audioRef.current) audioRef.current.volume = volume;
   }, [volume]);
 
-  // ---- SAFE TRACK LOADING ----
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
