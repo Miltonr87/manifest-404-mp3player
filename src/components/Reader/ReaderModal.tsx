@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo, useLayoutEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { LyricsModal } from './LyricsModal';
@@ -41,13 +41,38 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
     title: string;
     lyrics: string;
   } | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(() => {
-    const saved = localStorage.getItem('manifest404_currentIndex');
+    const saved = sessionStorage.getItem('readerIndex');
     return saved ? parseInt(saved) : 0;
   });
-
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isReady, setIsReady] = useState(false);
   const images = useMemo(() => imageData, []);
+
+  // preload neighboring images
+  useEffect(() => {
+    const preload = (i: number) => {
+      if (i >= 0 && i < images.length) {
+        const img = new Image();
+        img.src = images[i].src;
+      }
+    };
+    preload(currentIndex + 1);
+    preload(currentIndex - 1);
+  }, [currentIndex, images]);
+
+  const scrollToIndex = (
+    index: number,
+    behavior: ScrollBehavior = 'smooth'
+  ) => {
+    if (!scrollRef.current) return;
+    const container = scrollRef.current;
+    const childWidth =
+      container.firstElementChild?.getBoundingClientRect().width ?? 0;
+    container.scrollTo({ left: index * (childWidth + 32), behavior });
+    setCurrentIndex(index);
+    sessionStorage.setItem('readerIndex', String(index));
+  };
 
   const openSong = async (item: { title: string; lyricsPath: string }) => {
     try {
@@ -59,44 +84,17 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
     }
   };
 
-  const scrollToIndex = (
-    index: number,
-    behavior: ScrollBehavior = 'smooth'
-  ) => {
-    if (!scrollRef.current) return;
-    const container = scrollRef.current;
-    const child = container.firstElementChild as HTMLElement | null;
-    if (!child) return;
+  const scrollLeft = () => currentIndex > 0 && scrollToIndex(currentIndex - 1);
+  const scrollRight = () =>
+    currentIndex < images.length - 1 && scrollToIndex(currentIndex + 1);
 
-    const childWidth = child.offsetWidth + 32;
-    container.scrollTo({ left: index * childWidth, behavior });
-    setCurrentIndex(index);
-    localStorage.setItem('manifest404_currentIndex', String(index));
-  };
-
-  const scrollLeft = () => {
-    if (currentIndex > 0) scrollToIndex(currentIndex - 1);
-  };
-
-  const scrollRight = () => {
-    if (currentIndex < images.length - 1) scrollToIndex(currentIndex + 1);
-  };
-
-  useLayoutEffect(() => {
-    scrollToIndex(currentIndex, 'auto');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
+  // Resets properly after remount
   useEffect(() => {
-    const preload = (i: number) => {
-      if (i >= 0 && i < images.length) {
-        const img = new Image();
-        img.src = images[i].src;
-      }
-    };
-    preload(currentIndex + 1);
-    preload(currentIndex - 1);
-  }, [currentIndex, images]);
+    setTimeout(() => {
+      scrollToIndex(currentIndex, 'auto');
+      setIsReady(true);
+    }, 150);
+  }, []);
 
   return (
     <AnimatePresence>
@@ -138,17 +136,15 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
                 key={i}
                 src={item.src}
                 alt={item.title}
-                loading="eager"
+                loading={i === currentIndex ? 'eager' : 'lazy'}
                 decoding="async"
-                fetchPriority={i === currentIndex ? 'high' : 'low'}
+                fetchpriority={i === currentIndex ? 'high' : 'low'}
                 className={`
                   snap-center cursor-pointer rounded-2xl shadow-lg border border-border
                   max-h-[70vh] sm:max-h-[80vh] lg:max-h-[85vh]
                   w-auto max-w-[75vw] sm:max-w-[70vw] lg:max-w-[65vw]
-                  transition-transform duration-200 ease-out
-                  ${
-                    i === currentIndex ? 'scale-[1.02]' : 'scale-100 opacity-90'
-                  }
+                  ${i === currentIndex ? 'opacity-100' : 'opacity-80'}
+                  transition-opacity duration-200 ease-in-out
                 `}
                 onClick={() => openSong(item)}
               />
@@ -158,7 +154,7 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
             <div className="flex items-center gap-2">
               <button
                 onClick={scrollLeft}
-                disabled={currentIndex === 0}
+                disabled={!isReady || currentIndex === 0}
                 className={`player-button p-3 transition-all ${
                   currentIndex === 0
                     ? 'opacity-30 cursor-not-allowed'
@@ -169,7 +165,7 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
               </button>
               <button
                 onClick={scrollRight}
-                disabled={currentIndex === images.length - 1}
+                disabled={!isReady || currentIndex === images.length - 1}
                 className={`player-button p-3 transition-all ${
                   currentIndex === images.length - 1
                     ? 'opacity-30 cursor-not-allowed'
