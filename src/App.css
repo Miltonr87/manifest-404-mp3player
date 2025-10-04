@@ -40,3 +40,71 @@
 .read-the-docs {
   color: #888;
 }
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 14px rgba(255, 215, 0, 1);
+  }
+}
+
+@keyframes wave-text {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes waveform {
+  0% {
+    clip-path: polygon(
+      0% 50%,
+      25% 55%,
+      50% 50%,
+      75% 45%,
+      100% 50%,
+      100% 100%,
+      0% 100%
+    );
+  }
+  50% {
+    clip-path: polygon(
+      0% 50%,
+      25% 45%,
+      50% 50%,
+      75% 55%,
+      100% 50%,
+      100% 100%,
+      0% 100%
+    );
+  }
+  100% {
+    clip-path: polygon(
+      0% 50%,
+      25% 55%,
+      50% 50%,
+      75% 45%,
+      100% 50%,
+      100% 100%,
+      0% 100%
+    );
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 1.5s infinite;
+}
+.animate-wave-text {
+  animation: wave-text 2s infinite ease-in-out;
+}
+.animate-waveform {
+  animation: waveform 3s infinite linear;
+}

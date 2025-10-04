@@ -29,6 +29,11 @@ const images = [
     title: 'Break the Firewall',
     lyricsPath: '/lyrics/5.txt',
   },
+  {
+    src: '/assets/6.png',
+    title: 'Silicon Saints',
+    lyricsPath: '/lyrics/6.txt',
+  },
 ];
 
 export const ReaderModal = ({ onClose }: { onClose: () => void }) => {

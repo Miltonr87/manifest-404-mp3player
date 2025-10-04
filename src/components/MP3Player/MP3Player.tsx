@@ -12,6 +12,7 @@ interface Track {
   artist: string;
   duration: number;
   filename: string;
+  bonus?: boolean;
 }
 
 const tracks: Track[] = [
@@ -49,6 +50,14 @@ const tracks: Track[] = [
     artist: 'Break The Firewall',
     duration: 0,
     filename: '5_Break_the_Firewall.mp3',
+  },
+  {
+    id: 6,
+    title: 'Silicon Saints',
+    artist: 'Bonus Track',
+    duration: 0,
+    filename: 'Silicon Saints.mp3',
+    bonus: true,
   },
 ];
 

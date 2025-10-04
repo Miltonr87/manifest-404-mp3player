@@ -1,5 +1,6 @@
 import algorithmicTyrannyArt from '@/assets/algorithmic-tyranny-art.png';
 import codeRevolutionArt from '@/assets/code-revolution-art.png';
+import siliconSaintsArt from '@/assets/silicon-saints-art.png';
 
 interface Track {
   id: number;
@@ -8,6 +9,7 @@ interface Track {
   duration: number;
   filename: string;
   artwork?: string;
+  bonus?: boolean;
 }
 
 interface DisplayPanelProps {
@@ -23,6 +25,8 @@ const getArtwork = (trackId: number) => {
       return algorithmicTyrannyArt;
     case 2:
       return codeRevolutionArt;
+    case 6:
+      return siliconSaintsArt;
     default:
       return algorithmicTyrannyArt;
   }
@@ -31,8 +35,11 @@ const getArtwork = (trackId: number) => {
 export const DisplayPanel = ({
   track,
   currentTime,
+  duration,
   isPlaying,
 }: DisplayPanelProps) => {
+  const isBonus = track.id === 6;
+
   return (
     <div
       className="
@@ -40,19 +47,32 @@ export const DisplayPanel = ({
         w-full max-w-sm md:max-w-4xl mx-auto
       "
     >
-      {/* Track Info */}
       <div className="space-y-2 text-center md:text-left">
-        <div className="digital-display text-2xl md:text-3xl font-bold truncate">
+        <div
+          className={`
+            digital-display text-2xl md:text-3xl font-bold truncate
+            ${isBonus ? 'text-yellow-400 drop-shadow-md' : ''}
+          `}
+        >
           {track.title}
         </div>
-        <div className="text-muted-foreground">{track.artist}</div>
+        <div
+          className={`${
+            isBonus ? 'text-yellow-500 italic' : 'text-muted-foreground'
+          }`}
+        >
+          {track.artist}
+        </div>
       </div>
-
-      {/* Album Artwork */}
       <div className="flex items-center justify-center">
         <div
           className={`
-            relative w-28 h-28 md:w-32 md:h-32 rounded-xl overflow-hidden border-2 border-primary/30
+            relative w-28 h-28 md:w-32 md:h-32 rounded-xl overflow-hidden
+            ${
+              isBonus
+                ? 'border-2 border-yellow-400 shadow-[0_0_15px_rgba(255,215,0,0.8)]'
+                : 'border-2 border-primary/30'
+            }
             ${isPlaying ? 'animate-pulse-glow' : ''}
           `}
         >
@@ -66,18 +86,27 @@ export const DisplayPanel = ({
           />
           <div
             className={`
-              absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20
+              absolute inset-0 bg-gradient-to-br
+              ${
+                isBonus
+                  ? 'from-yellow-400/20 to-yellow-600/20'
+                  : 'from-primary/20 to-accent/20'
+              }
               ${isPlaying ? 'animate-pulse' : 'opacity-0'}
             `}
           />
         </div>
       </div>
-
-      {/* Time Display */}
       <div className="text-center md:text-right space-y-2">
-        <div className="digital-display text-3xl md:text-4xl font-bold">
+        <div
+          className={`
+            digital-display text-3xl md:text-4xl font-bold
+            ${isBonus ? 'text-yellow-400' : ''}
+          `}
+        >
           {currentTime}
         </div>
+        <div className="digital-display text-sm opacity-70">{duration}</div>
       </div>
     </div>
   );

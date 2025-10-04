@@ -18,15 +18,12 @@ export const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
         exit={{ opacity: 0 }}
         onClick={onClose}
       >
-        {/* Backdrop */}
         <motion.div
           className="absolute inset-0 bg-background/80 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         />
-
-        {/* Modal Content */}
         <motion.div
           className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto player-panel p-8"
           initial={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -35,7 +32,6 @@ export const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
           transition={{ duration: 0.3, ease: 'easeOut' }}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Close Button */}
           <motion.button
             onClick={onClose}
             className="absolute top-4 right-4 p-2 rounded-lg hover:bg-secondary transition-colors"
@@ -44,8 +40,6 @@ export const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
           >
             <X className="w-5 h-5" />
           </motion.button>
-
-          {/* Header */}
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-center neon-text mb-2">
               About
@@ -62,8 +56,6 @@ export const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
               of melodic hardcore with cyberpunk aesthetics.
             </p>
           </div>
-
-          {/* Technology Stack */}
           <div className="mb-8">
             <h3 className="text-xl font-semibold mb-4">Project Tech Stack</h3>
             <div className="flex flex-wrap gap-2">
@@ -85,8 +77,6 @@ export const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
               ))}
             </div>
           </div>
-
-          {/* Footer */}
           <div className="pt-6 border-t border-border">
             <p className="text-center text-sm text-muted-foreground flex items-center justify-center gap-1">
               <a
