@@ -77,10 +77,9 @@ export const MP3Player = () => {
     new Array(10).fill(0)
   );
 
-  // Initialize Web Audio API
+  // ---- AUDIO CONTEXT INITIALIZATION ----
   const initializeAudioContext = async () => {
     if (!audioRef.current || audioContextRef.current) return;
-
     try {
       const AudioContext =
         window.AudioContext || (window as any).webkitAudioContext;
@@ -90,23 +89,24 @@ export const MP3Player = () => {
 
       analyser.fftSize = 512;
       analyser.smoothingTimeConstant = 0.8;
-
       source.connect(analyser);
       analyser.connect(audioContext.destination);
 
       audioContextRef.current = audioContext;
       analyserRef.current = analyser;
       sourceRef.current = source;
-    } catch (error) {
-      console.error('Failed to initialize audio context:', error);
+    } catch (err) {
+      console.error('Failed to initialize audio context:', err);
     }
   };
 
+  // ---- EQUALIZER ----
   const analyzeAudio = () => {
     if (!analyserRef.current) return;
     const bufferLength = analyserRef.current.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
     analyserRef.current.getByteFrequencyData(dataArray);
+
     const bands = 10;
     const bandSize = Math.floor(bufferLength / bands);
     const newEqualizerData: number[] = [];
@@ -114,55 +114,44 @@ export const MP3Player = () => {
     for (let i = 0; i < bands; i++) {
       const start = i * bandSize;
       const end = start + bandSize;
-      let sum = 0;
-
-      for (let j = start; j < end; j++) {
-        sum += dataArray[j];
-      }
-
-      const average = sum / bandSize;
-      const normalized = average / 255;
-      newEqualizerData.push(normalized);
+      const avg =
+        dataArray.slice(start, end).reduce((a, b) => a + b, 0) / bandSize;
+      newEqualizerData.push(avg / 255);
     }
 
     setEqualizerData(newEqualizerData);
-
-    if (isPlaying) {
+    if (isPlaying)
       animationFrameRef.current = requestAnimationFrame(analyzeAudio);
-    }
   };
 
   useEffect(() => {
     if (isPlaying && analyserRef.current) {
-      if (audioContextRef.current?.state === 'suspended') {
+      if (audioContextRef.current?.state === 'suspended')
         audioContextRef.current.resume();
-      }
       analyzeAudio();
     } else {
-      if (animationFrameRef.current) {
+      if (animationFrameRef.current)
         cancelAnimationFrame(animationFrameRef.current);
-      }
       if (!isPlaying) {
-        const fadeInterval = setInterval(() => {
+        const fade = setInterval(() => {
           setEqualizerData((prev) => {
-            const newData = prev.map((val) => val * 0.85);
-            if (Math.max(...newData) < 0.01) {
-              clearInterval(fadeInterval);
+            const f = prev.map((v) => v * 0.85);
+            if (Math.max(...f) < 0.01) {
+              clearInterval(fade);
               return new Array(10).fill(0);
             }
-            return newData;
+            return f;
           });
         }, 50);
       }
     }
-
     return () => {
-      if (animationFrameRef.current) {
+      if (animationFrameRef.current)
         cancelAnimationFrame(animationFrameRef.current);
-      }
     };
   }, [isPlaying]);
 
+  // ---- TRACK EVENTS ----
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -171,19 +160,10 @@ export const MP3Player = () => {
       setDuration(audio.duration);
       tracks[currentTrack].duration = audio.duration;
     };
-
-    const handleTimeUpdate = () => {
-      setCurrentTime(audio.currentTime);
-    };
-
-    const handleEnded = () => {
-      handleNext();
-    };
-
+    const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
+    const handleEnded = () => handleNext();
     const handleCanPlay = () => {
-      if (!audioContextRef.current) {
-        initializeAudioContext();
-      }
+      if (!audioContextRef.current) initializeAudioContext();
     };
 
     audio.addEventListener('loadedmetadata', handleLoadedMetadata);
@@ -199,58 +179,71 @@ export const MP3Player = () => {
     };
   }, [currentTrack]);
 
+  // ---- VOLUME ----
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume;
-    }
+    if (audioRef.current) audioRef.current.volume = volume;
   }, [volume]);
 
+  // ---- SAFE TRACK LOADING ----
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.load();
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.src = `/audio/${tracks[currentTrack].filename}`;
+    audio.load();
+
+    const handleCanPlay = async () => {
       if (isPlaying) {
-        audioRef.current
-          .play()
-          .catch((err) => console.error('Error autoplaying track:', err));
+        try {
+          await audio.play();
+        } catch (err: any) {
+          if (err.name !== 'AbortError') {
+            console.error('Error autoplaying track:', err);
+          }
+        }
       }
-    }
-  }, [currentTrack, isPlaying]);
+    };
+
+    audio.addEventListener('canplay', handleCanPlay);
+    return () => audio.removeEventListener('canplay', handleCanPlay);
+  }, [currentTrack]);
 
   const handlePlay = async () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        if (!audioContextRef.current) {
-          await initializeAudioContext();
-        }
-        if (audioContextRef.current?.state === 'suspended') {
-          await audioContextRef.current.resume();
-        }
-        audioRef.current.play();
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (isPlaying) {
+      audio.pause();
+      setIsPlaying(false);
+    } else {
+      if (!audioContextRef.current) await initializeAudioContext();
+      if (audioContextRef.current?.state === 'suspended')
+        await audioContextRef.current.resume();
+      try {
+        await audio.play();
+      } catch (err: any) {
+        if (err.name !== 'AbortError') console.error('Playback error:', err);
       }
-      setIsPlaying(!isPlaying);
+      setIsPlaying(true);
     }
   };
 
   const handleStop = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-      setIsPlaying(false);
-      setCurrentTime(0);
-    }
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.pause();
+    audio.currentTime = 0;
+    setIsPlaying(false);
+    setCurrentTime(0);
   };
 
   const handleNext = () => {
-    const nextTrack = (currentTrack + 1) % tracks.length;
-    setCurrentTrack(nextTrack);
+    setCurrentTrack((prev) => (prev + 1) % tracks.length);
     setCurrentTime(0);
   };
 
   const handlePrevious = () => {
-    const prevTrack = currentTrack === 0 ? tracks.length - 1 : currentTrack - 1;
-    setCurrentTrack(prevTrack);
+    setCurrentTrack((prev) => (prev === 0 ? tracks.length - 1 : prev - 1));
     setCurrentTime(0);
   };
 
@@ -311,12 +304,7 @@ export const MP3Player = () => {
             onTrackSelect={handleTrackSelect}
           />
         </div>
-        <audio
-          ref={audioRef}
-          src={`/audio/${tracks[currentTrack].filename}`}
-          preload="metadata"
-          crossOrigin="anonymous"
-        />
+        <audio ref={audioRef} preload="metadata" crossOrigin="anonymous" />
       </div>
     </div>
   );
