@@ -51,7 +51,7 @@ export const DisplayPanel = ({
         <div
           className={`
             digital-display text-2xl md:text-3xl font-bold truncate
-            ${isBonus ? 'text-yellow-400 drop-shadow-md' : ''}
+            ${isBonus ? 'text-yellow-400' : 'text-muted-foreground'}
           `}
         >
           {track.title}
