@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, useLayoutEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { LyricsModal } from './LyricsModal';
@@ -41,9 +41,12 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
     title: string;
     lyrics: string;
   } | null>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const [currentIndex, setCurrentIndex] = useState(() => {
+    const saved = localStorage.getItem('manifest404_currentIndex');
+    return saved ? parseInt(saved) : 0;
+  });
 
+  const scrollRef = useRef<HTMLDivElement>(null);
   const images = useMemo(() => imageData, []);
 
   const openSong = async (item: { title: string; lyricsPath: string }) => {
@@ -62,18 +65,24 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
   ) => {
     if (!scrollRef.current) return;
     const container = scrollRef.current;
-    const childWidth = container.firstElementChild
-      ? (container.firstElementChild as HTMLElement).offsetWidth + 32
-      : 0;
+    const child = container.firstElementChild as HTMLElement | null;
+    if (!child) return;
+
+    const childWidth = child.offsetWidth + 32;
     container.scrollTo({ left: index * childWidth, behavior });
     setCurrentIndex(index);
+    localStorage.setItem('manifest404_currentIndex', String(index));
   };
 
-  const scrollLeft = () => currentIndex > 0 && scrollToIndex(currentIndex - 1);
-  const scrollRight = () =>
-    currentIndex < images.length - 1 && scrollToIndex(currentIndex + 1);
+  const scrollLeft = () => {
+    if (currentIndex > 0) scrollToIndex(currentIndex - 1);
+  };
 
-  useEffect(() => {
+  const scrollRight = () => {
+    if (currentIndex < images.length - 1) scrollToIndex(currentIndex + 1);
+  };
+
+  useLayoutEffect(() => {
     scrollToIndex(currentIndex, 'auto');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -129,13 +138,18 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
                 key={i}
                 src={item.src}
                 alt={item.title}
-                loading="lazy"
-                className="
+                loading="eager"
+                decoding="async"
+                fetchPriority={i === currentIndex ? 'high' : 'low'}
+                className={`
                   snap-center cursor-pointer rounded-2xl shadow-lg border border-border
                   max-h-[70vh] sm:max-h-[80vh] lg:max-h-[85vh]
                   w-auto max-w-[75vw] sm:max-w-[70vw] lg:max-w-[65vw]
-                "
-                transition={{ type: 'tween', duration: 0.25 }}
+                  transition-transform duration-200 ease-out
+                  ${
+                    i === currentIndex ? 'scale-[1.02]' : 'scale-100 opacity-90'
+                  }
+                `}
                 onClick={() => openSong(item)}
               />
             ))}
