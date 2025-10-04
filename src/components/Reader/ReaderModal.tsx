@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { LyricsModal } from './LyricsModal';
 
 const images = [
@@ -41,6 +41,7 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
     title: string;
     lyrics: string;
   } | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const openSong = async (item: { title: string; lyricsPath: string }) => {
     try {
@@ -49,6 +50,18 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
       setActiveSong({ title: item.title, lyrics: text });
     } catch (err) {
       console.error('Erro ao carregar letra:', err);
+    }
+  };
+
+  const scrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -400, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: 400, behavior: 'smooth' });
     }
   };
 
@@ -77,13 +90,16 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
         >
           <motion.button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 rounded-lg hover:bg-secondary transition-colors"
+            className="absolute top-2 right-3 p-2 rounded-lg hover:bg-secondary transition-colors"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
             <X className="w-5 h-5" />
           </motion.button>
-          <div className="flex-1 overflow-x-scroll snap-x snap-mandatory flex gap-8 p-6">
+          <div
+            ref={scrollRef}
+            className="flex-1 overflow-x-scroll snap-x snap-mandatory flex gap-8 p-6"
+          >
             {images.map((item, i) => (
               <motion.img
                 key={i}
@@ -100,8 +116,27 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
               />
             ))}
           </div>
+          <div className="relative w-full flex justify-center mt-4">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={scrollLeft}
+                className="player-button p-3 hover:neon-glow transition-all"
+                aria-label="Scroll left"
+              >
+                <ChevronLeft className="w-5 h-5 text-foreground" />
+              </button>
+              <button
+                onClick={scrollRight}
+                className="player-button p-3 hover:neon-glow transition-all"
+                aria-label="Scroll right"
+              >
+                <ChevronRight className="w-5 h-5 text-foreground" />
+              </button>
+            </div>
+          </div>
         </motion.div>
       </motion.div>
+
       {activeSong && (
         <LyricsModal
           title={activeSong.title}
