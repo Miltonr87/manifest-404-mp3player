@@ -1,9 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { LyricsModal } from './LyricsModal';
 
-const images = [
+const imageData = [
   {
     src: '/assets/1.png',
     title: 'Algorithmic Tyranny',
@@ -41,8 +41,10 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
     title: string;
     lyrics: string;
   } | null>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const images = useMemo(() => imageData, []);
 
   const openSong = async (item: { title: string; lyricsPath: string }) => {
     try {
@@ -50,37 +52,42 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
       const text = await res.text();
       setActiveSong({ title: item.title, lyrics: text });
     } catch (err) {
-      console.error('Erro ao carregar letra:', err);
+      console.error('Error loading lyrics:', err);
     }
   };
 
-  const scrollToIndex = (index: number) => {
+  const scrollToIndex = (
+    index: number,
+    behavior: ScrollBehavior = 'smooth'
+  ) => {
     if (!scrollRef.current) return;
-
     const container = scrollRef.current;
     const childWidth = container.firstElementChild
       ? (container.firstElementChild as HTMLElement).offsetWidth + 32
       : 0;
-
-    container.scrollTo({
-      left: index * childWidth,
-      behavior: 'smooth',
-    });
-
+    container.scrollTo({ left: index * childWidth, behavior });
     setCurrentIndex(index);
   };
 
-  const scrollLeft = () => {
-    if (currentIndex > 0) {
-      scrollToIndex(currentIndex - 1);
-    }
-  };
+  const scrollLeft = () => currentIndex > 0 && scrollToIndex(currentIndex - 1);
+  const scrollRight = () =>
+    currentIndex < images.length - 1 && scrollToIndex(currentIndex + 1);
 
-  const scrollRight = () => {
-    if (currentIndex < images.length - 1) {
-      scrollToIndex(currentIndex + 1);
-    }
-  };
+  useEffect(() => {
+    scrollToIndex(currentIndex, 'auto');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const preload = (i: number) => {
+      if (i >= 0 && i < images.length) {
+        const img = new Image();
+        img.src = images[i].src;
+      }
+    };
+    preload(currentIndex + 1);
+    preload(currentIndex - 1);
+  }, [currentIndex, images]);
 
   return (
     <AnimatePresence>
@@ -122,13 +129,13 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
                 key={i}
                 src={item.src}
                 alt={item.title}
+                loading="lazy"
                 className="
                   snap-center cursor-pointer rounded-2xl shadow-lg border border-border
                   max-h-[70vh] sm:max-h-[80vh] lg:max-h-[85vh]
                   w-auto max-w-[75vw] sm:max-w-[70vw] lg:max-w-[65vw]
                 "
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: 'spring', stiffness: 200 }}
+                transition={{ type: 'tween', duration: 0.25 }}
                 onClick={() => openSong(item)}
               />
             ))}
@@ -143,7 +150,6 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
                     ? 'opacity-30 cursor-not-allowed'
                     : 'hover:neon-glow'
                 }`}
-                aria-label="Scroll left"
               >
                 <ChevronLeft className="w-5 h-5 text-foreground" />
               </button>
@@ -155,7 +161,6 @@ export const ReaderModal = ({ onClose }: { onClose: () => void }) => {
                     ? 'opacity-30 cursor-not-allowed'
                     : 'hover:neon-glow'
                 }`}
-                aria-label="Scroll right"
               >
                 <ChevronRight className="w-5 h-5 text-foreground" />
               </button>
