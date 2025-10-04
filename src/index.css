@@ -296,6 +296,23 @@
   }
 }
 
+/* Hide scrollbars only on mobile */
+@media (max-width: 768px) {
+  .mobile-hide-scrollbar {
+    -ms-overflow-style: none; /* IE/Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .mobile-hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome/Safari/Opera */
+  }
+  /* Optional: prevent body from scrolling to avoid double-scroll on iOS */
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+}
+
 .hide-scrollbar {
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE e Edge */
