@@ -25,7 +25,7 @@ export const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
           exit={{ opacity: 0 }}
         />
         <motion.div
-          className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto hide-scrollbar player-panel p-8 border border-border rounded-2xl bg-card/90 shadow-xl"
+          className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto player-panel p-8"
           initial={{ scale: 0.9, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -41,14 +41,15 @@ export const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
             <X className="w-5 h-5" />
           </motion.button>
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-center neon-text mb-4">
+            <h2 className="text-3xl font-bold text-center neon-text mb-2">
               About
             </h2>
-            <img
-              src="/assets/manifest404.png"
-              alt="Manifest 404 Banner"
-              className="w-3/5 mx-auto h-auto object-cover rounded-xl border-2 border-[hsl(var(--glow))] shadow-md mb-6 transition-all duration-300"
-            />
+            <br />
+            <p className="text-muted-foreground">
+              A futuristic MP3 player crafted for the digital age, featuring
+              real-time audio visualization.
+            </p>
+            <br />
             <p>
               <b className="text-1xl font-bold neon-text mb-2">Manifest 404</b>{' '}
               is a Punk Rock digital band made with AI which blends the spirit
