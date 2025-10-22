@@ -47,9 +47,8 @@ export const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
             <img
               src="/assets/manifest404.png"
               alt="Manifest 404 Banner"
-              className="w-full h-auto object-cover rounded-xl border-4 border-border mb-6 shadow-md transition-all duration-300"
+              className="w-4/5 mx-auto h-auto object-cover rounded-xl border-2 border-[#00FFB3] shadow-md mb-6 transition-all duration-300"
             />
-
             <p>
               <b className="text-1xl font-bold neon-text mb-2">Manifest 404</b>{' '}
               is a Punk Rock digital band made with AI which blends the spirit
