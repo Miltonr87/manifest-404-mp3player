@@ -1,4 +1,6 @@
-# 📀 Manifest 404 — Break the Firewall
+# 📀 Manifest 404
+
+![Banner Preview](./public/banner/manifest404.png)
 
 **Manifest 404** is an experimental digital punk rock project that merges  
 the raw intensity of hardcore riffs with the aesthetics of cyberpunk culture.  
