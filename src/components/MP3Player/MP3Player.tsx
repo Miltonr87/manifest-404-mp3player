@@ -16,7 +16,7 @@ interface Track {
   artwork?: string;
 }
 
-const firewallTracks: Track[] = [
+const firewallTracksInit: Track[] = [
   {
     id: 1,
     title: 'Algorithmic Tyranny',
@@ -54,7 +54,7 @@ const firewallTracks: Track[] = [
   },
 ];
 
-const saintsTracks: Track[] = [
+const saintsTracksInit: Track[] = [
   {
     id: 1,
     title: 'Salvation Road',
@@ -68,8 +68,10 @@ export const MP3Player = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
-  const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
   const animationFrameRef = useRef<number | null>(null);
+
+  const [firewallTracks, setFirewallTracks] = useState(firewallTracksInit);
+  const [saintsTracks, setSaintsTracks] = useState(saintsTracksInit);
 
   const [activeTrack, setActiveTrack] = useState<{
     album: 'firewall' | 'saints';
@@ -107,7 +109,6 @@ export const MP3Player = () => {
 
       audioContextRef.current = audioContext;
       analyserRef.current = analyser;
-      sourceRef.current = source;
     } catch (err) {
       console.error('Failed to initialize audio context:', err);
     }
@@ -142,12 +143,11 @@ export const MP3Player = () => {
       if (audioContextRef.current?.state === 'suspended')
         audioContextRef.current.resume();
       analyzeAudio();
-    } else if (animationFrameRef.current) {
+    } else if (animationFrameRef.current)
       cancelAnimationFrame(animationFrameRef.current);
-    }
   }, [isPlaying]);
 
-  // ---- LOAD AND PLAY TRACK ----
+  // ---- LOAD TRACK & AUTOPLAY ----
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !currentTrack) return;
@@ -163,8 +163,7 @@ export const MP3Player = () => {
             await audioContextRef.current.resume();
           await audio.play();
         } catch (err: any) {
-          if (err.name !== 'AbortError')
-            console.error('Error autoplaying track:', err);
+          if (err.name !== 'AbortError') console.error('Playback error:', err);
         }
       }
     };
@@ -179,7 +178,24 @@ export const MP3Player = () => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    const handleLoadedMetadata = () => setDuration(audio.duration);
+    const handleLoadedMetadata = () => {
+      setDuration(audio.duration);
+      // ✅ Update duration in the correct album list
+      if (activeTrack.album === 'firewall') {
+        setFirewallTracks((prev) =>
+          prev.map((t, i) =>
+            i === activeTrack.index ? { ...t, duration: audio.duration } : t
+          )
+        );
+      } else {
+        setSaintsTracks((prev) =>
+          prev.map((t, i) =>
+            i === activeTrack.index ? { ...t, duration: audio.duration } : t
+          )
+        );
+      }
+    };
+
     const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
     const handleEnded = () => handleNext();
 
@@ -202,7 +218,6 @@ export const MP3Player = () => {
   const handlePlay = async () => {
     const audio = audioRef.current;
     if (!audio) return;
-
     if (isPlaying) {
       audio.pause();
       setIsPlaying(false);
@@ -253,14 +268,17 @@ export const MP3Player = () => {
     }
   };
 
-  // ✅ Safe album switch + guaranteed playback
+  // ✅ Proper album switch + wait for canplaythrough
   const handleTrackSelect = (album: 'firewall' | 'saints', index: number) => {
     handleStop();
+    setIsPlaying(false);
     setActiveTrack({ album, index });
-    setIsPlaying(true); // Will auto-play once track fully loads
+    // Start after re-render ensures highlight sync
+    setTimeout(() => setIsPlaying(true), 50);
   };
 
   const formatTime = (seconds: number) => {
+    if (!seconds || isNaN(seconds)) return '--:--';
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins.toString().padStart(2, '0')}:${secs
