@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { PlayerControls } from './PlayerControls';
 import { Equalizer } from './Equalizer';
-import { Playlist } from './Playlist';
+import { FirewallPlaylist } from './playlist/FirewallPlaylist';
+import { SaintsPlaylist } from './playlist/SaintsPlaylist';
 import { VolumeControl } from './VolumeControl';
 import { ProgressBar } from './ProgressBar';
 import { DisplayPanel } from './DisplayPanel';
@@ -12,10 +13,10 @@ interface Track {
   artist: string;
   duration: number;
   filename: string;
-  bonus?: boolean;
+  artwork?: string;
 }
 
-const tracks: Track[] = [
+const firewallTracks: Track[] = [
   {
     id: 1,
     title: 'Algorithmic Tyranny',
@@ -51,13 +52,15 @@ const tracks: Track[] = [
     duration: 0,
     filename: '5_Break_the_Firewall.mp3',
   },
+];
+
+const saintsTracks: Track[] = [
   {
-    id: 6,
-    title: 'Silicon Saints',
-    artist: 'Bonus Track',
+    id: 1,
+    title: 'Salvation Road',
+    artist: 'Silicon Saints',
     duration: 0,
-    filename: 'Silicon Saints.mp3',
-    bonus: true,
+    filename: '1_Salvation_Road.mp3',
   },
 ];
 
@@ -68,7 +71,13 @@ export const MP3Player = () => {
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
   const animationFrameRef = useRef<number | null>(null);
 
-  const [currentTrack, setCurrentTrack] = useState(0);
+  const [activeTrack, setActiveTrack] = useState<{
+    album: 'firewall' | 'saints';
+    index: number;
+  }>({
+    album: 'firewall',
+    index: 0,
+  });
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -77,6 +86,11 @@ export const MP3Player = () => {
     new Array(10).fill(0)
   );
 
+  const getTracks = () =>
+    activeTrack.album === 'firewall' ? firewallTracks : saintsTracks;
+  const currentTrack = getTracks()[activeTrack.index] ?? getTracks()[0];
+
+  // ---- AUDIO CONTEXT ----
   const initializeAudioContext = async () => {
     if (!audioRef.current || audioContextRef.current) return;
     try {
@@ -99,6 +113,7 @@ export const MP3Player = () => {
     }
   };
 
+  // ---- EQUALIZER ----
   const analyzeAudio = () => {
     if (!analyserRef.current) return;
     const bufferLength = analyserRef.current.frequencyBinCount;
@@ -111,9 +126,9 @@ export const MP3Player = () => {
 
     for (let i = 0; i < bands; i++) {
       const start = i * bandSize;
-      const end = start + bandSize;
       const avg =
-        dataArray.slice(start, end).reduce((a, b) => a + b, 0) / bandSize;
+        dataArray.slice(start, start + bandSize).reduce((a, b) => a + b, 0) /
+        bandSize;
       newEqualizerData.push(avg / 255);
     }
 
@@ -127,80 +142,63 @@ export const MP3Player = () => {
       if (audioContextRef.current?.state === 'suspended')
         audioContextRef.current.resume();
       analyzeAudio();
-    } else {
-      if (animationFrameRef.current)
-        cancelAnimationFrame(animationFrameRef.current);
-      if (!isPlaying) {
-        const fade = setInterval(() => {
-          setEqualizerData((prev) => {
-            const f = prev.map((v) => v * 0.85);
-            if (Math.max(...f) < 0.01) {
-              clearInterval(fade);
-              return new Array(10).fill(0);
-            }
-            return f;
-          });
-        }, 50);
-      }
+    } else if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
     }
-    return () => {
-      if (animationFrameRef.current)
-        cancelAnimationFrame(animationFrameRef.current);
-    };
   }, [isPlaying]);
 
+  // ---- LOAD AND PLAY TRACK ----
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !currentTrack) return;
+
+    audio.src = `/audio/${currentTrack.filename}`;
+    audio.load();
+
+    const handleCanPlayThrough = async () => {
+      if (isPlaying) {
+        try {
+          await initializeAudioContext();
+          if (audioContextRef.current?.state === 'suspended')
+            await audioContextRef.current.resume();
+          await audio.play();
+        } catch (err: any) {
+          if (err.name !== 'AbortError')
+            console.error('Error autoplaying track:', err);
+        }
+      }
+    };
+
+    audio.addEventListener('canplaythrough', handleCanPlayThrough);
+    return () =>
+      audio.removeEventListener('canplaythrough', handleCanPlayThrough);
+  }, [activeTrack, isPlaying]);
+
+  // ---- AUDIO EVENTS ----
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    const handleLoadedMetadata = () => {
-      setDuration(audio.duration);
-      tracks[currentTrack].duration = audio.duration;
-    };
+
+    const handleLoadedMetadata = () => setDuration(audio.duration);
     const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
     const handleEnded = () => handleNext();
-    const handleCanPlay = () => {
-      if (!audioContextRef.current) initializeAudioContext();
-    };
+
     audio.addEventListener('loadedmetadata', handleLoadedMetadata);
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('ended', handleEnded);
-    audio.addEventListener('canplay', handleCanPlay);
 
     return () => {
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('ended', handleEnded);
-      audio.removeEventListener('canplay', handleCanPlay);
     };
-  }, [currentTrack]);
+  }, [activeTrack]);
 
   useEffect(() => {
     if (audioRef.current) audioRef.current.volume = volume;
   }, [volume]);
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    audio.src = `/audio/${tracks[currentTrack].filename}`;
-    audio.load();
-
-    const handleCanPlay = async () => {
-      if (isPlaying) {
-        try {
-          await audio.play();
-        } catch (err: any) {
-          if (err.name !== 'AbortError') {
-            console.error('Error autoplaying track:', err);
-          }
-        }
-      }
-    };
-
-    audio.addEventListener('canplay', handleCanPlay);
-    return () => audio.removeEventListener('canplay', handleCanPlay);
-  }, [currentTrack]);
-
+  // ---- CONTROLS ----
   const handlePlay = async () => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -209,7 +207,7 @@ export const MP3Player = () => {
       audio.pause();
       setIsPlaying(false);
     } else {
-      if (!audioContextRef.current) await initializeAudioContext();
+      await initializeAudioContext();
       if (audioContextRef.current?.state === 'suspended')
         await audioContextRef.current.resume();
       try {
@@ -231,12 +229,20 @@ export const MP3Player = () => {
   };
 
   const handleNext = () => {
-    setCurrentTrack((prev) => (prev + 1) % tracks.length);
+    const playlist = getTracks();
+    setActiveTrack((prev) => ({
+      album: prev.album,
+      index: (prev.index + 1) % playlist.length,
+    }));
     setCurrentTime(0);
   };
 
   const handlePrevious = () => {
-    setCurrentTrack((prev) => (prev === 0 ? tracks.length - 1 : prev - 1));
+    const playlist = getTracks();
+    setActiveTrack((prev) => ({
+      album: prev.album,
+      index: prev.index === 0 ? playlist.length - 1 : prev.index - 1,
+    }));
     setCurrentTime(0);
   };
 
@@ -247,9 +253,11 @@ export const MP3Player = () => {
     }
   };
 
-  const handleTrackSelect = (trackIndex: number) => {
-    setCurrentTrack(trackIndex);
-    setCurrentTime(0);
+  // ✅ Safe album switch + guaranteed playback
+  const handleTrackSelect = (album: 'firewall' | 'saints', index: number) => {
+    handleStop();
+    setActiveTrack({ album, index });
+    setIsPlaying(true); // Will auto-play once track fully loads
   };
 
   const formatTime = (seconds: number) => {
@@ -260,15 +268,17 @@ export const MP3Player = () => {
       .padStart(2, '0')}`;
   };
 
+  // ---- RENDER ----
   return (
     <div className="pt-20 pb-8 px-4 md:px-8 min-h-screen bg-background">
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="player-panel p-6 space-y-6">
           <DisplayPanel
-            track={tracks[currentTrack]}
+            track={currentTrack}
             currentTime={formatTime(currentTime)}
             duration={formatTime(duration)}
             isPlaying={isPlaying}
+            album={activeTrack.album}
           />
           <ProgressBar
             currentTime={currentTime}
@@ -286,17 +296,31 @@ export const MP3Player = () => {
             <VolumeControl volume={volume} onVolumeChange={setVolume} />
           </div>
         </div>
+
         <div className="player-panel p-6">
           <Equalizer data={equalizerData} isActive={isPlaying} />
         </div>
+
         <div className="player-panel p-6">
-          <Playlist
-            tracks={tracks}
-            currentTrack={currentTrack}
-            isPlaying={isPlaying}
-            onTrackSelect={handleTrackSelect}
+          <FirewallPlaylist
+            tracks={firewallTracks}
+            currentTrack={
+              activeTrack.album === 'firewall' ? activeTrack.index : -1
+            }
+            isPlaying={isPlaying && activeTrack.album === 'firewall'}
+            onTrackSelect={(i) => handleTrackSelect('firewall', i)}
+          />
+          <br />
+          <SaintsPlaylist
+            tracks={saintsTracks}
+            currentTrack={
+              activeTrack.album === 'saints' ? activeTrack.index : -1
+            }
+            isPlaying={isPlaying && activeTrack.album === 'saints'}
+            onTrackSelect={(i) => handleTrackSelect('saints', i)}
           />
         </div>
+
         <audio ref={audioRef} preload="metadata" crossOrigin="anonymous" />
       </div>
     </div>

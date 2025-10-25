@@ -17,8 +17,8 @@ interface PlaylistProps {
   onTrackSelect: (index: number) => void;
 }
 
-const formatTime = (seconds: number) => {
-  if (!seconds) return '--:--';
+const formatTime = (seconds?: number) => {
+  if (!seconds || isNaN(seconds)) return '--:--';
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
   return `${mins.toString().padStart(2, '0')}:${secs
@@ -123,23 +123,29 @@ const TrackRow = memo(
   }
 );
 
-export const Playlist = memo(
-  ({ tracks, currentTrack, isPlaying, onTrackSelect }: PlaylistProps) => {
+export const SaintsPlaylist = memo(
+  ({ tracks = [], currentTrack, isPlaying, onTrackSelect }: PlaylistProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
-    const visibleTracks = useMemo(
-      () => (isExpanded ? tracks : [tracks[currentTrack]]),
-      [isExpanded, tracks, currentTrack]
-    );
+
+    const visibleTracks = useMemo(() => {
+      if (isExpanded) return tracks ?? [];
+      const safeIndex =
+        currentTrack >= 0 && currentTrack < tracks.length ? currentTrack : 0;
+      return tracks.length ? [tracks[safeIndex]] : [];
+    }, [isExpanded, tracks, currentTrack]);
+
     const handleToggle = useCallback(() => setIsExpanded((prev) => !prev), []);
     const handleSelect = useCallback(
-      (index: number) => onTrackSelect(isExpanded ? index : currentTrack),
-      [isExpanded, currentTrack, onTrackSelect]
+      (index: number) => {
+        if (tracks[index]) onTrackSelect(isExpanded ? index : currentTrack);
+      },
+      [isExpanded, currentTrack, onTrackSelect, tracks]
     );
 
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold neon-text">PLAYLIST</h3>
+          <h3 className="text-lg font-semibold neon-text">SILICON SAINTS</h3>
           <div className="flex items-center gap-3">
             <div className="digital-display text-sm">
               {tracks.length} TRACKS
@@ -157,17 +163,17 @@ export const Playlist = memo(
           </div>
         </div>
         <div className="space-y-2">
-          <div className={isExpanded ? 'hide-scrollbar' : ''}>
-            {visibleTracks.map((track, index) => (
+          {(visibleTracks ?? []).map((track, index) =>
+            track ? (
               <TrackRow
-                key={track.id}
+                key={track.id ?? `${track.title}-${index}`}
                 track={track}
                 isActive={isExpanded ? index === currentTrack : true}
                 isPlaying={isPlaying}
                 onClick={() => handleSelect(index)}
               />
-            ))}
-          </div>
+            ) : null
+          )}
         </div>
       </div>
     );
