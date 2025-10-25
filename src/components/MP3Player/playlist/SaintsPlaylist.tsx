@@ -126,20 +126,18 @@ const TrackRow = memo(
 export const SaintsPlaylist = memo(
   ({ tracks = [], currentTrack, isPlaying, onTrackSelect }: PlaylistProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
-
     const visibleTracks = useMemo(() => {
       if (isExpanded) return tracks ?? [];
       const safeIndex =
         currentTrack >= 0 && currentTrack < tracks.length ? currentTrack : 0;
       return tracks.length ? [tracks[safeIndex]] : [];
     }, [isExpanded, tracks, currentTrack]);
-
     const handleToggle = useCallback(() => setIsExpanded((prev) => !prev), []);
     const handleSelect = useCallback(
       (index: number) => {
-        if (tracks[index]) onTrackSelect(isExpanded ? index : currentTrack);
+        if (tracks[index]) onTrackSelect(index);
       },
-      [isExpanded, currentTrack, onTrackSelect, tracks]
+      [onTrackSelect, tracks]
     );
 
     return (
@@ -162,13 +160,14 @@ export const SaintsPlaylist = memo(
             </button>
           </div>
         </div>
+
         <div className="space-y-2">
           {(visibleTracks ?? []).map((track, index) =>
             track ? (
               <TrackRow
                 key={track.id ?? `${track.title}-${index}`}
                 track={track}
-                isActive={isExpanded ? index === currentTrack : true}
+                isActive={index === currentTrack}
                 isPlaying={isPlaying}
                 onClick={() => handleSelect(index)}
               />

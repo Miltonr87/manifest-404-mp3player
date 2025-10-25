@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { PlayerControls } from './PlayerControls';
 import { Equalizer } from './Equalizer';
 import { FirewallPlaylist } from './playlist/FirewallPlaylist';
@@ -77,7 +77,7 @@ export const MP3Player = () => {
     album: 'firewall' | 'saints';
     index: number;
   }>({
-    album: 'firewall',
+    album: 'saints', // ✅ default highlight = Silicon Saints
     index: 0,
   });
   const [isPlaying, setIsPlaying] = useState(false);
@@ -143,8 +143,9 @@ export const MP3Player = () => {
       if (audioContextRef.current?.state === 'suspended')
         audioContextRef.current.resume();
       analyzeAudio();
-    } else if (animationFrameRef.current)
+    } else if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
+    }
   }, [isPlaying]);
 
   // ---- LOAD TRACK & AUTOPLAY ----
@@ -174,27 +175,30 @@ export const MP3Player = () => {
   }, [activeTrack, isPlaying]);
 
   // ---- AUDIO EVENTS ----
+  const handleLoadedMetadata = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const dur = audio.duration;
+    setDuration(dur);
+
+    if (activeTrack.album === 'firewall') {
+      setFirewallTracks((prev) =>
+        prev.map((t, i) =>
+          i === activeTrack.index ? { ...t, duration: dur } : t
+        )
+      );
+    } else {
+      setSaintsTracks((prev) =>
+        prev.map((t, i) =>
+          i === activeTrack.index ? { ...t, duration: dur } : t
+        )
+      );
+    }
+  }, [activeTrack]);
+
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-
-    const handleLoadedMetadata = () => {
-      setDuration(audio.duration);
-      // ✅ Update duration in the correct album list
-      if (activeTrack.album === 'firewall') {
-        setFirewallTracks((prev) =>
-          prev.map((t, i) =>
-            i === activeTrack.index ? { ...t, duration: audio.duration } : t
-          )
-        );
-      } else {
-        setSaintsTracks((prev) =>
-          prev.map((t, i) =>
-            i === activeTrack.index ? { ...t, duration: audio.duration } : t
-          )
-        );
-      }
-    };
 
     const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
     const handleEnded = () => handleNext();
@@ -208,7 +212,7 @@ export const MP3Player = () => {
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('ended', handleEnded);
     };
-  }, [activeTrack]);
+  }, [handleLoadedMetadata, activeTrack]);
 
   useEffect(() => {
     if (audioRef.current) audioRef.current.volume = volume;
@@ -227,10 +231,10 @@ export const MP3Player = () => {
         await audioContextRef.current.resume();
       try {
         await audio.play();
+        setIsPlaying(true);
       } catch (err: any) {
         if (err.name !== 'AbortError') console.error('Playback error:', err);
       }
-      setIsPlaying(true);
     }
   };
 
@@ -268,13 +272,35 @@ export const MP3Player = () => {
     }
   };
 
-  // ✅ Proper album switch + wait for canplaythrough
-  const handleTrackSelect = (album: 'firewall' | 'saints', index: number) => {
+  // ✅ Fixed — only one track highlighted and plays after click
+  const handleTrackSelect = async (
+    album: 'firewall' | 'saints',
+    index: number
+  ) => {
     handleStop();
-    setIsPlaying(false);
+
+    const selectedTracks = album === 'firewall' ? firewallTracks : saintsTracks;
+    const selectedTrack = selectedTracks[index];
+    if (!selectedTrack) return;
+
     setActiveTrack({ album, index });
-    // Start after re-render ensures highlight sync
-    setTimeout(() => setIsPlaying(true), 50);
+
+    setTimeout(async () => {
+      const audio = audioRef.current;
+      if (!audio) return;
+
+      audio.src = `/audio/${selectedTrack.filename}`;
+      audio.load();
+
+      await initializeAudioContext();
+      try {
+        await audio.play();
+        setIsPlaying(true);
+      } catch (err) {
+        console.error('Playback error:', err);
+        setIsPlaying(false);
+      }
+    }, 150);
   };
 
   const formatTime = (seconds: number) => {
@@ -286,7 +312,6 @@ export const MP3Player = () => {
       .padStart(2, '0')}`;
   };
 
-  // ---- RENDER ----
   return (
     <div className="pt-20 pb-8 px-4 md:px-8 min-h-screen bg-background">
       <div className="max-w-4xl mx-auto space-y-6">
@@ -320,22 +345,22 @@ export const MP3Player = () => {
         </div>
 
         <div className="player-panel p-6">
-          <FirewallPlaylist
-            tracks={firewallTracks}
-            currentTrack={
-              activeTrack.album === 'firewall' ? activeTrack.index : -1
-            }
-            isPlaying={isPlaying && activeTrack.album === 'firewall'}
-            onTrackSelect={(i) => handleTrackSelect('firewall', i)}
-          />
-          <br />
           <SaintsPlaylist
             tracks={saintsTracks}
             currentTrack={
               activeTrack.album === 'saints' ? activeTrack.index : -1
             }
-            isPlaying={isPlaying && activeTrack.album === 'saints'}
+            isPlaying={activeTrack.album === 'saints' && isPlaying}
             onTrackSelect={(i) => handleTrackSelect('saints', i)}
+          />
+          <br />
+          <FirewallPlaylist
+            tracks={firewallTracks}
+            currentTrack={
+              activeTrack.album === 'firewall' ? activeTrack.index : -1
+            }
+            isPlaying={activeTrack.album === 'firewall' && isPlaying}
+            onTrackSelect={(i) => handleTrackSelect('firewall', i)}
           />
         </div>
 
