@@ -19,7 +19,6 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
     isDragging.current = true;
     startY.current = e.pageY - scrollRef.current.offsetTop;
     scrollStart.current = scrollRef.current.scrollTop;
-    // blocked mouse highlight text
     document.body.style.userSelect = 'none';
   };
 
@@ -36,40 +35,45 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
     document.body.style.userSelect = '';
   };
 
+  // 🧩 Animate line-by-line reveal
   const formattedLyrics = lyrics.split('\n').map((line, idx) => {
+    const baseDelay = idx * 0.05;
+
     if (line.match(/\[Chorus\]/i)) {
       return (
         <motion.p
           key={idx}
-          className="text-white font-bold text-lg neon-text drop-shadow-[0_0_8px_rgba(255,0,255,0.9)] text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{
-            repeat: Infinity,
-            repeatType: 'reverse',
-            duration: 1.5,
-          }}
+          className="text-center font-bold text-lg neon-text drop-shadow-[0_0_8px_rgba(0,255,255,0.9)] mt-6"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: baseDelay }}
         >
           {line}
         </motion.p>
       );
     } else if (line.match(/\[.*\]/)) {
       return (
-        <p
+        <motion.p
           key={idx}
-          className="text-purple-400 font-semibold mt-4 drop-shadow-[0_0_4px_rgba(180,100,255,0.7)] text-center"
+          className="text-accent font-semibold text-center mt-4 uppercase tracking-widest"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: baseDelay }}
         >
           {line}
-        </p>
+        </motion.p>
       );
     }
     return (
-      <p
+      <motion.p
         key={idx}
-        className="text-purple drop-shadow-[0_0_6px_rgba(255,255,255,0.8)] text-center"
+        className="text-center text-muted-foreground tracking-wide"
+        initial={{ opacity: 0, y: 5 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: baseDelay }}
       >
         {line}
-      </p>
+      </motion.p>
     );
   });
 
@@ -82,18 +86,21 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
         exit={{ opacity: 0 }}
         onClick={onClose}
       >
+        {/* Background blur */}
         <motion.div
           className="absolute inset-0 bg-background/80 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         />
+
+        {/* Holographic lyric chamber */}
         <motion.div
-          className="relative w-full max-w-4xl max-h-[75vh] player-panel p-4 sm:p-6 overflow-y-auto hide-scrollbar rounded-2xl cursor-grab active:cursor-grabbing"
-          initial={{ scale: 0.9, opacity: 0, y: 20 }}
+          className="relative w-full max-w-4xl max-h-[80vh] p-6 md:p-8 overflow-y-auto hide-scrollbar rounded-2xl cursor-grab active:cursor-grabbing border border-primary/40 bg-gradient-to-b from-secondary/40 to-background/60 comic-panel"
+          initial={{ scale: 0.9, opacity: 0, y: 30 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.9, opacity: 0, y: 20 }}
-          transition={{ duration: 0.3, ease: 'easeOut' }}
+          exit={{ scale: 0.9, opacity: 0, y: 30 }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
           onClick={(e) => e.stopPropagation()}
           ref={scrollRef}
           onMouseDown={handleMouseDown}
@@ -101,20 +108,41 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
           onMouseUp={stopDragging}
           onMouseLeave={stopDragging}
         >
+          {/* Close Button */}
           <motion.button
             onClick={onClose}
-            className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 rounded-lg hover:bg-secondary transition-colors"
+            className="absolute top-3 right-3 p-2 rounded-lg hover:bg-secondary transition-colors"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
             <X className="w-5 h-5" />
           </motion.button>
-          <h2 className="text-xl sm:text-2xl font-bold neon-text mb-4 sm:mb-6 text-center">
+
+          {/* Song Title */}
+          <motion.h2
+            className="text-2xl md:text-3xl font-bold text-center neon-text mb-6 uppercase tracking-widest"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
             {title}
-          </h2>
-          <div className="space-y-2 text-sm sm:text-base leading-relaxed">
+          </motion.h2>
+
+          {/* Scrollable lyrics */}
+          <motion.div
+            className="space-y-2 text-base leading-relaxed px-4"
+            initial="hidden"
+            animate="visible"
+          >
             {formattedLyrics}
-          </div>
+          </motion.div>
+
+          {/* Flickering bottom border light */}
+          <motion.div
+            className="mt-6 w-full h-[2px] bg-primary/50"
+            animate={{ opacity: [0.2, 1, 0.4, 1, 0.3] }}
+            transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
+          />
         </motion.div>
       </motion.div>
     </AnimatePresence>

@@ -46,7 +46,7 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
             >
-              Reader
+              Discography
             </motion.h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 mt-2 sm:mt-4">
               <motion.div
@@ -97,7 +97,7 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
                     Break the Firewall
                   </h3>
                   <p className="text-[11px] sm:text-xs text-muted-foreground">
-                    A journey through the Manifest 404 first mission
+                    A journey through the 404 first mission
                   </p>
                 </motion.div>
               </motion.div>
