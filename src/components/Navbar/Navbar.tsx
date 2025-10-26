@@ -14,17 +14,13 @@ export const Navbar = () => {
       (window as any).webkitAudioContext)();
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
-
     osc.type = 'sine';
     osc.frequency.setValueAtTime(180, audioCtx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + 0.8);
-
     gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
-
     osc.connect(gain);
     gain.connect(audioCtx.destination);
-
     osc.start();
     osc.stop(audioCtx.currentTime + 0.8);
   };
