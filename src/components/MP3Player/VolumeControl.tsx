@@ -19,7 +19,6 @@ export const VolumeControl = ({
 
   return (
     <>
-      {/* Mobile: animated button only */}
       <div className="flex sm:hidden items-center">
         <button
           onClick={toggleMute}
@@ -40,8 +39,6 @@ export const VolumeControl = ({
           )}
         </button>
       </div>
-
-      {/* Desktop: full volume control */}
       <div className="hidden sm:flex items-center gap-4">
         <button
           onClick={toggleMute}
@@ -54,7 +51,6 @@ export const VolumeControl = ({
             <VolumeX className="w-5 h-5 text-foreground" />
           )}
         </button>
-
         <div className="flex items-center gap-3">
           <div className="volume-knob w-16 h-16 cursor-pointer relative">
             <input
