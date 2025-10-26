@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { ReaderModal } from './ReaderModal';
@@ -7,6 +7,27 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
   const [openReader, setOpenReader] = useState<'firewall' | 'saints' | null>(
     null
   );
+
+  // 🔊 Soft synth woosh when modal opens
+  useEffect(() => {
+    const audioCtx = new (window.AudioContext ||
+      (window as any).webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + 0.8);
+
+    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.8);
+  }, []);
 
   return (
     <AnimatePresence>
@@ -24,6 +45,7 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           />
+
           <motion.div
             className="relative w-full max-w-5xl max-h-[90vh] sm:max-h-[85vh] player-panel p-6 sm:p-8 flex flex-col overflow-y-auto sm:overflow-hidden border border-primary/30 bg-secondary/20 rounded-2xl hide-scrollbar"
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -32,6 +54,7 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
             transition={{ duration: 0.3, ease: 'easeOut' }}
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Close button */}
             <motion.button
               onClick={onClose}
               className="absolute top-4 right-4 p-2 rounded-lg hover:bg-secondary transition-colors"
@@ -40,6 +63,8 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
             >
               <X className="w-5 h-5" />
             </motion.button>
+
+            {/* Title */}
             <motion.h2
               className="text-3xl font-bold text-center neon-text mb-6"
               initial={{ opacity: 0, y: -10 }}
@@ -48,10 +73,16 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
             >
               Discography
             </motion.h2>
+
+            {/* Albums Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 mt-2 sm:mt-4">
+              {/* Silicon Saints */}
               <motion.div
                 className="relative bg-secondary/30 border border-primary/30 rounded-xl overflow-hidden cursor-pointer"
-                whileHover={{ scale: 1.05 }}
+                initial={{ opacity: 0, rotateY: -10, scale: 0.9 }}
+                animate={{ opacity: 1, rotateY: 0, scale: 1 }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+                whileHover={{ rotateY: 4, scale: 1.05 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => setOpenReader('saints')}
               >
@@ -77,7 +108,10 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
               </motion.div>
               <motion.div
                 className="relative bg-secondary/30 border border-primary/30 rounded-xl overflow-hidden cursor-pointer"
-                whileHover={{ scale: 1.05 }}
+                initial={{ opacity: 0, rotateY: 10, scale: 0.9 }}
+                animate={{ opacity: 1, rotateY: 0, scale: 1 }}
+                transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
+                whileHover={{ rotateY: -4, scale: 1.05 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => setOpenReader('firewall')}
               >
@@ -90,7 +124,7 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
                   className="absolute bottom-0 left-0 right-0 bg-black/70 backdrop-blur-md p-3 text-center"
                   initial={{ opacity: 0, x: -30 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, ease: 'easeOut', delay: 0.2 }}
+                  transition={{ duration: 0.5, ease: 'easeOut', delay: 0.3 }}
                   viewport={{ once: true }}
                 >
                   <h3 className="font-semibold text-primary text-base sm:text-lg">

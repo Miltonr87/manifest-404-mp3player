@@ -113,7 +113,6 @@ export const ReaderModal = ({
         onClick={onClose}
       >
         <motion.div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
-
         <motion.div
           className={`relative w-full ${
             singleImage
@@ -126,7 +125,6 @@ export const ReaderModal = ({
           transition={{ duration: 0.3, ease: 'easeOut' }}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Close */}
           <motion.button
             onClick={onClose}
             className="absolute top-2 right-3 p-2 rounded-lg hover:bg-secondary transition-colors"
@@ -135,8 +133,6 @@ export const ReaderModal = ({
           >
             <X className="w-5 h-5" />
           </motion.button>
-
-          {/* Single image layout */}
           {singleImage ? (
             <motion.img
               key={images[0].src}
@@ -149,7 +145,6 @@ export const ReaderModal = ({
             />
           ) : (
             <>
-              {/* Multi-image horizontal scroll */}
               <div
                 ref={scrollRef}
                 className="flex-1 overflow-x-hidden snap-x snap-mandatory flex gap-8 p-6 hide-scrollbar"
@@ -172,8 +167,6 @@ export const ReaderModal = ({
                   />
                 ))}
               </div>
-
-              {/* Navigation only if multiple images */}
               {images.length > 1 && (
                 <div className="relative w-full flex justify-center mt-4">
                   <div className="flex items-center gap-2">
@@ -206,7 +199,6 @@ export const ReaderModal = ({
           )}
         </motion.div>
       </motion.div>
-
       {activeSong && (
         <LyricsModal
           title={activeSong.title}

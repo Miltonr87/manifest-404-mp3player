@@ -35,7 +35,6 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
     document.body.style.userSelect = '';
   };
 
-  // 🧩 Animate line-by-line reveal
   const formattedLyrics = lyrics.split('\n').map((line, idx) => {
     const baseDelay = idx * 0.05;
 
@@ -86,15 +85,12 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
         exit={{ opacity: 0 }}
         onClick={onClose}
       >
-        {/* Background blur */}
         <motion.div
           className="absolute inset-0 bg-background/80 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         />
-
-        {/* Holographic lyric chamber */}
         <motion.div
           className="relative w-full max-w-4xl max-h-[80vh] p-6 md:p-8 overflow-y-auto hide-scrollbar rounded-2xl cursor-grab active:cursor-grabbing border border-primary/40 bg-gradient-to-b from-secondary/40 to-background/60 comic-panel"
           initial={{ scale: 0.9, opacity: 0, y: 30 }}
@@ -108,7 +104,6 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
           onMouseUp={stopDragging}
           onMouseLeave={stopDragging}
         >
-          {/* Close Button */}
           <motion.button
             onClick={onClose}
             className="absolute top-3 right-3 p-2 rounded-lg hover:bg-secondary transition-colors"
@@ -117,8 +112,6 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
           >
             <X className="w-5 h-5" />
           </motion.button>
-
-          {/* Song Title */}
           <motion.h2
             className="text-2xl md:text-3xl font-bold text-center neon-text mb-6 uppercase tracking-widest"
             initial={{ opacity: 0, y: -10 }}
@@ -127,8 +120,6 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
           >
             {title}
           </motion.h2>
-
-          {/* Scrollable lyrics */}
           <motion.div
             className="space-y-2 text-base leading-relaxed px-4"
             initial="hidden"
@@ -136,8 +127,6 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
           >
             {formattedLyrics}
           </motion.div>
-
-          {/* Flickering bottom border light */}
           <motion.div
             className="mt-6 w-full h-[2px] bg-primary/50"
             animate={{ opacity: [0.2, 1, 0.4, 1, 0.3] }}
