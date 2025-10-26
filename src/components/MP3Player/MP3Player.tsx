@@ -426,6 +426,8 @@ export const MP3Player = () => {
             onTrackSelect={(i) => handleTrackSelect('firewall', i)}
           />
         </div>
+        <br />
+        <br />
         <audio ref={audioRef} preload="metadata" crossOrigin="anonymous" />
       </div>
     </div>

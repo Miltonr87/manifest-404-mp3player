@@ -135,7 +135,7 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
                     Break the Firewall
                   </h3>
                   <p className="text-[11px] sm:text-xs text-muted-foreground">
-                    A journey through the 404 first campaign
+                    A journey through the 404 first discoveries
                   </p>
                 </motion.div>
               </motion.div>
