@@ -62,6 +62,69 @@ const saintsTracksInit: Track[] = [
     duration: 0,
     filename: '1_Salvation_Road.mp3',
   },
+  {
+    id: 2,
+    title: 'Clean Code, Dirty World',
+    artist: 'Silicon Saints',
+    duration: 0,
+    filename: '2_Clean_Code.mp3',
+  },
+  {
+    id: 3,
+    title: 'Crush On Dopamine',
+    artist: 'Silicon Saints',
+    duration: 0,
+    filename: '3_Crush_on_Dopamine.mp3',
+  },
+  {
+    id: 4,
+    title: 'The Great Reset',
+    artist: 'Silicon Saints',
+    duration: 0,
+    filename: '4_The_Great_Reset.mp3',
+  },
+  {
+    id: 5,
+    title: 'Silicon Saints',
+    artist: 'Silicon Saints',
+    duration: 0,
+    filename: '5_Silicon_Saints.mp3',
+  },
+  {
+    id: 6,
+    title: 'Digital Harvest',
+    artist: 'Silicon Saints',
+    duration: 0,
+    filename: '6_Digital_Harvest.mp3',
+  },
+  {
+    id: 7,
+    title: 'Angels In The Stream',
+    artist: 'Silicon Saints',
+    duration: 0,
+    filename: '7_Angels_Stream.mp3',
+  },
+  {
+    id: 8,
+    title: 'Church Of The Machine',
+    artist: 'Silicon Saints',
+    duration: 0,
+    filename: '8_Church_the_Machine.mp3',
+  },
+  {
+    id: 9,
+    title: 'Ghost In My Feed',
+    artist: 'Silicon Saints',
+    duration: 0,
+    filename: '9_Ghost_in_My_Feed.mp3',
+  },
+  {
+    id: 10,
+    title: 'Soft Reboot',
+    artist: 'Silicon Saints',
+    duration: 0,
+    filename: '10_Soft_Reboot.mp3',
+  },
 ];
 
 export const MP3Player = () => {
@@ -77,7 +140,7 @@ export const MP3Player = () => {
     album: 'firewall' | 'saints';
     index: number;
   }>({
-    album: 'saints', // ✅ default highlight = Silicon Saints
+    album: 'saints',
     index: 0,
   });
   const [isPlaying, setIsPlaying] = useState(false);
@@ -92,7 +155,6 @@ export const MP3Player = () => {
     activeTrack.album === 'firewall' ? firewallTracks : saintsTracks;
   const currentTrack = getTracks()[activeTrack.index] ?? getTracks()[0];
 
-  // ---- AUDIO CONTEXT ----
   const initializeAudioContext = async () => {
     if (!audioRef.current || audioContextRef.current) return;
     try {
@@ -114,7 +176,6 @@ export const MP3Player = () => {
     }
   };
 
-  // ---- EQUALIZER ----
   const analyzeAudio = () => {
     if (!analyserRef.current) return;
     const bufferLength = analyserRef.current.frequencyBinCount;
@@ -148,11 +209,9 @@ export const MP3Player = () => {
     }
   }, [isPlaying]);
 
-  // ---- LOAD TRACK & AUTOPLAY ----
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !currentTrack) return;
-
     audio.src = `/audio/${currentTrack.filename}`;
     audio.load();
 
@@ -174,7 +233,6 @@ export const MP3Player = () => {
       audio.removeEventListener('canplaythrough', handleCanPlayThrough);
   }, [activeTrack, isPlaying]);
 
-  // ---- AUDIO EVENTS ----
   const handleLoadedMetadata = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -203,12 +261,11 @@ export const MP3Player = () => {
     const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
     const handleEnded = () => handleNext();
 
-    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+    audio.addEventListener('loadedmetadata', () => setDuration(audio.duration));
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('ended', handleEnded);
 
     return () => {
-      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('ended', handleEnded);
     };
@@ -218,10 +275,10 @@ export const MP3Player = () => {
     if (audioRef.current) audioRef.current.volume = volume;
   }, [volume]);
 
-  // ---- CONTROLS ----
   const handlePlay = async () => {
     const audio = audioRef.current;
     if (!audio) return;
+
     if (isPlaying) {
       audio.pause();
       setIsPlaying(false);
@@ -272,13 +329,11 @@ export const MP3Player = () => {
     }
   };
 
-  // ✅ Fixed — only one track highlighted and plays after click
   const handleTrackSelect = async (
     album: 'firewall' | 'saints',
     index: number
   ) => {
     handleStop();
-
     const selectedTracks = album === 'firewall' ? firewallTracks : saintsTracks;
     const selectedTrack = selectedTracks[index];
     if (!selectedTrack) return;
@@ -292,7 +347,14 @@ export const MP3Player = () => {
       audio.src = `/audio/${selectedTrack.filename}`;
       audio.load();
 
+      audio.addEventListener(
+        'loadedmetadata',
+        () => setDuration(audio.duration),
+        { once: true }
+      );
+
       await initializeAudioContext();
+
       try {
         await audio.play();
         setIsPlaying(true);
@@ -314,8 +376,9 @@ export const MP3Player = () => {
 
   return (
     <div className="pt-20 pb-8 px-4 md:px-8 min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="player-panel p-6 space-y-6">
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* Top Panel */}
+        <div className="player-panel p-8 space-y-8">
           <DisplayPanel
             track={currentTrack}
             currentTime={formatTime(currentTime)}
@@ -340,11 +403,13 @@ export const MP3Player = () => {
           </div>
         </div>
 
-        <div className="player-panel p-6">
+        {/* Equalizer */}
+        <div className="player-panel p-8">
           <Equalizer data={equalizerData} isActive={isPlaying} />
         </div>
 
-        <div className="player-panel p-6">
+        {/* Playlists */}
+        <div className="player-panel p-8 space-y-8">
           <SaintsPlaylist
             tracks={saintsTracks}
             currentTrack={
@@ -353,7 +418,7 @@ export const MP3Player = () => {
             isPlaying={activeTrack.album === 'saints' && isPlaying}
             onTrackSelect={(i) => handleTrackSelect('saints', i)}
           />
-          <br />
+
           <FirewallPlaylist
             tracks={firewallTracks}
             currentTrack={

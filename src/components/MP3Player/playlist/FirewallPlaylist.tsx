@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo, useState, useEffect } from 'react';
 import { Play, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface Track {
@@ -56,6 +56,7 @@ const TrackRow = memo(
           }
         `}
       >
+        {/* Play icon / Active indicator */}
         <div className="flex-shrink-0">
           {isActive && isPlaying ? (
             <div className="w-6 h-6 flex items-center justify-center">
@@ -81,10 +82,12 @@ const TrackRow = memo(
             </div>
           )}
         </div>
+
+        {/* Track info (supports long titles) */}
         <div className="flex-1 min-w-0">
           <div
             className={`
-              font-medium truncate
+              font-medium leading-snug break-words whitespace-normal
               ${
                 isActive
                   ? isBonus
@@ -99,20 +102,24 @@ const TrackRow = memo(
             {track.title}
           </div>
           <div
-            className={`text-sm ${
+            className={`text-sm mt-0.5 ${
               isBonus ? 'text-yellow-500/80 italic' : 'text-muted-foreground'
             }`}
           >
             {track.artist}
           </div>
         </div>
+
+        {/* Duration */}
         <div
-          className={`digital-display text-sm ${
+          className={`digital-display text-sm flex-shrink-0 text-right ${
             isBonus ? 'text-yellow-400/90' : 'text-muted-foreground'
           }`}
         >
           {formatTime(track.duration)}
         </div>
+
+        {/* Bonus waveform overlay */}
         {!isActive && isBonus && (
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute w-full h-full animate-waveform opacity-20 bg-yellow-400" />
@@ -126,6 +133,21 @@ const TrackRow = memo(
 export const FirewallPlaylist = memo(
   ({ tracks = [], currentTrack, isPlaying, onTrackSelect }: PlaylistProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
+    const [durations, setDurations] = useState<Record<number, number>>({});
+
+    useEffect(() => {
+      tracks.forEach((track) => {
+        if (track.duration === 0 && !durations[track.id]) {
+          const audio = new Audio(`/audio/${track.filename}`);
+          audio.addEventListener('loadedmetadata', () => {
+            setDurations((prev) => ({
+              ...prev,
+              [track.id]: audio.duration,
+            }));
+          });
+        }
+      });
+    }, [tracks, durations]);
 
     const visibleTracks = useMemo(() => {
       if (isExpanded) return tracks ?? [];
@@ -164,18 +186,21 @@ export const FirewallPlaylist = memo(
             </button>
           </div>
         </div>
+
+        {/* Track list (no scroll, same spacing as SaintsPlaylist) */}
         <div className="space-y-2">
-          {(visibleTracks ?? []).map((track, index) =>
-            track ? (
+          {(visibleTracks ?? []).map((track, index) => {
+            const duration = durations[track.id] || track.duration;
+            return (
               <TrackRow
                 key={track.id ?? `${track.title}-${index}`}
-                track={track}
+                track={{ ...track, duration }}
                 isActive={index === currentTrack}
                 isPlaying={isPlaying}
                 onClick={() => handleSelect(index)}
               />
-            ) : null
-          )}
+            );
+          })}
         </div>
       </div>
     );
