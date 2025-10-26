@@ -56,7 +56,6 @@ const TrackRow = memo(
           }
         `}
       >
-        {/* Play icon / Active indicator */}
         <div className="flex-shrink-0">
           {isActive && isPlaying ? (
             <div className="w-6 h-6 flex items-center justify-center">
@@ -82,8 +81,6 @@ const TrackRow = memo(
             </div>
           )}
         </div>
-
-        {/* Track info (long title fix) */}
         <div className="flex-1 min-w-0">
           <div
             className={`
@@ -109,8 +106,6 @@ const TrackRow = memo(
             {track.artist}
           </div>
         </div>
-
-        {/* Duration */}
         <div
           className={`digital-display text-sm flex-shrink-0 text-right ${
             isBonus ? 'text-yellow-400/90' : 'text-muted-foreground'
@@ -118,8 +113,6 @@ const TrackRow = memo(
         >
           {formatTime(track.duration)}
         </div>
-
-        {/* Bonus waveform overlay */}
         {!isActive && isBonus && (
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute w-full h-full animate-waveform opacity-20 bg-yellow-400" />
@@ -155,7 +148,6 @@ export const SaintsPlaylist = memo(
         currentTrack >= 0 && currentTrack < tracks.length ? currentTrack : 0;
       return tracks.length ? [tracks[safeIndex]] : [];
     }, [isExpanded, tracks, currentTrack]);
-
     const handleToggle = useCallback(() => setIsExpanded((prev) => !prev), []);
     const handleSelect = useCallback(
       (index: number) => {
@@ -169,9 +161,6 @@ export const SaintsPlaylist = memo(
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold neon-text">SILICON SAINTS</h3>
           <div className="flex items-center gap-3">
-            <div className="digital-display text-sm">
-              {tracks.length} TRACKS
-            </div>
             <button
               onClick={handleToggle}
               className="player-button px-3 py-2 hover:neon-glow transition-all flex items-center justify-center"
@@ -184,8 +173,6 @@ export const SaintsPlaylist = memo(
             </button>
           </div>
         </div>
-
-        {/* Track list (no scroll) */}
         <div className="space-y-2">
           {(visibleTracks ?? []).map((track, index) => {
             const duration = durations[track.id] || track.duration;

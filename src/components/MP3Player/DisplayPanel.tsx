@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import algorithmicTyrannyArt from '@/assets/algorithmic-tyranny-art.png';
 import codeRevolutionArt from '@/assets/code-revolution-art.png';
 import siliconSaintsArt from '@/assets/silicon-saints-art.png';
@@ -19,10 +20,8 @@ interface DisplayPanelProps {
   album?: 'firewall' | 'saints';
 }
 
-// 🎨 Return artwork depending on album + track ID
 const getArtwork = (album: 'firewall' | 'saints', trackId?: number) => {
   if (album === 'saints') return siliconSaintsArt;
-
   switch (trackId) {
     case 1:
       return algorithmicTyrannyArt;
@@ -33,7 +32,6 @@ const getArtwork = (album: 'firewall' | 'saints', trackId?: number) => {
   }
 };
 
-// 💡 Unified green theme for both albums
 const getTheme = () => ({
   border: 'border-primary/30',
   glow: 'shadow-[0_0_10px_rgba(0,255,200,0.4)]',
@@ -51,6 +49,11 @@ export const DisplayPanel = ({
 }: DisplayPanelProps) => {
   const theme = getTheme();
   const artwork = getArtwork(album, track?.id);
+  const titleRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (titleRef.current) titleRef.current.scrollLeft = 0;
+  }, [track?.title]);
 
   return (
     <div
@@ -59,10 +62,10 @@ export const DisplayPanel = ({
         w-full max-w-sm md:max-w-4xl mx-auto
       "
     >
-      {/* Left: Track info */}
       <div className="space-y-2 text-center md:text-left">
         <div
-          className={`digital-display text-2xl md:text-3xl font-bold truncate ${theme.title}`}
+          ref={titleRef}
+          className={`digital-display text-2xl md:text-3xl font-bold break-words ${theme.title}`}
         >
           {track?.title || '—'}
         </div>
@@ -70,8 +73,6 @@ export const DisplayPanel = ({
           {track?.artist || 'No track selected'}
         </div>
       </div>
-
-      {/* Center: Artwork */}
       <div className="flex items-center justify-center">
         <div
           className={`
@@ -95,8 +96,6 @@ export const DisplayPanel = ({
           />
         </div>
       </div>
-
-      {/* Right: Timer */}
       <div className="text-center md:text-right space-y-2">
         <div
           className={`digital-display text-3xl md:text-4xl font-bold ${theme.title}`}

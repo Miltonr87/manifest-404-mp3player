@@ -143,6 +143,7 @@ export const MP3Player = () => {
     album: 'saints',
     index: 0,
   });
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -155,6 +156,35 @@ export const MP3Player = () => {
     activeTrack.album === 'firewall' ? firewallTracks : saintsTracks;
   const currentTrack = getTracks()[activeTrack.index] ?? getTracks()[0];
 
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !currentTrack) return;
+
+    const newSrc = `/audio/${currentTrack.filename}`;
+    if (audio.src.endsWith(currentTrack.filename)) return;
+
+    audio.src = newSrc;
+    audio.load();
+    setCurrentTime(0);
+
+    const handleCanPlayThrough = async () => {
+      if (isPlaying) {
+        try {
+          await initializeAudioContext();
+          if (audioContextRef.current?.state === 'suspended')
+            await audioContextRef.current.resume();
+          await audio.play();
+        } catch (err: any) {
+          if (err.name !== 'AbortError') console.error('Playback error:', err);
+        }
+      }
+    };
+
+    audio.addEventListener('canplaythrough', handleCanPlayThrough);
+    return () =>
+      audio.removeEventListener('canplaythrough', handleCanPlayThrough);
+  }, [activeTrack]);
+
   const initializeAudioContext = async () => {
     if (!audioRef.current || audioContextRef.current) return;
     try {
@@ -163,12 +193,10 @@ export const MP3Player = () => {
       const audioContext = new AudioContext();
       const analyser = audioContext.createAnalyser();
       const source = audioContext.createMediaElementSource(audioRef.current);
-
       analyser.fftSize = 512;
       analyser.smoothingTimeConstant = 0.8;
       source.connect(analyser);
       analyser.connect(audioContext.destination);
-
       audioContextRef.current = audioContext;
       analyserRef.current = analyser;
     } catch (err) {
@@ -209,30 +237,6 @@ export const MP3Player = () => {
     }
   }, [isPlaying]);
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio || !currentTrack) return;
-    audio.src = `/audio/${currentTrack.filename}`;
-    audio.load();
-
-    const handleCanPlayThrough = async () => {
-      if (isPlaying) {
-        try {
-          await initializeAudioContext();
-          if (audioContextRef.current?.state === 'suspended')
-            await audioContextRef.current.resume();
-          await audio.play();
-        } catch (err: any) {
-          if (err.name !== 'AbortError') console.error('Playback error:', err);
-        }
-      }
-    };
-
-    audio.addEventListener('canplaythrough', handleCanPlayThrough);
-    return () =>
-      audio.removeEventListener('canplaythrough', handleCanPlayThrough);
-  }, [activeTrack, isPlaying]);
-
   const handleLoadedMetadata = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -261,11 +265,12 @@ export const MP3Player = () => {
     const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
     const handleEnded = () => handleNext();
 
-    audio.addEventListener('loadedmetadata', () => setDuration(audio.duration));
+    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('ended', handleEnded);
 
     return () => {
+      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('ended', handleEnded);
     };
@@ -343,18 +348,14 @@ export const MP3Player = () => {
     setTimeout(async () => {
       const audio = audioRef.current;
       if (!audio) return;
-
       audio.src = `/audio/${selectedTrack.filename}`;
       audio.load();
-
       audio.addEventListener(
         'loadedmetadata',
         () => setDuration(audio.duration),
         { once: true }
       );
-
       await initializeAudioContext();
-
       try {
         await audio.play();
         setIsPlaying(true);
@@ -366,7 +367,7 @@ export const MP3Player = () => {
   };
 
   const formatTime = (seconds: number) => {
-    if (!seconds || isNaN(seconds)) return '--:--';
+    if (!seconds || isNaN(seconds)) return '00:00';
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins.toString().padStart(2, '0')}:${secs
@@ -377,7 +378,6 @@ export const MP3Player = () => {
   return (
     <div className="pt-20 pb-8 px-4 md:px-8 min-h-screen bg-background">
       <div className="max-w-4xl mx-auto space-y-8">
-        {/* Top Panel */}
         <div className="player-panel p-8 space-y-8">
           <DisplayPanel
             track={currentTrack}
@@ -402,13 +402,9 @@ export const MP3Player = () => {
             <VolumeControl volume={volume} onVolumeChange={setVolume} />
           </div>
         </div>
-
-        {/* Equalizer */}
         <div className="player-panel p-8">
           <Equalizer data={equalizerData} isActive={isPlaying} />
         </div>
-
-        {/* Playlists */}
         <div className="player-panel p-8 space-y-8">
           <SaintsPlaylist
             tracks={saintsTracks}
@@ -418,7 +414,8 @@ export const MP3Player = () => {
             isPlaying={activeTrack.album === 'saints' && isPlaying}
             onTrackSelect={(i) => handleTrackSelect('saints', i)}
           />
-
+        </div>
+        <div className="player-panel p-8 space-y-8">
           <FirewallPlaylist
             tracks={firewallTracks}
             currentTrack={
@@ -428,7 +425,6 @@ export const MP3Player = () => {
             onTrackSelect={(i) => handleTrackSelect('firewall', i)}
           />
         </div>
-
         <audio ref={audioRef} preload="metadata" crossOrigin="anonymous" />
       </div>
     </div>
