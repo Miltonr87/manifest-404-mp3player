@@ -1,64 +1,63 @@
-# 📀 Manifest 404
+# 📀 Manifest 404 MP3 Player
 
 ![Banner Preview](./public/banner/manifest404.png)
 
-**Manifest 404** is an experimental digital punk rock project that merges  
-the raw intensity of hardcore riffs with the aesthetics of cyberpunk culture.  
-Composed and produced with the assistance of AI, this album explores themes of  
-control, rebellion, irony, addiction, and liberation in a hyper-connected world.
+**Manifest 404** is a digital punk-rock experiment that fuses  
+hardcore riffs, AI-driven creativity, and cyberpunk aesthetics.  
+Each song reflects a modern rebellion — a scream inside a machine-wired world.
 
 ---
 
-## 🎶 Tracklist
+## 🎧 Sound Experience
 
-1. **Algorithmic Tyranny**  
-   A heavy opener that confronts the invisible power of algorithms shaping modern life.  
-   Freedom reduced to data points, choice swallowed by prediction.
+The custom **MP3 Player** is the core of Manifest 404’s interactive experience.  
+Built entirely in **React + TypeScript**, it delivers album-grade sound and motion in the browser.
 
-2. **Code Revolution**  
-   Punk energy turned into digital rebellion.  
-   Armed with code, coffee, and distorted guitars — the anthem of those who fight back.
+### ✨ Features
 
-3. **Pixelated Love**  
-   An ironic ballad about intimacy lost in the noise of screens and glitches.  
-   Affection reduced to pixels, relationships filtered through firewalls.
+- **Dynamic playlists** for each album (e.g., _Firewall_, _Saints_, etc.)
+- **MiniPlayer** that appears when the main panel scrolls out of view
+- **Framer Motion transitions** for smooth, hardware-accelerated animations
+- **Custom hooks** for playback, progress tracking, and visibility detection
+- **Responsive layout** optimized for desktop and mobile
+- **Visual hierarchy** that highlights track metadata and artwork dynamically
 
-4. **Synthetic Addiction**  
-   A dark track reflecting modern dependencies: dopamine, notifications, artificial pleasures.  
-   Fast, abrasive, and suffocating — the sound of being consumed by plastic highs.
-
-5. **Break the Firewall**  
-   The title track — raw defiance and catharsis.  
-   Chains shatter, voices rise, and walls collapse in a collective scream for liberation.
+The goal was to make the listening experience feel like part of the Manifest 404 narrative —  
+every scroll, fade, and glitch moves in rhythm with the songs.
 
 ---
 
-## 🔥 Concept
+## 🛠️ Tech Stack & Decisions
 
-_Break the Firewall_ is made with this flow in mind:
+Manifest 404 is a fusion of **music + frontend engineering**, pushing both into expressive art.
 
-**Control → Revolt → Irony → Addiction → Liberation**
+| Area          | Technology                | Reason                                                                 |
+| ------------- | ------------------------- | ---------------------------------------------------------------------- |
+| Framework     | **React 18 + TypeScript** | Strict typing and modular component structure                          |
+| Styling       | **TailwindCSS**           | Utility-first styling for rapid prototyping and visual consistency     |
+| Animation     | **Framer Motion**         | Fluid transitions, spring-based physics, and micro-interactions        |
+| Audio Engine  | **Web Audio API**         | Custom playback controls, waveform analysis, and real-time timing sync |
+| Icons         | **Lucide-React**          | Minimalist SVG icons for visual rhythm                                 |
+| State         | **React Hooks**           | Simplicity over heavy global stores; easy track state management       |
+| Design System | Custom HSL palette        | Cyberpunk-inspired gradients, tuned for light/dark balance             |
 
-The project reimagines punk rock for the 21st century.
+### 🧩 Architectural Decisions
 
----
+- **Component isolation:** each album, playlist, and modal is modular.
+- **Dynamic height detection:** ensures the player adapts to the viewport and MiniPlayer offset.
+- **IntersectionObserver:** powers smooth transitions between playback modes.
+- **Progressive rendering:** artwork and banners load with priority over secondary assets.
 
-## 🛠️ Technology & Process
-
-This album was created using **AI-assisted music generation** free, combined with  
-manual prompts and few sound design. The result is a hybrid of machine-driven ideas  
-and human direction.
-
-- **Tools Used:** AI music generation and sound design plugins.
-- **Code & Visualization:** React, TypeScript, Framer Motion, TailwindCSS, Web Audio API.
+The code still needs to be refactored to receive tests
 
 ---
 
 ## 🎸 Credits
 
 Produced & Directed by **Milton Rodrigues**  
-_Software Engineer & Punk Rock AI Producer_
+_Software Engineer // Punk-Rock AI Producer_
 
 ---
 
-⚡ \_Manifest 404 is not a traditional band.
+⚡ Manifest 404 isn’t just a band —  
+it’s **made for FUN!**
