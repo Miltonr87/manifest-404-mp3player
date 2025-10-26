@@ -1,8 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { MiniPlayer } from './MiniPlayer';
-import algorithmicTyrannyArt from '@/assets/algorithmic-tyranny-art.png';
-import codeRevolutionArt from '@/assets/code-revolution-art.png';
-import siliconSaintsArt from '@/assets/silicon-saints-art.png';
+import breakTheFirewallArt from '@/assets/break_the_firewall.jpg';
+import siliconSaintsArt from '@/assets/silicon_saints.jpg';
 
 interface Track {
   id: number;
@@ -22,16 +21,8 @@ interface DisplayPanelProps {
   onTogglePlay?: () => void;
 }
 
-const getArtwork = (album: 'firewall' | 'saints', trackId?: number) => {
-  if (album === 'saints') return siliconSaintsArt;
-  switch (trackId) {
-    case 1:
-      return algorithmicTyrannyArt;
-    case 2:
-      return codeRevolutionArt;
-    default:
-      return algorithmicTyrannyArt;
-  }
+const getArtwork = (album: 'firewall' | 'saints') => {
+  return album === 'saints' ? siliconSaintsArt : breakTheFirewallArt;
 };
 
 const getTheme = () => ({
@@ -51,7 +42,7 @@ export const DisplayPanel = ({
   onTogglePlay,
 }: DisplayPanelProps) => {
   const theme = getTheme();
-  const artwork = getArtwork(album, track?.id);
+  const artwork = getArtwork(album);
   const titleRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

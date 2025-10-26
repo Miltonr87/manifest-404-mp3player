@@ -5,32 +5,32 @@ import { LyricsModal } from './LyricsModal';
 
 const imageData = [
   {
-    src: '/assets/1.png',
+    src: '/assets/1.jpg',
     title: 'Algorithmic Tyranny',
     lyricsPath: '/lyrics/1.txt',
   },
   {
-    src: '/assets/2.png',
+    src: '/assets/2.jpg',
     title: 'Code Revolution',
     lyricsPath: '/lyrics/2.txt',
   },
   {
-    src: '/assets/3.png',
+    src: '/assets/3.jpg',
     title: 'Pixelated Love',
     lyricsPath: '/lyrics/3.txt',
   },
   {
-    src: '/assets/4.png',
+    src: '/assets/4.jpg',
     title: 'Synthetic Addiction',
     lyricsPath: '/lyrics/4.txt',
   },
   {
-    src: '/assets/5.png',
+    src: '/assets/5.jpg',
     title: 'Break the Firewall',
     lyricsPath: '/lyrics/5.txt',
   },
   {
-    src: '/assets/6.png',
+    src: '/assets/6.jpg',
     title: 'Silicon Saints',
     lyricsPath: '/lyrics/6.txt',
   },

@@ -91,7 +91,7 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
                 onClick={() => setOpenReader('saints')}
               >
                 <img
-                  src="/assets/6.png"
+                  src="/assets/6.jpg"
                   alt="Silicon Saints"
                   className="w-full h-auto object-cover max-h-[65vh] transition-all duration-300"
                 />
@@ -120,7 +120,7 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
                 onClick={() => setOpenReader('firewall')}
               >
                 <img
-                  src="/assets/5.png"
+                  src="/assets/5.jpg"
                   alt="Break the Firewall"
                   className="w-full h-auto object-cover max-h-[65vh] transition-all duration-300"
                 />
