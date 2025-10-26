@@ -37,8 +37,8 @@ const getArtwork = (album: 'firewall' | 'saints', trackId?: number) => {
 const getTheme = () => ({
   border: 'border-primary/30',
   glow: 'shadow-[0_0_10px_rgba(0,255,200,0.4)]',
-  title: 'text-primary',
-  artist: 'text-muted-foreground',
+  title: 'text-primary no-underline decoration-none',
+  artist: 'text-muted-foreground no-underline decoration-none',
   pulse: 'from-primary/20 to-accent/20',
 });
 
@@ -93,7 +93,7 @@ export const DisplayPanel = ({
               alt={track?.title ? `${track.title} artwork` : 'Album artwork'}
               className={`w-full h-full object-cover transition-transform duration-500 ${
                 isPlaying ? 'scale-105' : 'scale-100'
-              }`}
+              } no-underline decoration-none`}
             />
             <div
               className={`
@@ -109,7 +109,9 @@ export const DisplayPanel = ({
           >
             {currentTime}
           </div>
-          <div className="digital-display text-sm opacity-70">{duration}</div>
+          <div className="digital-display text-sm opacity-70 no-underline decoration-none">
+            {duration}
+          </div>
         </div>
       </div>
       <MiniPlayer
