@@ -400,7 +400,9 @@ export const MP3Player = () => {
               onPrevious={handlePrevious}
               onNext={handleNext}
             />
-            <VolumeControl volume={volume} onVolumeChange={setVolume} />
+            <div className="hidden sm:block">
+              <VolumeControl volume={volume} onVolumeChange={setVolume} />
+            </div>
           </div>
         </div>
         <div className="player-panel p-8">
