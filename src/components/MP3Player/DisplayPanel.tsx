@@ -62,7 +62,6 @@ export const DisplayPanel = ({
 
   return (
     <>
-      {/* 🎵 Full-size player section */}
       <div
         id="display-panel"
         className="
@@ -70,7 +69,6 @@ export const DisplayPanel = ({
           w-full max-w-sm md:max-w-4xl mx-auto
         "
       >
-        {/* Left: Track info */}
         <div className="space-y-2 text-center md:text-left">
           <div
             ref={titleRef}
@@ -82,8 +80,6 @@ export const DisplayPanel = ({
             {track?.artist || 'No track selected'}
           </div>
         </div>
-
-        {/* Center: Artwork */}
         <div className="flex items-center justify-center">
           <div
             className={`
@@ -107,8 +103,6 @@ export const DisplayPanel = ({
             />
           </div>
         </div>
-
-        {/* Right: Timer */}
         <div className="text-center md:text-right space-y-2">
           <div
             className={`digital-display text-3xl md:text-4xl font-bold ${theme.title}`}
@@ -118,8 +112,6 @@ export const DisplayPanel = ({
           <div className="digital-display text-sm opacity-70">{duration}</div>
         </div>
       </div>
-
-      {/* 🎧 Floating mini player (appears when DisplayPanel is off-screen) */}
       <MiniPlayer
         track={{
           ...track,
