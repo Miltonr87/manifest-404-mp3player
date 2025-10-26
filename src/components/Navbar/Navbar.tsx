@@ -3,7 +3,7 @@ import { Download, Info, BookOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ThemeToggle } from '../MP3Player/ThemeToggle';
 import { AboutModal } from './AboutModal';
-import { ReaderModal } from '../Reader/ReaderModal'; // novo import
+import { DiscographyModal } from '../Reader/DiscographyModal';
 
 export const Navbar = () => {
   const [showAbout, setShowAbout] = useState(false);
@@ -90,7 +90,7 @@ export const Navbar = () => {
       <AboutModal isOpen={showAbout} onClose={() => setShowAbout(false)} />
 
       {/* Reader Modal */}
-      {showReader && <ReaderModal onClose={() => setShowReader(false)} />}
+      {showReader && <DiscographyModal onClose={() => setShowReader(false)} />}
     </>
   );
 };
