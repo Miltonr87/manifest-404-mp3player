@@ -385,6 +385,7 @@ export const MP3Player = () => {
             duration={formatTime(duration)}
             isPlaying={isPlaying}
             album={activeTrack.album}
+            onTogglePlay={handlePlay}
           />
           <ProgressBar
             currentTime={currentTime}
