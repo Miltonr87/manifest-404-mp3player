@@ -82,7 +82,7 @@ export const Navbar = () => {
                 whileTap={{ scale: 0.95 }}
               >
                 <BookOpen className="w-4 h-4" />
-                <span className="hidden sm:inline">Reader</span>
+                <span className="hidden sm:inline">Discography</span>
               </motion.button>
               <motion.button
                 onClick={handleDownload}
