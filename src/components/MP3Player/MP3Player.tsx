@@ -88,7 +88,7 @@ const saintsTracksInit: Track[] = [
     title: 'Silicon Saints',
     artist: 'Silicon Saints',
     duration: 0,
-    filename: '5_Silicon_Saints.mp3',
+    filename: '5_SiliconSaints.mp3',
   },
   {
     id: 6,
