@@ -106,7 +106,7 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
                     Silicon Saints
                   </h3>
                   <p className="text-[11px] sm:text-xs text-muted-foreground">
-                    Meet the prophets of the machine age
+                    Meet the new gods of the machine age
                   </p>
                 </motion.div>
               </motion.div>
