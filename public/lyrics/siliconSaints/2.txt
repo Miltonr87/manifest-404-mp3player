@@ -1,0 +1,45 @@
+[Verse 1]
+Lines of code, a broken spine
+Morals lost in the React line
+Perfect syntax, stinkin’ core
+Push that build, ignore the war
+
+[Chorus]
+Clean code, dirty world!
+Where the truth gets debugged and hurled
+Shiny screens, toxic dreams
+We’re the bugs inside the machine
+
+[Verse 2]
+Algorithms: bang, you’re done!
+Profit’s just another gun
+Function runs, but hearts don’t start
+Who decides what tears apart?
+
+[Pre-Chorus]
+Zeroes grin, ones confess
+Binary saints in a code-stained mess
+
+[Chorus]
+Clean code, dirty world!
+Where the truth gets debugged and hurled
+Shiny screens, toxic dreams
+We’re the bugs inside the machine
+
+[Verse 3]
+Render me down, I won’t comply
+Hooks and lies, they amplify
+Fake states built on false impact
+Don’t just code: React! React!
+
+[Bridge]
+Comment lies, no regret
+Logic sharp like bayonet
+Ethics crashed, no going back
+Commit the sin, push to the stack!
+
+[Final Chorus]
+Clean code, dirty world!
+Neon saints and plastic pearls
+Shiny screens, filthy dreams
+Yeah, your machine ain’t what it seems!

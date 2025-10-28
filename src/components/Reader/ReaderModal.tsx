@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { LyricsModal } from './LyricsModal';
 
-const imageData = [
+const firewallData = [
   {
     src: '/assets/1.jpg',
     title: 'Algorithmic Tyranny',
@@ -29,10 +29,33 @@ const imageData = [
     title: 'Break the Firewall',
     lyricsPath: '/lyrics/5.txt',
   },
+];
+
+const saintsData = [
   {
-    src: '/assets/6.jpg',
+    src: '/assets/siliconSaints/1.jpg',
+    title: '404 Salvation Road',
+    lyricsPath: '/lyrics/siliconSaints/1.txt',
+  },
+  {
+    src: '/assets/siliconSaints/2.jpg',
+    title: 'Clean Code, Dirty World',
+    lyricsPath: '/lyrics/siliconSaints/2.txt',
+  },
+  {
+    src: '/assets/siliconSaints/3.jpg',
+    title: 'Crush on Dopamine',
+    lyricsPath: '/lyrics/siliconSaints/3.txt',
+  },
+  {
+    src: '/assets/siliconSaints/4.jpg',
+    title: 'The Great Reset',
+    lyricsPath: '/lyrics/siliconSaints/4.txt',
+  },
+  {
+    src: '/assets/siliconSaints/5.jpg',
     title: 'Silicon Saints',
-    lyricsPath: '/lyrics/6.txt',
+    lyricsPath: '/lyrics/siliconSaints/5.txt',
   },
 ];
 
@@ -44,9 +67,7 @@ export const ReaderModal = ({
   albumType?: 'firewall' | 'saints';
 }) => {
   const images = useMemo(() => {
-    return albumType === 'firewall'
-      ? imageData.slice(0, 5)
-      : imageData.slice(5, 6);
+    return albumType === 'firewall' ? firewallData : saintsData;
   }, [albumType]);
 
   const [activeSong, setActiveSong] = useState<{
