@@ -62,6 +62,16 @@ const saintsData = [
     title: 'Digital Harvest',
     lyricsPath: '/lyrics/siliconSaints/6.txt',
   },
+  {
+    src: '/assets/siliconSaints/7.jpg',
+    title: 'Angels In The Stream',
+    lyricsPath: '/lyrics/siliconSaints/7.txt',
+  },
+  {
+    src: '/assets/siliconSaints/8.jpg',
+    title: 'Church Of The Machine',
+    lyricsPath: '/lyrics/siliconSaints/8.txt',
+  },
 ];
 
 export const ReaderModal = ({
