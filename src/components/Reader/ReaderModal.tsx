@@ -57,6 +57,11 @@ const saintsData = [
     title: 'Silicon Saints',
     lyricsPath: '/lyrics/siliconSaints/5.txt',
   },
+  {
+    src: '/assets/siliconSaints/6.jpg',
+    title: 'Digital Harvest',
+    lyricsPath: '/lyrics/siliconSaints/6.txt',
+  },
 ];
 
 export const ReaderModal = ({
