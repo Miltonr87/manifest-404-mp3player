@@ -72,6 +72,16 @@ const saintsData = [
     title: 'Church Of The Machine',
     lyricsPath: '/lyrics/siliconSaints/8.txt',
   },
+  {
+    src: '/assets/siliconSaints/9.jpg',
+    title: 'Ghost In My Feed',
+    lyricsPath: '/lyrics/siliconSaints/9.txt',
+  },
+  {
+    src: '/assets/siliconSaints/10.jpg',
+    title: 'Soft Reboot',
+    lyricsPath: '/lyrics/siliconSaints/10.txt',
+  },
 ];
 
 export const ReaderModal = ({
