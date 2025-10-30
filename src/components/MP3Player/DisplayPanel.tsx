@@ -119,7 +119,7 @@ export const DisplayPanel = ({
                     animate={{ opacity: [0.3, 1, 0.3] }}
                     transition={{ repeat: Infinity, duration: 1.2 }}
                   >
-                    START
+                    LOADING
                   </motion.span>
                 </motion.div>
               ) : (

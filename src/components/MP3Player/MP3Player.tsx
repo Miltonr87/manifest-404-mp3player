@@ -292,10 +292,10 @@ export const MP3Player = () => {
           </button>
         </div>
         <AnimatePresence mode="wait">
-          {visibleAlbum === 'saints' ? (
-            <>
+          <div className="pb-12">
+            {visibleAlbum === 'saints' ? (
               <motion.div
-                key="saints"
+                key="album-saints"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -310,12 +310,9 @@ export const MP3Player = () => {
                   onTrackSelect={(i) => handleTrackSelect('saints', i)}
                 />
               </motion.div>
-              <br />
-            </>
-          ) : (
-            <>
+            ) : (
               <motion.div
-                key="firewall"
+                key="album-firewall"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -330,10 +327,8 @@ export const MP3Player = () => {
                   onTrackSelect={(i) => handleTrackSelect('firewall', i)}
                 />
               </motion.div>
-              <br />
-            </>
-          )}
-          <br />
+            )}
+          </div>
         </AnimatePresence>
         <AudioPlayer
           ref={audioRef}
