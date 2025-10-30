@@ -94,7 +94,7 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
             <motion.div
               className="relative w-full max-w-5xl flex flex-col border border-border bg-secondary/10 rounded-2xl overflow-y-auto hide-scrollbar player-panel"
               style={{
-                maxHeight: 'calc(80vh - 80px)',
+                maxHeight: 'calc(90vh - 80px)',
                 paddingBottom: '10px',
               }}
               initial={{ y: '100%' }}
