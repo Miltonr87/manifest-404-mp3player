@@ -5,7 +5,6 @@ export const IntroPage = ({ onEnter }: { onEnter: () => void }) => {
   const [ready, setReady] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  // 🧬 Matrix rain background
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -48,7 +47,6 @@ export const IntroPage = ({ onEnter }: { onEnter: () => void }) => {
     };
   }, []);
 
-  // Small delay before showing box (smooth)
   useEffect(() => {
     const timer = setTimeout(() => setReady(true), 200);
     return () => clearTimeout(timer);
