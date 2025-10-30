@@ -291,39 +291,47 @@ export const MP3Player = () => {
         </div>
         <AnimatePresence mode="wait">
           {visibleAlbum === 'saints' ? (
-            <motion.div
-              key="saints"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="player-panel p-8 space-y-8"
-            >
-              <SaintsPlaylist
-                tracks={saintsTracks}
-                currentTrack={
-                  activeTrack.album === 'saints' ? activeTrack.index : -1
-                }
-                isPlaying={activeTrack.album === 'saints' && isPlaying}
-                onTrackSelect={(i) => handleTrackSelect('saints', i)}
-              />
-            </motion.div>
+            <>
+              <motion.div
+                key="saints"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="player-panel p-8 space-y-8"
+              >
+                <SaintsPlaylist
+                  tracks={saintsTracks}
+                  currentTrack={
+                    activeTrack.album === 'saints' ? activeTrack.index : -1
+                  }
+                  isPlaying={activeTrack.album === 'saints' && isPlaying}
+                  onTrackSelect={(i) => handleTrackSelect('saints', i)}
+                />
+              </motion.div>
+              <br />
+              <br />
+            </>
           ) : (
-            <motion.div
-              key="firewall"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="player-panel p-8 space-y-8"
-            >
-              <FirewallPlaylist
-                tracks={firewallTracks}
-                currentTrack={
-                  activeTrack.album === 'firewall' ? activeTrack.index : -1
-                }
-                isPlaying={activeTrack.album === 'firewall' && isPlaying}
-                onTrackSelect={(i) => handleTrackSelect('firewall', i)}
-              />
-            </motion.div>
+            <>
+              <motion.div
+                key="firewall"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="player-panel p-8 space-y-8"
+              >
+                <FirewallPlaylist
+                  tracks={firewallTracks}
+                  currentTrack={
+                    activeTrack.album === 'firewall' ? activeTrack.index : -1
+                  }
+                  isPlaying={activeTrack.album === 'firewall' && isPlaying}
+                  onTrackSelect={(i) => handleTrackSelect('firewall', i)}
+                />
+              </motion.div>
+              <br />
+              <br />
+            </>
           )}
         </AnimatePresence>
         <AudioPlayer
