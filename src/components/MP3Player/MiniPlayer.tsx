@@ -51,38 +51,38 @@ export const MiniPlayer = ({
   const barRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const displayPanel = document.querySelector('#display-panel');
-    if (!displayPanel) return;
+    const target = document.querySelector('#display-panel');
+    if (!target) return;
     const observer = new IntersectionObserver(
       ([entry]) => setVisible(!entry.isIntersecting),
       { threshold: 0.1 }
     );
-    observer.observe(displayPanel);
+    observer.observe(target);
     return () => observer.disconnect();
   }, []);
 
   const handleScrollToTop = () => {
     const panel = document.querySelector('#display-panel');
+    if (!panel) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
     const container = getScrollParent(panel);
     const headerOffset = 272;
-    if (panel) {
-      const rect = panel.getBoundingClientRect();
-      const absoluteTop =
-        rect.top +
-        (container === window
-          ? window.scrollY
-          : (container as HTMLElement).scrollTop);
-      const targetTop = Math.max(absoluteTop - headerOffset, 0);
-      if (container === window) {
-        window.scrollTo({ top: targetTop, behavior: 'smooth' });
-      } else {
-        (container as HTMLElement).scrollTo({
-          top: targetTop,
-          behavior: 'smooth',
-        });
-      }
+    const rect = panel.getBoundingClientRect();
+    const absoluteTop =
+      rect.top +
+      (container === window
+        ? window.scrollY
+        : (container as HTMLElement).scrollTop);
+    const targetTop = Math.max(absoluteTop - headerOffset, 0);
+    if (container === window) {
+      window.scrollTo({ top: targetTop, behavior: 'smooth' });
     } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      (container as HTMLElement).scrollTo({
+        top: targetTop,
+        behavior: 'smooth',
+      });
     }
   };
 
@@ -102,6 +102,7 @@ export const MiniPlayer = ({
           <div className="flex items-center gap-3 overflow-hidden">
             {track?.artwork && (
               <motion.img
+                key={track.artwork}
                 src={track.artwork}
                 alt={track.title || 'cover'}
                 className="w-10 h-10 rounded-md border border-border object-cover"
@@ -126,7 +127,7 @@ export const MiniPlayer = ({
             <motion.button
               type="button"
               onClick={onTogglePlay}
-              className={`p-2 rounded-full border border-border bg-secondary/10 hover:bg-secondary/20 transition`}
+              className="p-2 rounded-full border border-border bg-secondary/10 hover:bg-secondary/20 transition"
               aria-label={isPlaying ? 'Pause' : 'Play'}
               whileTap={{ scale: 0.9 }}
             >
