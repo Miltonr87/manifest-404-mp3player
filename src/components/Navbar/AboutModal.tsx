@@ -68,11 +68,6 @@ export const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
               About
             </h2>
             <br />
-            <p className="text-muted-foreground">
-              A futuristic MP3 player crafted for the digital age, featuring
-              real-time audio visualization.
-            </p>
-            <br />
             <p>
               <b className="text-1xl font-bold neon-text mb-2">Manifest 404</b>{' '}
               is a Punk Rock digital band made with AI which blends the spirit
@@ -84,10 +79,10 @@ export const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
             <div className="flex flex-wrap gap-2">
               {[
                 'React',
+                'React H5 Audio',
                 'TypeScript',
-                'Framer Motion',
                 'Tailwind CSS',
-                'Web Audio API',
+                'Framer Motion',
                 'Lucide Icons',
               ].map((tech) => (
                 <motion.span
