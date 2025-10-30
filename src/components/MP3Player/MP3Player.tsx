@@ -1,8 +1,6 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
-import { motion, AnimatePresence } from 'framer-motion';
-
 import { PlayerControls } from './PlayerControls';
 import { Equalizer } from './Equalizer';
 import { FirewallPlaylist } from './playlist/FirewallPlaylist';
@@ -10,19 +8,20 @@ import { SaintsPlaylist } from './playlist/SaintsPlaylist';
 import { VolumeControl } from './VolumeControl';
 import { ProgressBar } from './ProgressBar';
 import { DisplayPanel } from './DisplayPanel';
-import { manifest404Tracks, Track } from '../../data/manifest404Tracks';
+import {
+  firewallTracksInit,
+  saintsTracksInit,
+} from '../../data/manifest404Tracks';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export const MP3Player = () => {
   const audioRef = useRef<any>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animationFrameRef = useRef<number | null>(null);
-  const [firewallTracks, setFirewallTracks] = useState<Track[]>(
-    manifest404Tracks.firewall
-  );
-  const [saintsTracks, setSaintsTracks] = useState<Track[]>(
-    manifest404Tracks.saints
-  );
+
+  const [firewallTracks, setFirewallTracks] = useState(firewallTracksInit);
+  const [saintsTracks, setSaintsTracks] = useState(saintsTracksInit);
   const [visibleAlbum, setVisibleAlbum] = useState<'saints' | 'firewall'>(
     'saints'
   );
@@ -43,16 +42,17 @@ export const MP3Player = () => {
     new Array(10).fill(0)
   );
 
+  // 🧠 Memoized track list
   const getTracks = useCallback(
     () => (activeTrack.album === 'firewall' ? firewallTracks : saintsTracks),
     [activeTrack.album, firewallTracks, saintsTracks]
   );
-
   const currentTrack = useMemo(
     () => getTracks()[activeTrack.index] ?? getTracks()[0],
     [getTracks, activeTrack.index]
   );
 
+  // 🎧 Initialize AudioContext
   const initializeAudioContext = useCallback(async () => {
     const el = audioRef.current?.audio?.current as HTMLAudioElement | null;
     if (!el || audioContextRef.current) return;
@@ -73,6 +73,7 @@ export const MP3Player = () => {
     }
   }, []);
 
+  // 🔊 Equalizer Analysis
   const analyzeAudio = useCallback(() => {
     if (!analyserRef.current) return;
     const buf = new Uint8Array(analyserRef.current.frequencyBinCount);
@@ -269,22 +270,26 @@ export const MP3Player = () => {
         <div className="flex justify-center items-center gap-0 bg-[#0a0d0f] border border-[#00ff99]/30 rounded-md overflow-hidden shadow-[0_0_8px_rgba(0,255,153,0.15)] w-fit mx-auto">
           <button
             onClick={() => setVisibleAlbum('saints')}
-            className={`flex items-center gap-2 px-6 py-2 text-sm font-semibold tracking-wide transition-all duration-300 ${
-              visibleAlbum === 'saints'
-                ? 'bg-[#003321]/60 text-[#00ff99] border border-[#00ff99]/40 shadow-[inset_0_0_16px_rgba(0,255,153,0.6),0_0_8px_rgba(0,255,153,0.4)]'
-                : 'bg-[#0e1114] text-gray-400 border border-transparent hover:text-[#00ff99]/70'
-            }`}
+            className={`flex items-center gap-2 px-6 py-2 text-sm font-semibold tracking-wide transition-all duration-300
+              ${
+                visibleAlbum === 'saints'
+                  ? 'bg-[#003321]/60 text-[#00ff99] border border-[#00ff99]/40 shadow-[inset_0_0_16px_rgba(0,255,153,0.6),0_0_8px_rgba(0,255,153,0.4)]'
+                  : 'bg-[#0e1114] text-gray-400 border border-transparent hover:text-[#00ff99]/70'
+              }
+            `}
           >
             <span>Silicon Saints</span>
           </button>
           <div className="h-6 w-px bg-[#00ff99]/25" />
           <button
             onClick={() => setVisibleAlbum('firewall')}
-            className={`flex items-center gap-2 px-6 py-2 text-sm font-semibold tracking-wide transition-all duration-300 ${
-              visibleAlbum === 'firewall'
-                ? 'bg-[#003321]/60 text-[#00ff99] border border-[#00ff99]/40 shadow-[inset_0_0_16px_rgba(0,255,153,0.6),0_0_8px_rgba(0,255,153,0.4)]'
-                : 'bg-[#0e1114] text-gray-400 border border-transparent hover:text-[#00ff99]/70'
-            }`}
+            className={`flex items-center gap-2 px-6 py-2 text-sm font-semibold tracking-wide transition-all duration-300
+              ${
+                visibleAlbum === 'firewall'
+                  ? 'bg-[#003321]/60 text-[#00ff99] border border-[#00ff99]/40 shadow-[inset_0_0_16px_rgba(0,255,153,0.6),0_0_8px_rgba(0,255,153,0.4)]'
+                  : 'bg-[#0e1114] text-gray-400 border border-transparent hover:text-[#00ff99]/70'
+              }
+            `}
           >
             <span>Break The Firewall</span>
           </button>
@@ -309,7 +314,6 @@ export const MP3Player = () => {
                 />
               </motion.div>
               <br />
-              <br />
             </>
           ) : (
             <>
@@ -330,9 +334,9 @@ export const MP3Player = () => {
                 />
               </motion.div>
               <br />
-              <br />
             </>
           )}
+          <br />
         </AnimatePresence>
         <AudioPlayer
           ref={audioRef}
@@ -344,6 +348,7 @@ export const MP3Player = () => {
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
           onLoadedMetadata={(e) => setDuration(e.target.duration)}
+          onEnded={handleNext}
           style={{ display: 'none' }}
         />
       </div>
