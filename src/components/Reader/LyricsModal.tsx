@@ -92,7 +92,7 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
           exit={{ opacity: 0 }}
         />
         <motion.div
-          className="relative w-full max-w-4xl max-h-[80vh] p-6 md:p-8 overflow-y-auto hide-scrollbar rounded-2xl cursor-grab active:cursor-grabbing border border-primary/40 bg-gradient-to-b from-secondary/40 to-background/60 comic-panel"
+          className="relative w-full max-w-4xl max-h-[80vh] p-6 md:p-8 overflow-y-auto hide-scrollbar rounded-2xl cursor-grab active:cursor-grabbing border border-border bg-secondary/10 player-panel bg-gradient-to-b from-secondary/40 to-background/60 comic-panel"
           initial={{ scale: 0.9, opacity: 0, y: 30 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 30 }}
