@@ -234,7 +234,6 @@ export const MP3Player = () => {
       : updateList(saintsTracks, setSaintsTracks);
   }, [activeTrack, firewallTracks, saintsTracks]);
 
-  // ⏱ Update playback time
   useEffect(() => {
     const el = audioRef.current?.audio?.current as HTMLAudioElement | null;
     if (!el) return;
@@ -255,7 +254,6 @@ export const MP3Player = () => {
     if (el) el.volume = volume;
   }, [volume]);
 
-  // ▶️ Play / Pause
   const handlePlay = async () => {
     const el = audioRef.current?.audio?.current as HTMLAudioElement | null;
     if (!el) return;
@@ -309,7 +307,6 @@ export const MP3Player = () => {
     }
   };
 
-  // 🎵 Track Selection
   const handleTrackSelect = async (
     album: 'firewall' | 'saints',
     index: number
@@ -320,7 +317,6 @@ export const MP3Player = () => {
     if (!selected) return;
     setActiveTrack({ album, index });
 
-    // Preload next track for smoother playback
     const next = getTracks()[index + 1];
     if (next) {
       const link = document.createElement('link');
