@@ -16,7 +16,7 @@ export const PlayerControls = ({
   onNext,
 }: PlayerControlsProps) => {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center justify-center sm:justify-start gap-3 w-full">
       <button
         onClick={onPrevious}
         className="player-button p-3 hover:neon-glow transition-all"
@@ -24,6 +24,7 @@ export const PlayerControls = ({
       >
         <SkipBack className="w-5 h-5 text-foreground" />
       </button>
+
       <button
         onClick={onPlay}
         className="player-button p-4 hover:neon-glow transition-all"
@@ -35,6 +36,7 @@ export const PlayerControls = ({
           <Play className="w-6 h-6 text-foreground ml-1" />
         )}
       </button>
+
       <button
         onClick={onStop}
         className="player-button p-3 hover:neon-glow transition-all"
@@ -42,6 +44,7 @@ export const PlayerControls = ({
       >
         <Square className="w-5 h-5 text-foreground" />
       </button>
+
       <button
         onClick={onNext}
         className="player-button p-3 hover:neon-glow transition-all"

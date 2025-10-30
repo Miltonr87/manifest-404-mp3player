@@ -19,26 +19,6 @@ export const VolumeControl = ({
 
   return (
     <>
-      <div className="flex sm:hidden items-center">
-        <button
-          onClick={toggleMute}
-          className={`
-            player-button p-3 rounded-full transition-all
-            ${
-              volume > 0
-                ? 'animate-pulse-glow bg-primary/20'
-                : 'bg-secondary/20'
-            }
-          `}
-          aria-label={volume > 0 ? 'Mute' : 'Unmute'}
-        >
-          {volume > 0 ? (
-            <Volume2 className="w-6 h-6 text-primary" />
-          ) : (
-            <VolumeX className="w-6 h-6 text-muted-foreground" />
-          )}
-        </button>
-      </div>
       <div className="hidden sm:flex items-center gap-4">
         <button
           onClick={toggleMute}

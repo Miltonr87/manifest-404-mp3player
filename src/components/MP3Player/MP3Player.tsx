@@ -8,129 +8,8 @@ import { SaintsPlaylist } from './playlist/SaintsPlaylist';
 import { VolumeControl } from './VolumeControl';
 import { ProgressBar } from './ProgressBar';
 import { DisplayPanel } from './DisplayPanel';
-import { Volume2 } from 'lucide-react'; // add this to imports
 import { motion, AnimatePresence } from 'framer-motion';
-
-interface Track {
-  id: number;
-  title: string;
-  artist: string;
-  duration: number;
-  filename: string;
-  artwork?: string;
-}
-
-// 🎸 Album Data
-const firewallTracksInit: Track[] = [
-  {
-    id: 1,
-    title: 'Algorithmic Tyranny',
-    artist: 'Break The Firewall',
-    duration: 0,
-    filename: '1_Algorithmic Tyranny.mp3',
-  },
-  {
-    id: 2,
-    title: 'Code Revolution',
-    artist: 'Break The Firewall',
-    duration: 0,
-    filename: '2_Code Revolution.mp3',
-  },
-  {
-    id: 3,
-    title: 'Pixelated Love',
-    artist: 'Break The Firewall',
-    duration: 0,
-    filename: '3_Pixelated Love.mp3',
-  },
-  {
-    id: 4,
-    title: 'Synthetic Addiction',
-    artist: 'Break The Firewall',
-    duration: 0,
-    filename: '4_Synthetic Addiction.mp3',
-  },
-  {
-    id: 5,
-    title: 'Break The Firewall',
-    artist: 'Break The Firewall',
-    duration: 0,
-    filename: '5_Break_the_Firewall.mp3',
-  },
-];
-
-const saintsTracksInit: Track[] = [
-  {
-    id: 1,
-    title: '404 Salvation Road',
-    artist: 'Silicon Saints',
-    duration: 0,
-    filename: '1_Salvation_Road.mp3',
-  },
-  {
-    id: 2,
-    title: 'Clean Code, Dirty World',
-    artist: 'Silicon Saints',
-    duration: 0,
-    filename: '2_Clean_Code.mp3',
-  },
-  {
-    id: 3,
-    title: 'Crush On Dopamine',
-    artist: 'Silicon Saints',
-    duration: 0,
-    filename: '3_Crush_on_Dopamine.mp3',
-  },
-  {
-    id: 4,
-    title: 'The Great Reset',
-    artist: 'Silicon Saints',
-    duration: 0,
-    filename: '4_The_Great_Reset.mp3',
-  },
-  {
-    id: 5,
-    title: 'Silicon Saints',
-    artist: 'Silicon Saints',
-    duration: 0,
-    filename: '5_SiliconSaints.mp3',
-  },
-  {
-    id: 6,
-    title: 'Digital Harvest',
-    artist: 'Silicon Saints',
-    duration: 0,
-    filename: '6_Digital_Harvest.mp3',
-  },
-  {
-    id: 7,
-    title: 'Angels In The Stream',
-    artist: 'Silicon Saints',
-    duration: 0,
-    filename: '7_Angels_Stream.mp3',
-  },
-  {
-    id: 8,
-    title: 'Church Of The Machine',
-    artist: 'Silicon Saints',
-    duration: 0,
-    filename: '8_Church_the_Machine.mp3',
-  },
-  {
-    id: 9,
-    title: 'Ghost In My Feed',
-    artist: 'Silicon Saints',
-    duration: 0,
-    filename: '9_Ghost_in_My_Feed.mp3',
-  },
-  {
-    id: 10,
-    title: 'Soft Reboot',
-    artist: 'Silicon Saints',
-    duration: 0,
-    filename: '10_Soft_Reboot.mp3',
-  },
-];
+import { manifest404Tracks, Track } from '@/data/manifest404Tracks';
 
 export const MP3Player = () => {
   const audioRef = useRef<any>(null);
@@ -138,8 +17,10 @@ export const MP3Player = () => {
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animationFrameRef = useRef<number | null>(null);
 
-  const [firewallTracks, setFirewallTracks] = useState(firewallTracksInit);
-  const [saintsTracks, setSaintsTracks] = useState(saintsTracksInit);
+  const [firewallTracks, setFirewallTracks] = useState(
+    manifest404Tracks.firewall
+  );
+  const [saintsTracks, setSaintsTracks] = useState(manifest404Tracks.saints);
   const [visibleAlbum, setVisibleAlbum] = useState<'saints' | 'firewall'>(
     'saints'
   );
@@ -160,17 +41,18 @@ export const MP3Player = () => {
     new Array(10).fill(0)
   );
 
-  // 🧠 Memoized track list
+  // Get active track
   const getTracks = useCallback(
     () => (activeTrack.album === 'firewall' ? firewallTracks : saintsTracks),
     [activeTrack.album, firewallTracks, saintsTracks]
   );
+
   const currentTrack = useMemo(
     () => getTracks()[activeTrack.index] ?? getTracks()[0],
     [getTracks, activeTrack.index]
   );
 
-  // 🎧 Initialize AudioContext
+  // AudioContext setup
   const initializeAudioContext = useCallback(async () => {
     const el = audioRef.current?.audio?.current as HTMLAudioElement | null;
     if (!el || audioContextRef.current) return;
@@ -187,11 +69,11 @@ export const MP3Player = () => {
       audioContextRef.current = ctx;
       analyserRef.current = analyser;
     } catch (err) {
-      console.error('Failed to init audio context:', err);
+      console.error('AudioContext error:', err);
     }
   }, []);
 
-  // 🔊 Equalizer Analysis
+  // Equalizer effect
   const analyzeAudio = useCallback(() => {
     if (!analyserRef.current) return;
     const buf = new Uint8Array(analyserRef.current.frequencyBinCount);
@@ -223,25 +105,30 @@ export const MP3Player = () => {
     if (!el) return;
     const dur = el.duration;
     setDuration(dur);
+
     const updateList = (list: Track[], setList: any) =>
       setList(
         list.map((t, i) =>
           i === activeTrack.index ? { ...t, duration: dur } : t
         )
       );
+
     activeTrack.album === 'firewall'
       ? updateList(firewallTracks, setFirewallTracks)
       : updateList(saintsTracks, setSaintsTracks);
   }, [activeTrack, firewallTracks, saintsTracks]);
 
+  // Time tracking
   useEffect(() => {
     const el = audioRef.current?.audio?.current as HTMLAudioElement | null;
     if (!el) return;
     const handleTimeUpdate = () => setCurrentTime(el.currentTime);
     const handleEnded = () => handleNext();
+
     el.addEventListener('loadedmetadata', handleLoadedMetadata);
     el.addEventListener('timeupdate', handleTimeUpdate);
     el.addEventListener('ended', handleEnded);
+
     return () => {
       el.removeEventListener('loadedmetadata', handleLoadedMetadata);
       el.removeEventListener('timeupdate', handleTimeUpdate);
@@ -249,11 +136,13 @@ export const MP3Player = () => {
     };
   }, [handleLoadedMetadata, activeTrack]);
 
+  // Volume
   useEffect(() => {
     const el = audioRef.current?.audio?.current as HTMLAudioElement | null;
     if (el) el.volume = volume;
   }, [volume]);
 
+  // Player controls
   const handlePlay = async () => {
     const el = audioRef.current?.audio?.current as HTMLAudioElement | null;
     if (!el) return;
@@ -382,36 +271,35 @@ export const MP3Player = () => {
             <VolumeControl volume={volume} onVolumeChange={setVolume} />
           </div>
         </div>
+
         <div className="player-panel p-8">
           <Equalizer data={equalizerData} isActive={isPlaying} />
         </div>
+
         <div className="flex justify-center items-center gap-0 bg-[#0a0d0f] border border-[#00ff99]/30 rounded-md overflow-hidden shadow-[0_0_8px_rgba(0,255,153,0.15)] w-fit mx-auto">
           <button
             onClick={() => setVisibleAlbum('saints')}
-            className={`flex items-center gap-2 px-6 py-2 text-sm font-semibold tracking-wide transition-all duration-300
-      ${
-        visibleAlbum === 'saints'
-          ? 'bg-[#003321]/60 text-[#00ff99] border border-[#00ff99]/40 shadow-[inset_0_0_16px_rgba(0,255,153,0.6),0_0_8px_rgba(0,255,153,0.4)]'
-          : 'bg-[#0e1114] text-gray-400 border border-transparent hover:text-[#00ff99]/70'
-      }
-    `}
+            className={`px-6 py-2 text-sm font-semibold transition-all ${
+              visibleAlbum === 'saints'
+                ? 'bg-[#003321]/60 text-[#00ff99] border border-[#00ff99]/40 shadow-[inset_0_0_16px_rgba(0,255,153,0.6)]'
+                : 'bg-[#0e1114] text-gray-400 hover:text-[#00ff99]/70'
+            }`}
           >
-            <span>Silicon Saints</span>
+            Silicon Saints
           </button>
           <div className="h-6 w-px bg-[#00ff99]/25" />
           <button
             onClick={() => setVisibleAlbum('firewall')}
-            className={`flex items-center gap-2 px-6 py-2 text-sm font-semibold tracking-wide transition-all duration-300
-      ${
-        visibleAlbum === 'firewall'
-          ? 'bg-[#003321]/60 text-[#00ff99] border border-[#00ff99]/40 shadow-[inset_0_0_16px_rgba(0,255,153,0.6),0_0_8px_rgba(0,255,153,0.4)]'
-          : 'bg-[#0e1114] text-gray-400 border border-transparent hover:text-[#00ff99]/70'
-      }
-    `}
+            className={`px-6 py-2 text-sm font-semibold transition-all ${
+              visibleAlbum === 'firewall'
+                ? 'bg-[#003321]/60 text-[#00ff99] border border-[#00ff99]/40 shadow-[inset_0_0_16px_rgba(0,255,153,0.6)]'
+                : 'bg-[#0e1114] text-gray-400 hover:text-[#00ff99]/70'
+            }`}
           >
-            <span>Break The Firewall</span>
+            Break The Firewall
           </button>
         </div>
+
         <AnimatePresence mode="wait">
           {visibleAlbum === 'saints' ? (
             <motion.div
@@ -419,7 +307,6 @@ export const MP3Player = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="player-panel p-8 space-y-8"
             >
               <SaintsPlaylist
                 tracks={saintsTracks}
@@ -436,7 +323,6 @@ export const MP3Player = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="player-panel p-8 space-y-8"
             >
               <FirewallPlaylist
                 tracks={firewallTracks}
@@ -449,6 +335,7 @@ export const MP3Player = () => {
             </motion.div>
           )}
         </AnimatePresence>
+
         <AudioPlayer
           ref={audioRef}
           src={`/audio/${currentTrack.filename}`}
