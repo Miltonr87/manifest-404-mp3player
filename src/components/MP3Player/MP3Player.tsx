@@ -42,7 +42,6 @@ export const MP3Player = () => {
     new Array(10).fill(0)
   );
 
-  // 🧠 Memoized track list
   const getTracks = useCallback(
     () => (activeTrack.album === 'firewall' ? firewallTracks : saintsTracks),
     [activeTrack.album, firewallTracks, saintsTracks]
@@ -52,7 +51,6 @@ export const MP3Player = () => {
     [getTracks, activeTrack.index]
   );
 
-  // 🎧 Initialize AudioContext
   const initializeAudioContext = useCallback(async () => {
     const el = audioRef.current?.audio?.current as HTMLAudioElement | null;
     if (!el || audioContextRef.current) return;
@@ -73,7 +71,6 @@ export const MP3Player = () => {
     }
   }, []);
 
-  // 🔊 Equalizer Analysis
   const analyzeAudio = useCallback(() => {
     if (!analyserRef.current) return;
     const buf = new Uint8Array(analyserRef.current.frequencyBinCount);
