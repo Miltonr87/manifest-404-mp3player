@@ -101,7 +101,7 @@ export const IntroPage = ({ onEnter }: { onEnter: () => void }) => {
               animate={{ opacity: [0.4, 1, 0.4] }}
               transition={{ repeat: Infinity, duration: 2 }}
             >
-              v1.404 — Cybernetic Boot Protocol
+              v1.404 — Cybernetic Protocol
             </motion.p>
           </motion.div>
         )}
