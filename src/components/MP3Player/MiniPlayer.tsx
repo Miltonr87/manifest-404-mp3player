@@ -53,7 +53,6 @@ export const MiniPlayer = ({
   useEffect(() => {
     const displayPanel = document.querySelector('#display-panel');
     if (!displayPanel) return;
-
     const observer = new IntersectionObserver(
       ([entry]) => setVisible(!entry.isIntersecting),
       { threshold: 0.1 }
@@ -74,7 +73,6 @@ export const MiniPlayer = ({
           ? window.scrollY
           : (container as HTMLElement).scrollTop);
       const targetTop = Math.max(absoluteTop - headerOffset, 0);
-
       if (container === window) {
         window.scrollTo({ top: targetTop, behavior: 'smooth' });
       } else {
@@ -94,7 +92,7 @@ export const MiniPlayer = ({
         <motion.div
           ref={barRef}
           className="fixed bottom-0 left-0 right-0 z-50 
-            bg-black/80 border-t border-primary/30 backdrop-blur-md
+            bg-background/80 border-t border-border backdrop-blur-md
             flex items-center justify-between px-4 py-2 md:px-8"
           initial={{ opacity: 0, y: 100, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -102,16 +100,18 @@ export const MiniPlayer = ({
           transition={{ duration: 0.4, ease: 'easeOut' }}
         >
           <div className="flex items-center gap-3 overflow-hidden">
-            <motion.img
-              src={track?.artwork}
-              alt={track?.title || 'cover'}
-              className="w-10 h-10 rounded-md border border-primary/40 object-cover"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3 }}
-            />
+            {track?.artwork && (
+              <motion.img
+                src={track.artwork}
+                alt={track.title || 'cover'}
+                className="w-10 h-10 rounded-md border border-border object-cover"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
+              />
+            )}
             <div className="text-left overflow-hidden">
-              <div className="digital-display text-primary font-semibold text-sm truncate max-w-[180px] md:max-w-[250px]">
+              <div className="text-foreground font-semibold text-sm truncate max-w-[180px] md:max-w-[250px]">
                 {track?.title || '—'}
               </div>
               <div className="text-muted-foreground text-xs">
@@ -120,36 +120,32 @@ export const MiniPlayer = ({
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <div className="digital-display text-xs opacity-70 hidden md:block">
+            <div className="text-xs text-muted-foreground hidden md:block">
               {currentTime} / {duration}
             </div>
             <motion.button
               type="button"
               onClick={onTogglePlay}
-              className={`p-2 rounded-full transition ${
-                isPlaying
-                  ? 'bg-primary/40 shadow-[0_0_8px_rgba(0,255,200,0.6)]'
-                  : 'bg-primary/20 hover:bg-primary/40'
-              }`}
+              className={`p-2 rounded-full border border-border bg-secondary/10 hover:bg-secondary/20 transition`}
               aria-label={isPlaying ? 'Pause' : 'Play'}
               whileTap={{ scale: 0.9 }}
             >
               {isPlaying ? (
-                <Pause className="w-4 h-4 text-primary" />
+                <Pause className="w-4 h-4 text-foreground" />
               ) : (
-                <Play className="w-4 h-4 text-primary" />
+                <Play className="w-4 h-4 text-foreground" />
               )}
             </motion.button>
             <motion.button
               type="button"
               onClick={handleScrollToTop}
-              className="p-2 rounded-full bg-primary/20 hover:bg-primary/40 transition"
+              className="p-2 rounded-full border border-border bg-secondary/10 hover:bg-secondary/20 transition"
               title="Back to top"
               aria-label="Back to top"
               whileTap={{ scale: 0.9 }}
               whileHover={{ scale: 1.1 }}
             >
-              <ArrowUp className="w-4 h-4 text-primary" />
+              <ArrowUp className="w-4 h-4 text-foreground" />
             </motion.button>
           </div>
         </motion.div>

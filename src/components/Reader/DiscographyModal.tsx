@@ -7,19 +7,7 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
   const [openReader, setOpenReader] = useState<'firewall' | 'saints' | null>(
     null
   );
-  const [viewportHeight, setViewportHeight] = useState('90vh');
   const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const updateHeight = () => {
-      const miniPlayerHeight = 80;
-      const vh = window.innerHeight;
-      setViewportHeight(`${vh - miniPlayerHeight - 16}px`);
-    };
-    updateHeight();
-    window.addEventListener('resize', updateHeight);
-    return () => window.removeEventListener('resize', updateHeight);
-  }, []);
 
   useEffect(() => {
     const audioCtx = new (window.AudioContext ||
@@ -40,7 +28,6 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
   useEffect(() => {
     const images = ['/assets/siliconSaints/5.jpg', '/assets/5.jpg'];
     let loaded = 0;
-
     images.forEach((src) => {
       const img = new Image();
       img.src = src;
@@ -70,12 +57,15 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
           exit={{ opacity: 0 }}
           onClick={onClose}
         >
+          {/* 🔲 Backdrop */}
           <motion.div
             className="absolute inset-0 bg-background/80 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           />
+
+          {/* 🌀 Loader */}
           <AnimatePresence>
             {isLoading && (
               <motion.div
@@ -90,11 +80,11 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
                   animate={{ rotate: 360 }}
                   transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
                 >
-                  <div className="absolute inset-0 rounded-full border-4 border-primary/40" />
-                  <div className="absolute inset-0 rounded-full border-t-4 border-primary" />
+                  <div className="absolute inset-0 rounded-full border-4 border-border/40" />
+                  <div className="absolute inset-0 rounded-full border-t-4 border-border" />
                 </motion.div>
                 <motion.p
-                  className="text-primary text-lg font-semibold tracking-widest neon-text"
+                  className="text-foreground text-lg font-semibold tracking-widest"
                   animate={{ opacity: [0.3, 1, 0.3] }}
                   transition={{ repeat: Infinity, duration: 1.5 }}
                 >
@@ -105,21 +95,25 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
           </AnimatePresence>
           {!isLoading && (
             <motion.div
-              className="relative w-full max-w-5xl flex flex-col border border-primary/30 bg-secondary/20 rounded-2xl overflow-y-auto hide-scrollbar player-panel"
-              style={{ maxHeight: viewportHeight }}
+              className="relative w-full max-w-5xl flex flex-col border border-border bg-secondary/10 rounded-2xl overflow-y-auto hide-scrollbar player-panel"
+              style={{
+                maxHeight: 'calc(90vh - 80px)',
+                paddingBottom: '100px',
+              }}
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
               onClick={(e) => e.stopPropagation()}
             >
+              {/* 🧠 Header */}
               <motion.div
-                className="sticky top-0 z-20 bg-gradient-to-b from-background/95 to-background/60 backdrop-blur-md border-b border-primary/30 py-4"
+                className="sticky top-0 z-20 bg-gradient-to-b from-background/95 to-background/60 backdrop-blur-md border-b border-border py-4"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
               >
-                <h2 className="text-2xl sm:text-3xl font-bold text-center neon-text tracking-wider">
+                <h2 className="text-2xl sm:text-3xl font-bold text-center text-foreground tracking-wider">
                   Discography
                 </h2>
                 <motion.button
@@ -131,10 +125,9 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
                   <X className="w-5 h-5" />
                 </motion.button>
               </motion.div>
-              <br />
-              <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 px-4 pb-8 sm:px-8">
+              <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 px-4 pb-8 sm:px-8 mt-6">
                 <motion.div
-                  className="relative bg-secondary/30 border border-primary/30 rounded-xl overflow-hidden cursor-pointer"
+                  className="relative bg-secondary/20 border border-border rounded-xl overflow-hidden cursor-pointer"
                   initial={{ opacity: 0, rotateY: -10, scale: 0.9 }}
                   animate={{ opacity: 1, rotateY: 0, scale: 1 }}
                   transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -148,13 +141,13 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
                     className="w-full h-auto object-cover max-h-[65vh] transition-all duration-300"
                   />
                   <motion.div
-                    className="absolute bottom-0 left-0 right-0 bg-black/70 backdrop-blur-md p-3 text-center border-t border-primary/30"
+                    className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-md p-3 text-center border-t border-border"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, ease: 'easeOut' }}
                     viewport={{ once: true }}
                   >
-                    <h3 className="font-semibold text-primary text-base sm:text-lg">
+                    <h3 className="font-semibold text-foreground text-base sm:text-lg">
                       Silicon Saints
                     </h3>
                     <p className="text-[11px] sm:text-xs text-muted-foreground">
@@ -163,7 +156,7 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
                   </motion.div>
                 </motion.div>
                 <motion.div
-                  className="relative bg-secondary/30 border border-primary/30 rounded-xl overflow-hidden cursor-pointer"
+                  className="relative bg-secondary/20 border border-border rounded-xl overflow-hidden cursor-pointer"
                   initial={{ opacity: 0, rotateY: 10, scale: 0.9 }}
                   animate={{ opacity: 1, rotateY: 0, scale: 1 }}
                   transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
@@ -177,13 +170,13 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
                     className="w-full h-auto object-cover max-h-[65vh] transition-all duration-300"
                   />
                   <motion.div
-                    className="absolute bottom-0 left-0 right-0 bg-black/70 backdrop-blur-md p-3 text-center border-t border-primary/30"
+                    className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-md p-3 text-center border-t border-border"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, ease: 'easeOut', delay: 0.3 }}
                     viewport={{ once: true }}
                   >
-                    <h3 className="font-semibold text-primary text-base sm:text-lg">
+                    <h3 className="font-semibold text-foreground text-base sm:text-lg">
                       Break the Firewall
                     </h3>
                     <p className="text-[11px] sm:text-xs text-muted-foreground">

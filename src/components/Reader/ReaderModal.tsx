@@ -207,7 +207,11 @@ export const ReaderModal = ({
               singleImage
                 ? 'max-w-3xl md:flex md:items-center md:justify-center'
                 : 'max-w-6xl'
-            } max-h-[90vh] player-panel p-6 flex flex-col`}
+            } player-panel p-6 flex flex-col`}
+            style={{
+              maxHeight: 'calc(95vh - 80px)',
+              paddingBottom: '30px',
+            }}
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -247,12 +251,16 @@ export const ReaderModal = ({
                       decoding="async"
                       fetchPriority={i === currentIndex ? 'high' : 'low'}
                       className={`
-    snap-center cursor-pointer rounded-2xl shadow-lg border border-border
-    max-h-[70vh] sm:max-h-[80vh] lg:max-h-[85vh]
-    w-auto max-w-[75vw] sm:max-w-[70vw] lg:max-w-[65vw]
-    ${i === currentIndex ? 'opacity-100 scale-100' : 'opacity-70 scale-95'}
-    transition-all duration-300 ease-in-out
-  `}
+                    snap-center cursor-pointer rounded-2xl shadow-lg border border-border
+                    max-h-[70vh] sm:max-h-[80vh] lg:max-h-[85vh]
+                    w-auto max-w-[75vw] sm:max-w-[70vw] lg:max-w-[65vw]
+                    ${
+                      i === currentIndex
+                        ? 'opacity-100 scale-100'
+                        : 'opacity-70 scale-95'
+                    }
+                    transition-all duration-300 ease-in-out
+                  `}
                       onClick={() => openSong(item)}
                       style={{
                         willChange: 'transform, opacity',
