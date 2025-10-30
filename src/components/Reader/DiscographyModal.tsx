@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ReaderModal } from './ReaderModal';
 
 export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
@@ -8,25 +8,26 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
     null
   );
   const [isLoading, setIsLoading] = useState(true);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const albums = [
+    {
+      id: 'saints',
+      title: 'Silicon Saints',
+      desc: 'Meet the new gods of the machine age',
+      src: '/assets/siliconSaints/5.jpg',
+    },
+    {
+      id: 'firewall',
+      title: 'Break the Firewall',
+      desc: 'A journey through the 404 first discoveries',
+      src: '/assets/5.jpg',
+    },
+  ];
 
   useEffect(() => {
-    const audioCtx = new (window.AudioContext ||
-      (window as any).webkitAudioContext)();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(180, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + 0.8);
-    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.8);
-  }, []);
-
-  useEffect(() => {
-    const images = ['/assets/siliconSaints/5.jpg', '/assets/5.jpg'];
+    const images = albums.map((a) => a.src);
     let loaded = 0;
     images.forEach((src) => {
       const img = new Image();
@@ -35,16 +36,32 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
         loaded++;
         if (loaded === images.length) setIsLoading(false);
       } else {
-        img.onload = () => {
-          loaded++;
-          if (loaded === images.length) setIsLoading(false);
-        };
-        img.onerror = () => {
+        img.onload = img.onerror = () => {
           loaded++;
           if (loaded === images.length) setIsLoading(false);
         };
       }
     });
+  }, []);
+
+  const scrollToIndex = (
+    index: number,
+    behavior: ScrollBehavior = 'smooth'
+  ) => {
+    if (!scrollRef.current) return;
+    const container = scrollRef.current;
+    const childWidth =
+      container.firstElementChild?.getBoundingClientRect().width ?? 0;
+    container.scrollTo({ left: index * (childWidth + 32), behavior });
+    setCurrentIndex(index);
+  };
+
+  const scrollLeft = () => currentIndex > 0 && scrollToIndex(currentIndex - 1);
+  const scrollRight = () =>
+    currentIndex < albums.length - 1 && scrollToIndex(currentIndex + 1);
+
+  useEffect(() => {
+    setTimeout(() => scrollToIndex(0, 'auto'), 200);
   }, []);
 
   return (
@@ -61,7 +78,6 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
             className="absolute inset-0 bg-background/80 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
           />
           <AnimatePresence>
             {isLoading && (
@@ -92,11 +108,8 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
           </AnimatePresence>
           {!isLoading && (
             <motion.div
-              className="relative w-full max-w-5xl flex flex-col border border-border bg-secondary/10 rounded-2xl overflow-y-auto hide-scrollbar player-panel"
-              style={{
-                maxHeight: 'calc(90vh - 80px)',
-                paddingBottom: '10px',
-              }}
+              className="relative w-full max-w-6xl flex flex-col border border-border bg-secondary/10 rounded-2xl overflow-hidden player-panel"
+              style={{ maxHeight: 'calc(90vh - 80px)' }}
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
@@ -121,65 +134,69 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
                   <X className="w-5 h-5" />
                 </motion.button>
               </motion.div>
-              <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 px-4 pb-8 sm:px-8 mt-6">
-                <motion.div
-                  className="relative bg-secondary/20 border border-border rounded-xl overflow-hidden cursor-pointer"
-                  initial={{ opacity: 0, rotateY: -10, scale: 0.9 }}
-                  animate={{ opacity: 1, rotateY: 0, scale: 1 }}
-                  transition={{ duration: 0.8, ease: 'easeOut' }}
-                  whileHover={{ rotateY: 4, scale: 1.05 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => setOpenReader('saints')}
-                >
-                  <img
-                    src="/assets/siliconSaints/5.jpg"
-                    alt="Silicon Saints"
-                    className="w-full h-auto object-cover max-h-[65vh] transition-all duration-300"
-                  />
+              <div
+                ref={scrollRef}
+                className="flex-1 overflow-x-hidden snap-x snap-mandatory flex gap-8 p-6 hide-scrollbar"
+              >
+                {albums.map((album, i) => (
                   <motion.div
-                    className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-md p-3 text-center border-t border-border"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, ease: 'easeOut' }}
-                    viewport={{ once: true }}
+                    key={album.id}
+                    className={`snap-center relative bg-secondary/20 border border-border rounded-xl overflow-hidden cursor-pointer flex-shrink-0 ${
+                      i === currentIndex
+                        ? 'opacity-100 scale-100'
+                        : 'opacity-70 scale-95'
+                    } transition-all duration-300`}
+                    onClick={() =>
+                      setOpenReader(album.id as 'firewall' | 'saints')
+                    }
                   >
-                    <h3 className="font-semibold text-foreground text-base sm:text-lg">
-                      Silicon Saints
-                    </h3>
-                    <p className="text-[11px] sm:text-xs text-muted-foreground">
-                      Meet the new gods of the machine age
-                    </p>
+                    <img
+                      src={album.src}
+                      alt={album.title}
+                      className="w-auto max-w-[85vw] sm:max-w-[65vw] rounded-xl object-cover max-h-[70vh] sm:max-h-[80vh]"
+                    />
+                    <motion.div
+                      className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-md p-3 text-center border-t border-border"
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, ease: 'easeOut' }}
+                      viewport={{ once: true }}
+                    >
+                      <h3 className="font-semibold text-foreground text-base sm:text-lg">
+                        {album.title}
+                      </h3>
+                      <p className="text-[11px] sm:text-xs text-muted-foreground">
+                        {album.desc}
+                      </p>
+                    </motion.div>
                   </motion.div>
-                </motion.div>
-                <motion.div
-                  className="relative bg-secondary/20 border border-border rounded-xl overflow-hidden cursor-pointer"
-                  initial={{ opacity: 0, rotateY: 10, scale: 0.9 }}
-                  animate={{ opacity: 1, rotateY: 0, scale: 1 }}
-                  transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
-                  whileHover={{ rotateY: -4, scale: 1.05 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => setOpenReader('firewall')}
-                >
-                  <img
-                    src="/assets/5.jpg"
-                    alt="Break the Firewall"
-                    className="w-full h-auto object-cover max-h-[65vh] transition-all duration-300"
-                  />
-                  <motion.div
-                    className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-md p-3 text-center border-t border-border"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, ease: 'easeOut', delay: 0.3 }}
-                    viewport={{ once: true }}
+                ))}
+              </div>
+              <div className="relative w-full flex justify-center mt-4 mb-3">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={scrollLeft}
+                    disabled={currentIndex === 0}
+                    className={`player-button p-3 transition-all ${
+                      currentIndex === 0
+                        ? 'opacity-30 cursor-not-allowed'
+                        : 'hover:neon-glow'
+                    }`}
                   >
-                    <h3 className="font-semibold text-foreground text-base sm:text-lg">
-                      Break the Firewall
-                    </h3>
-                    <p className="text-[11px] sm:text-xs text-muted-foreground">
-                      A journey through the 404 first discoveries
-                    </p>
-                  </motion.div>
-                </motion.div>
+                    <ChevronLeft className="w-5 h-5 text-foreground" />
+                  </button>
+                  <button
+                    onClick={scrollRight}
+                    disabled={currentIndex === albums.length - 1}
+                    className={`player-button p-3 transition-all ${
+                      currentIndex === albums.length - 1
+                        ? 'opacity-30 cursor-not-allowed'
+                        : 'hover:neon-glow'
+                    }`}
+                  >
+                    <ChevronRight className="w-5 h-5 text-foreground" />
+                  </button>
+                </div>
               </div>
             </motion.div>
           )}
