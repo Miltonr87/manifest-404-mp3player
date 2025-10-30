@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
 import { PlayerControls } from './PlayerControls';
@@ -8,6 +8,8 @@ import { SaintsPlaylist } from './playlist/SaintsPlaylist';
 import { VolumeControl } from './VolumeControl';
 import { ProgressBar } from './ProgressBar';
 import { DisplayPanel } from './DisplayPanel';
+import { Volume2 } from 'lucide-react'; // add this to imports
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Track {
   id: number;
@@ -18,6 +20,7 @@ interface Track {
   artwork?: string;
 }
 
+// 🎸 Album Data
 const firewallTracksInit: Track[] = [
   {
     id: 1,
@@ -137,6 +140,9 @@ export const MP3Player = () => {
 
   const [firewallTracks, setFirewallTracks] = useState(firewallTracksInit);
   const [saintsTracks, setSaintsTracks] = useState(saintsTracksInit);
+  const [visibleAlbum, setVisibleAlbum] = useState<'saints' | 'firewall'>(
+    'saints'
+  );
 
   const [activeTrack, setActiveTrack] = useState<{
     album: 'firewall' | 'saints';
@@ -154,10 +160,17 @@ export const MP3Player = () => {
     new Array(10).fill(0)
   );
 
-  const getTracks = () =>
-    activeTrack.album === 'firewall' ? firewallTracks : saintsTracks;
-  const currentTrack = getTracks()[activeTrack.index] ?? getTracks()[0];
+  // 🧠 Memoized track list
+  const getTracks = useCallback(
+    () => (activeTrack.album === 'firewall' ? firewallTracks : saintsTracks),
+    [activeTrack.album, firewallTracks, saintsTracks]
+  );
+  const currentTrack = useMemo(
+    () => getTracks()[activeTrack.index] ?? getTracks()[0],
+    [getTracks, activeTrack.index]
+  );
 
+  // 🎧 Initialize AudioContext
   const initializeAudioContext = useCallback(async () => {
     const el = audioRef.current?.audio?.current as HTMLAudioElement | null;
     if (!el || audioContextRef.current) return;
@@ -178,6 +191,7 @@ export const MP3Player = () => {
     }
   }, []);
 
+  // 🔊 Equalizer Analysis
   const analyzeAudio = useCallback(() => {
     if (!analyserRef.current) return;
     const buf = new Uint8Array(analyserRef.current.frequencyBinCount);
@@ -220,6 +234,7 @@ export const MP3Player = () => {
       : updateList(saintsTracks, setSaintsTracks);
   }, [activeTrack, firewallTracks, saintsTracks]);
 
+  // ⏱ Update playback time
   useEffect(() => {
     const el = audioRef.current?.audio?.current as HTMLAudioElement | null;
     if (!el) return;
@@ -240,6 +255,7 @@ export const MP3Player = () => {
     if (el) el.volume = volume;
   }, [volume]);
 
+  // ▶️ Play / Pause
   const handlePlay = async () => {
     const el = audioRef.current?.audio?.current as HTMLAudioElement | null;
     if (!el) return;
@@ -293,6 +309,7 @@ export const MP3Player = () => {
     }
   };
 
+  // 🎵 Track Selection
   const handleTrackSelect = async (
     album: 'firewall' | 'saints',
     index: number
@@ -302,6 +319,17 @@ export const MP3Player = () => {
       album === 'firewall' ? firewallTracks[index] : saintsTracks[index];
     if (!selected) return;
     setActiveTrack({ album, index });
+
+    // Preload next track for smoother playback
+    const next = getTracks()[index + 1];
+    if (next) {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'audio';
+      link.href = `/audio/${next.filename}`;
+      document.head.appendChild(link);
+    }
+
     setTimeout(async () => {
       const el = audioRef.current?.audio?.current as HTMLAudioElement | null;
       if (!el) return;
@@ -361,38 +389,80 @@ export const MP3Player = () => {
         <div className="player-panel p-8">
           <Equalizer data={equalizerData} isActive={isPlaying} />
         </div>
-        <div className="player-panel p-8 space-y-8">
-          <SaintsPlaylist
-            tracks={saintsTracks}
-            currentTrack={
-              activeTrack.album === 'saints' ? activeTrack.index : -1
-            }
-            isPlaying={activeTrack.album === 'saints' && isPlaying}
-            onTrackSelect={(i) => handleTrackSelect('saints', i)}
-          />
+        <div className="flex justify-center items-center gap-0 bg-[#0a0d0f] border border-[#00ff99]/30 rounded-md overflow-hidden shadow-[0_0_8px_rgba(0,255,153,0.15)] w-fit mx-auto">
+          <button
+            onClick={() => setVisibleAlbum('saints')}
+            className={`flex items-center gap-2 px-6 py-2 text-sm font-semibold tracking-wide transition-all duration-300
+      ${
+        visibleAlbum === 'saints'
+          ? 'bg-[#003321]/60 text-[#00ff99] border border-[#00ff99]/40 shadow-[inset_0_0_16px_rgba(0,255,153,0.6),0_0_8px_rgba(0,255,153,0.4)]'
+          : 'bg-[#0e1114] text-gray-400 border border-transparent hover:text-[#00ff99]/70'
+      }
+    `}
+          >
+            <span>Silicon Saints</span>
+          </button>
+          <div className="h-6 w-px bg-[#00ff99]/25" />
+          <button
+            onClick={() => setVisibleAlbum('firewall')}
+            className={`flex items-center gap-2 px-6 py-2 text-sm font-semibold tracking-wide transition-all duration-300
+      ${
+        visibleAlbum === 'firewall'
+          ? 'bg-[#003321]/60 text-[#00ff99] border border-[#00ff99]/40 shadow-[inset_0_0_16px_rgba(0,255,153,0.6),0_0_8px_rgba(0,255,153,0.4)]'
+          : 'bg-[#0e1114] text-gray-400 border border-transparent hover:text-[#00ff99]/70'
+      }
+    `}
+          >
+            <span>Break The Firewall</span>
+          </button>
         </div>
-        <div className="player-panel p-8 space-y-8">
-          <FirewallPlaylist
-            tracks={firewallTracks}
-            currentTrack={
-              activeTrack.album === 'firewall' ? activeTrack.index : -1
-            }
-            isPlaying={activeTrack.album === 'firewall' && isPlaying}
-            onTrackSelect={(i) => handleTrackSelect('firewall', i)}
-          />
-        </div>
+        <AnimatePresence mode="wait">
+          {visibleAlbum === 'saints' ? (
+            <motion.div
+              key="saints"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="player-panel p-8 space-y-8"
+            >
+              <SaintsPlaylist
+                tracks={saintsTracks}
+                currentTrack={
+                  activeTrack.album === 'saints' ? activeTrack.index : -1
+                }
+                isPlaying={activeTrack.album === 'saints' && isPlaying}
+                onTrackSelect={(i) => handleTrackSelect('saints', i)}
+              />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="firewall"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="player-panel p-8 space-y-8"
+            >
+              <FirewallPlaylist
+                tracks={firewallTracks}
+                currentTrack={
+                  activeTrack.album === 'firewall' ? activeTrack.index : -1
+                }
+                isPlaying={activeTrack.album === 'firewall' && isPlaying}
+                onTrackSelect={(i) => handleTrackSelect('firewall', i)}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
         <AudioPlayer
           ref={audioRef}
           src={`/audio/${currentTrack.filename}`}
+          preload="none"
           autoPlayAfterSrcChange
           showJumpControls={false}
-          showSkipControls
+          showSkipControls={false}
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
-          onListen={(e) => setCurrentTime(e.target.currentTime)}
           onLoadedMetadata={(e) => setDuration(e.target.duration)}
-          onClickNext={handleNext}
-          onClickPrevious={handlePrevious}
           onEnded={handleNext}
           style={{ display: 'none' }}
         />
