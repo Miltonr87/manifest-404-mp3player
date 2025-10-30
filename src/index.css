@@ -321,3 +321,16 @@
 .hide-scrollbar::-webkit-scrollbar {
   display: none; /* Chrome, Safari e Opera */
 }
+
+.rhap_container {
+  background: transparent;
+  box-shadow: none;
+  color: var(--foreground);
+}
+.rhap_progress-bar,
+.rhap_download-progress {
+  background-color: rgba(0, 255, 200, 0.3);
+}
+.rhap_main-controls-button svg {
+  color: var(--primary);
+}

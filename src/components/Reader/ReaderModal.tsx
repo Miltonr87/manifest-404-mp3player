@@ -209,7 +209,7 @@ export const ReaderModal = ({
                 : 'max-w-6xl'
             } player-panel p-6 flex flex-col`}
             style={{
-              maxHeight: 'calc(95vh - 80px)',
+              maxHeight: 'calc(80vh - 80px)',
               paddingBottom: '30px',
             }}
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
