@@ -222,7 +222,6 @@ export const ReaderModal = ({
             >
               <X className="w-5 h-5" />
             </motion.button>
-
             {singleImage ? (
               <motion.img
                 key={images[0].src}
@@ -246,14 +245,19 @@ export const ReaderModal = ({
                       alt={item.title}
                       loading={i === currentIndex ? 'eager' : 'lazy'}
                       decoding="async"
+                      fetchPriority={i === currentIndex ? 'high' : 'low'}
                       className={`
-                        snap-center cursor-pointer rounded-2xl shadow-lg border border-border
-                        max-h-[70vh] sm:max-h-[80vh] lg:max-h-[85vh]
-                        w-auto max-w-[75vw] sm:max-w-[70vw] lg:max-w-[65vw]
-                        ${i === currentIndex ? 'opacity-100' : 'opacity-80'}
-                        transition-opacity duration-200 ease-in-out
-                      `}
+    snap-center cursor-pointer rounded-2xl shadow-lg border border-border
+    max-h-[70vh] sm:max-h-[80vh] lg:max-h-[85vh]
+    w-auto max-w-[75vw] sm:max-w-[70vw] lg:max-w-[65vw]
+    ${i === currentIndex ? 'opacity-100 scale-100' : 'opacity-70 scale-95'}
+    transition-all duration-300 ease-in-out
+  `}
                       onClick={() => openSong(item)}
+                      style={{
+                        willChange: 'transform, opacity',
+                        contain: 'layout paint',
+                      }}
                     />
                   ))}
                 </div>

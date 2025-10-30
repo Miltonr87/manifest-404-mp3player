@@ -334,37 +334,52 @@ export const MP3Player = () => {
     }
   };
 
-  const handleTrackSelect = async (
-    album: 'firewall' | 'saints',
-    index: number
-  ) => {
-    handleStop();
-    const selectedTracks = album === 'firewall' ? firewallTracks : saintsTracks;
-    const selectedTrack = selectedTracks[index];
-    if (!selectedTrack) return;
+  const handleTrackSelect = useCallback(
+    async (album: 'firewall' | 'saints', index: number) => {
+      handleStop();
 
-    setActiveTrack({ album, index });
+      const selectedTracks =
+        album === 'firewall' ? firewallTracks : saintsTracks;
+      const selectedTrack = selectedTracks[index];
+      if (!selectedTrack) return;
 
-    setTimeout(async () => {
-      const audio = audioRef.current;
-      if (!audio) return;
-      audio.src = `/audio/${selectedTrack.filename}`;
-      audio.load();
-      audio.addEventListener(
-        'loadedmetadata',
-        () => setDuration(audio.duration),
-        { once: true }
-      );
-      await initializeAudioContext();
-      try {
-        await audio.play();
-        setIsPlaying(true);
-      } catch (err) {
-        console.error('Playback error:', err);
-        setIsPlaying(false);
-      }
-    }, 150);
-  };
+      setActiveTrack({ album, index });
+
+      setTimeout(async () => {
+        const audio = audioRef.current;
+        if (!audio) return;
+        // Lazy load the track blob only when needed
+        try {
+          const res = await fetch(`/audio/${selectedTrack.filename}`);
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+          audio.src = url;
+          audio.load();
+
+          audio.addEventListener(
+            'loadedmetadata',
+            () => setDuration(audio.duration),
+            { once: true }
+          );
+          await initializeAudioContext();
+          await audio.play();
+          setIsPlaying(true);
+          const nextTrack = selectedTracks[index + 1];
+          if (nextTrack) {
+            const preloadLink = document.createElement('link');
+            preloadLink.rel = 'preload';
+            preloadLink.as = 'audio';
+            preloadLink.href = `/audio/${nextTrack.filename}`;
+            document.head.appendChild(preloadLink);
+          }
+        } catch (err) {
+          console.error('Lazy load error:', err);
+          setIsPlaying(false);
+        }
+      }, 150);
+    },
+    [firewallTracks, saintsTracks]
+  );
 
   const formatTime = (seconds: number) => {
     if (!seconds || isNaN(seconds)) return '00:00';
@@ -428,7 +443,7 @@ export const MP3Player = () => {
         </div>
         <br />
         <br />
-        <audio ref={audioRef} preload="metadata" crossOrigin="anonymous" />
+        <audio ref={audioRef} preload="none" crossOrigin="anonymous" />
       </div>
     </div>
   );
