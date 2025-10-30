@@ -340,7 +340,6 @@ export const MP3Player = () => {
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
           onLoadedMetadata={(e) => setDuration(e.target.duration)}
-          onEnded={handleNext}
           style={{ display: 'none' }}
         />
       </div>
