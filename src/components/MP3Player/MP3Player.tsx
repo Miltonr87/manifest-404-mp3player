@@ -443,7 +443,7 @@ export const MP3Player = () => {
         </div>
         <br />
         <br />
-        <audio ref={audioRef} preload="none" crossOrigin="anonymous" />
+        <audio ref={audioRef} preload="metadata" crossOrigin="anonymous" />
       </div>
     </div>
   );

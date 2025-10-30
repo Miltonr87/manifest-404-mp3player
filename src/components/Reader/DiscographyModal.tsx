@@ -57,19 +57,16 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
           exit={{ opacity: 0 }}
           onClick={onClose}
         >
-          {/* 🔲 Backdrop */}
           <motion.div
             className="absolute inset-0 bg-background/80 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           />
-
-          {/* 🌀 Loader */}
           <AnimatePresence>
             {isLoading && (
               <motion.div
-                key="loader"
+                key="discography-loader"
                 className="absolute inset-0 flex flex-col items-center justify-center gap-6 text-center"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -80,11 +77,11 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
                   animate={{ rotate: 360 }}
                   transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
                 >
-                  <div className="absolute inset-0 rounded-full border-4 border-border/40" />
-                  <div className="absolute inset-0 rounded-full border-t-4 border-border" />
+                  <div className="absolute inset-0 rounded-full border-4 border-primary/40" />
+                  <div className="absolute inset-0 rounded-full border-t-4 border-primary" />
                 </motion.div>
                 <motion.p
-                  className="text-foreground text-lg font-semibold tracking-widest"
+                  className="text-primary text-lg font-semibold tracking-widest neon-text"
                   animate={{ opacity: [0.3, 1, 0.3] }}
                   transition={{ repeat: Infinity, duration: 1.5 }}
                 >
@@ -98,7 +95,7 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
               className="relative w-full max-w-5xl flex flex-col border border-border bg-secondary/10 rounded-2xl overflow-y-auto hide-scrollbar player-panel"
               style={{
                 maxHeight: 'calc(90vh - 80px)',
-                paddingBottom: '100px',
+                paddingBottom: '10px',
               }}
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
@@ -106,7 +103,6 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
               transition={{ duration: 0.4, ease: 'easeOut' }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* 🧠 Header */}
               <motion.div
                 className="sticky top-0 z-20 bg-gradient-to-b from-background/95 to-background/60 backdrop-blur-md border-b border-border py-4"
                 initial={{ opacity: 0, y: -10 }}
