@@ -342,7 +342,7 @@ export const MP3Player = () => {
     const selectedTracks = album === 'firewall' ? firewallTracks : saintsTracks;
     const selectedTrack = selectedTracks[index];
     if (!selectedTrack) return;
-
+    // testing
     setActiveTrack({ album, index });
 
     setTimeout(async () => {
