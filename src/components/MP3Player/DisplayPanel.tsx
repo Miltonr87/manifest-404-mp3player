@@ -160,16 +160,15 @@ export const DisplayPanel = ({
           </div>
         </div>
       </div>
-      <MiniPlayer
-        track={{
-          ...track,
-          artwork: artworkUrl,
-        }}
-        currentTime={currentTime}
-        duration={duration}
-        isPlaying={isPlaying}
-        onTogglePlay={onTogglePlay ?? (() => {})}
-      />
+      <div className="mini-player-wrapper">
+        <MiniPlayer
+          track={{ ...track, artwork: artworkUrl }}
+          currentTime={currentTime}
+          duration={duration}
+          isPlaying={isPlaying}
+          onTogglePlay={onTogglePlay ?? (() => {})}
+        />
+      </div>
     </div>
   );
 };

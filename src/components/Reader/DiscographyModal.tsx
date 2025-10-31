@@ -64,6 +64,11 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
     setTimeout(() => scrollToIndex(0, 'auto'), 200);
   }, []);
 
+  useEffect(() => {
+    document.body.classList.add('discography-open');
+    return () => document.body.classList.remove('discography-open');
+  }, []);
+
   return (
     <AnimatePresence>
       {!openReader && (
