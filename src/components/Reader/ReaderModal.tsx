@@ -95,6 +95,7 @@ export const ReaderModal = ({
     () => (albumType === 'firewall' ? firewallData : saintsData),
     [albumType]
   );
+
   const [activeSong, setActiveSong] = useState<{
     title: string;
     lyrics: string;
@@ -102,6 +103,7 @@ export const ReaderModal = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isReady, setIsReady] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const singleImage = images.length === 1;
 
@@ -112,21 +114,18 @@ export const ReaderModal = ({
 
   useEffect(() => {
     let loaded = 0;
+    const handleLoaded = () => {
+      loaded++;
+      if (loaded === images.length) setIsLoading(false);
+    };
+
     images.forEach((item) => {
       const img = new Image();
       img.src = item.src;
-      if (img.complete) {
-        loaded++;
-        if (loaded === images.length) setIsLoading(false);
-      } else {
-        img.onload = () => {
-          loaded++;
-          if (loaded === images.length) setIsLoading(false);
-        };
-        img.onerror = () => {
-          loaded++;
-          if (loaded === images.length) setIsLoading(false);
-        };
+      if (img.complete) handleLoaded();
+      else {
+        img.onload = handleLoaded;
+        img.onerror = handleLoaded;
       }
     });
   }, [images]);
@@ -135,8 +134,8 @@ export const ReaderModal = ({
     index: number,
     behavior: ScrollBehavior = 'smooth'
   ) => {
-    if (!scrollRef.current) return;
     const container = scrollRef.current;
+    if (!container) return;
     const childWidth =
       container.firstElementChild?.getBoundingClientRect().width ?? 0;
     container.scrollTo({ left: index * (childWidth + 32), behavior });
@@ -158,10 +157,11 @@ export const ReaderModal = ({
     currentIndex < images.length - 1 && scrollToIndex(currentIndex + 1);
 
   useEffect(() => {
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       scrollToIndex(0, 'auto');
       setIsReady(true);
     }, 200);
+    return () => clearTimeout(timeout);
   }, [images]);
 
   return (
@@ -208,10 +208,7 @@ export const ReaderModal = ({
                 ? 'max-w-3xl md:flex md:items-center md:justify-center'
                 : 'max-w-6xl'
             } player-panel p-6 flex flex-col`}
-            style={{
-              maxHeight: 'calc(95vh - 80px)',
-              paddingBottom: '30px',
-            }}
+            style={{ maxHeight: 'calc(95vh - 80px)', paddingBottom: '30px' }}
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -244,23 +241,21 @@ export const ReaderModal = ({
                 >
                   {images.map((item, i) => (
                     <motion.img
-                      key={item.src}
+                      key={`${albumType}-${item.src || 'img'}-${i}`}
                       src={item.src}
                       alt={item.title}
                       loading={i === currentIndex ? 'eager' : 'lazy'}
                       decoding="async"
                       fetchPriority={i === currentIndex ? 'high' : 'low'}
-                      className={`
-                    snap-center cursor-pointer rounded-2xl shadow-lg border border-border
-                    max-h-[70vh] sm:max-h-[80vh] lg:max-h-[85vh]
-                    w-auto max-w-[75vw] sm:max-w-[70vw] lg:max-w-[65vw]
-                    ${
-                      i === currentIndex
-                        ? 'opacity-100 scale-100'
-                        : 'opacity-70 scale-95'
-                    }
-                    transition-all duration-300 ease-in-out
-                  `}
+                      className={`snap-center cursor-pointer rounded-2xl shadow-lg border border-border
+                        max-h-[70vh] sm:max-h-[80vh] lg:max-h-[85vh]
+                        w-auto max-w-[75vw] sm:max-w-[70vw] lg:max-w-[65vw]
+                        ${
+                          i === currentIndex
+                            ? 'opacity-100 scale-100'
+                            : 'opacity-70 scale-95'
+                        }
+                        transition-all duration-300 ease-in-out`}
                       onClick={() => openSong(item)}
                       style={{
                         willChange: 'transform, opacity',
