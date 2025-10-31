@@ -167,6 +167,7 @@ export const ReaderModal = ({
   return (
     <AnimatePresence>
       <motion.div
+        key="reader-loader"
         className="fixed inset-0 z-50 flex items-center justify-center p-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -225,7 +226,9 @@ export const ReaderModal = ({
             </motion.button>
             {singleImage ? (
               <motion.img
-                key={images[0].src}
+                key={`${albumType}-${images[0].title || 'no-title'}-${
+                  images[0].src || 'no-src'
+                }`}
                 src={images[0].src}
                 alt={images[0].title}
                 loading="eager"
@@ -241,12 +244,14 @@ export const ReaderModal = ({
                 >
                   {images.map((item, i) => (
                     <motion.img
-                      key={`${albumType}-${item.src || 'img'}-${i}`}
+                      key={`${albumType}-${item.title || 'no-title'}-${
+                        item.src || 'no-src'
+                      }-${i}`}
                       src={item.src}
                       alt={item.title}
                       loading={i === currentIndex ? 'eager' : 'lazy'}
                       decoding="async"
-                      fetchPriority={i === currentIndex ? 'high' : 'low'}
+                      fetchpriority={i === currentIndex ? 'high' : 'low'}
                       className={`snap-center cursor-pointer rounded-2xl shadow-lg border border-border
                         max-h-[70vh] sm:max-h-[80vh] lg:max-h-[85vh]
                         w-auto max-w-[75vw] sm:max-w-[70vw] lg:max-w-[65vw]

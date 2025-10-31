@@ -29,9 +29,11 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
   useEffect(() => {
     const images = albums.map((a) => a.src);
     let loaded = 0;
+
     images.forEach((src) => {
       const img = new Image();
       img.src = src;
+
       if (img.complete) {
         loaded++;
         if (loaded === images.length) setIsLoading(false);
@@ -61,7 +63,8 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
     currentIndex < albums.length - 1 && scrollToIndex(currentIndex + 1);
 
   useEffect(() => {
-    setTimeout(() => scrollToIndex(0, 'auto'), 200);
+    const timeout = setTimeout(() => scrollToIndex(0, 'auto'), 200);
+    return () => clearTimeout(timeout);
   }, []);
 
   useEffect(() => {
@@ -73,6 +76,7 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
     <AnimatePresence>
       {!openReader && (
         <motion.div
+          key="reader-loader"
           className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -145,7 +149,7 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
               >
                 {albums.map((album, i) => (
                   <motion.div
-                    key={album.id}
+                    key={`${album.id}-${album.title}-${album.src}`}
                     className={`snap-center relative bg-secondary/20 border border-border rounded-xl overflow-hidden cursor-pointer flex-shrink-0 ${
                       i === currentIndex
                         ? 'opacity-100 scale-100'

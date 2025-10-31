@@ -37,11 +37,12 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
 
   const formattedLyrics = lyrics.split('\n').map((line, idx) => {
     const baseDelay = idx * 0.05;
+    const safeKey = `${title}-line-${idx}-${line}`;
 
-    if (line.match(/\[Chorus\]/i)) {
+    if (/\[Chorus\]/i.test(line)) {
       return (
         <motion.p
-          key={idx}
+          key={safeKey}
           className="text-center font-bold text-lg neon-text drop-shadow-[0_0_8px_rgba(0,255,255,0.9)] mt-6"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -50,10 +51,12 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
           {line}
         </motion.p>
       );
-    } else if (line.match(/\[.*\]/)) {
+    }
+
+    if (/\[.*\]/.test(line)) {
       return (
         <motion.p
-          key={idx}
+          key={safeKey}
           className="text-accent font-semibold text-center mt-4 uppercase tracking-widest"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -63,9 +66,10 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
         </motion.p>
       );
     }
+
     return (
       <motion.p
-        key={idx}
+        key={safeKey}
         className="text-center text-muted-foreground tracking-wide"
         initial={{ opacity: 0, y: 5 }}
         animate={{ opacity: 1, y: 0 }}
@@ -91,6 +95,7 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         />
+
         <motion.div
           className="relative w-full max-w-4xl max-h-[80vh] p-6 md:p-8 overflow-y-auto hide-scrollbar rounded-2xl cursor-grab active:cursor-grabbing border border-border bg-secondary/10 player-panel bg-gradient-to-b from-secondary/40 to-background/60 comic-panel"
           initial={{ scale: 0.9, opacity: 0, y: 30 }}
@@ -112,6 +117,7 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
           >
             <X className="w-5 h-5" />
           </motion.button>
+
           <motion.h2
             className="text-2xl md:text-3xl font-bold text-center neon-text mb-6 uppercase tracking-widest"
             initial={{ opacity: 0, y: -10 }}
@@ -120,6 +126,7 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
           >
             {title}
           </motion.h2>
+
           <motion.div
             className="space-y-2 text-base leading-relaxed px-4"
             initial="hidden"
@@ -127,6 +134,7 @@ export const LyricsModal = ({ title, lyrics, onClose }: LyricsModalProps) => {
           >
             {formattedLyrics}
           </motion.div>
+
           <motion.div
             className="mt-6 w-full h-[2px] bg-primary/50"
             animate={{ opacity: [0.2, 1, 0.4, 1, 0.3] }}
