@@ -15,13 +15,13 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
     {
       id: 'saints',
       title: 'Silicon Saints',
-      desc: 'Meet the gods of the machine age',
+      desc: 'Meet the prophets of the machine age',
       src: '/assets/siliconSaints/5.jpg',
     },
     {
       id: 'firewall',
       title: 'Break the Firewall',
-      desc: 'A journey through the 404 discoveries',
+      desc: 'A journey through the first 404 battles',
       src: '/assets/5.jpg',
     },
   ];
