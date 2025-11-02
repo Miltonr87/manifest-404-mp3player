@@ -67,7 +67,7 @@ export const IntroPage = ({ onEnter }: { onEnter: () => void }) => {
             transition={{ duration: 0.6 }}
           >
             <motion.img
-              src="/banner/manifest_404.png"
+              src="/banner/manifest_404.jpg"
               alt="Manifest 404"
               className="relative w-full max-w-[280px] sm:max-w-[340px] mx-auto mb-4 rounded-md border border-primary/40 shadow-[0_0_6px_rgba(0,255,153,0.25)]"
               initial={{ opacity: 0, y: 10 }}
@@ -92,7 +92,7 @@ export const IntroPage = ({ onEnter }: { onEnter: () => void }) => {
               animate={{ opacity: [0.4, 1, 0.4] }}
               transition={{ repeat: Infinity, duration: 2 }}
             >
-              v1.7.0 — Cybernetic Protocol
+              v2.0.0 — Cybernetic Protocol
             </motion.p>
           </motion.div>
         )}
