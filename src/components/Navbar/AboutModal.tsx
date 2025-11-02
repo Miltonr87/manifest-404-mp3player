@@ -83,7 +83,7 @@ export const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
                 'TypeScript',
                 'Tailwind CSS',
                 'Framer Motion',
-                'Lucide Icons',
+                'Supabase',
               ].map((tech) => (
                 <motion.span
                   key={tech}
