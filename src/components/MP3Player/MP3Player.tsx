@@ -11,6 +11,7 @@ import { DisplayPanel } from './DisplayPanel';
 import {
   firewallTracksInit,
   saintsTracksInit,
+  Track,
 } from '../../data/manifest404Tracks';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -19,7 +20,6 @@ export const MP3Player = () => {
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animationFrameRef = useRef<number | null>(null);
-
   const [firewallTracks, setFirewallTracks] = useState(firewallTracksInit);
   const [saintsTracks, setSaintsTracks] = useState(saintsTracksInit);
   const [visibleAlbum, setVisibleAlbum] = useState<'saints' | 'firewall'>(
@@ -46,6 +46,7 @@ export const MP3Player = () => {
     () => (activeTrack.album === 'firewall' ? firewallTracks : saintsTracks),
     [activeTrack.album, firewallTracks, saintsTracks]
   );
+
   const currentTrack = useMemo(
     () => getTracks()[activeTrack.index] ?? getTracks()[0],
     [getTracks, activeTrack.index]
@@ -73,14 +74,15 @@ export const MP3Player = () => {
 
   const analyzeAudio = useCallback(() => {
     if (!analyserRef.current) return;
-    const buf = new Uint8Array(analyserRef.current.frequencyBinCount);
-    analyserRef.current.getByteFrequencyData(buf);
+    const buffer = new Uint8Array(analyserRef.current.frequencyBinCount);
+    analyserRef.current.getByteFrequencyData(buffer);
     const bands = 10;
-    const step = Math.floor(buf.length / bands);
-    const out = [];
+    const step = Math.floor(buffer.length / bands);
+    const out: number[] = [];
     for (let i = 0; i < bands; i++) {
       const avg =
-        buf.slice(i * step, (i + 1) * step).reduce((a, b) => a + b, 0) / step;
+        buffer.slice(i * step, (i + 1) * step).reduce((a, b) => a + b, 0) /
+        step;
       out.push(avg / 255);
     }
     setEqualizerData(out);
@@ -108,6 +110,7 @@ export const MP3Player = () => {
           i === activeTrack.index ? { ...t, duration: dur } : t
         )
       );
+
     activeTrack.album === 'firewall'
       ? updateList(firewallTracks, setFirewallTracks)
       : updateList(saintsTracks, setSaintsTracks);
@@ -116,11 +119,14 @@ export const MP3Player = () => {
   useEffect(() => {
     const el = audioRef.current?.audio?.current as HTMLAudioElement | null;
     if (!el) return;
+
     const handleTimeUpdate = () => setCurrentTime(el.currentTime);
     const handleEnded = () => handleNext();
+
     el.addEventListener('loadedmetadata', handleLoadedMetadata);
     el.addEventListener('timeupdate', handleTimeUpdate);
     el.addEventListener('ended', handleEnded);
+
     return () => {
       el.removeEventListener('loadedmetadata', handleLoadedMetadata);
       el.removeEventListener('timeupdate', handleTimeUpdate);
@@ -136,6 +142,7 @@ export const MP3Player = () => {
   const handlePlay = async () => {
     const el = audioRef.current?.audio?.current as HTMLAudioElement | null;
     if (!el) return;
+
     if (isPlaying) {
       el.pause();
       setIsPlaying(false);
@@ -146,7 +153,9 @@ export const MP3Player = () => {
         await el.play();
         setIsPlaying(true);
       } catch (err: any) {
-        if (err.name !== 'AbortError') console.error('Playback error:', err);
+        if (err.name !== 'AbortError') {
+          console.error('Playback error:', err);
+        }
       }
     }
   };
@@ -177,7 +186,6 @@ export const MP3Player = () => {
     }));
     setCurrentTime(0);
   };
-
   const handleSeek = (time: number) => {
     const el = audioRef.current?.audio?.current as HTMLAudioElement | null;
     if (el) {
@@ -195,20 +203,19 @@ export const MP3Player = () => {
       album === 'firewall' ? firewallTracks[index] : saintsTracks[index];
     if (!selected) return;
     setActiveTrack({ album, index });
-
     const next = getTracks()[index + 1];
     if (next) {
       const link = document.createElement('link');
       link.rel = 'preload';
       link.as = 'audio';
-      link.href = `/audio/${next.filename}`;
+      link.href = next.filename;
       document.head.appendChild(link);
     }
 
     setTimeout(async () => {
       const el = audioRef.current?.audio?.current as HTMLAudioElement | null;
       if (!el) return;
-      el.src = `/audio/${selected.filename}`;
+      el.src = selected.filename;
       el.load();
       el.addEventListener('loadedmetadata', () => setDuration(el.duration), {
         once: true,
@@ -217,21 +224,21 @@ export const MP3Player = () => {
       try {
         await el.play();
         setIsPlaying(true);
-      } catch (err) {
-        console.error('Playback error:', err);
+      } catch (err: any) {
+        if (err.name !== 'AbortError') {
+          console.error('Playback error:', err);
+        }
         setIsPlaying(false);
       }
     }, 150);
   };
 
-  const formatTime = (s: number) => {
-    if (!s || isNaN(s)) return '00:00';
-    const m = Math.floor(s / 60);
-    const sec = Math.floor(s % 60);
-    return `${m.toString().padStart(2, '0')}:${sec
-      .toString()
-      .padStart(2, '0')}`;
-  };
+  const formatTime = (s: number) =>
+    !s || isNaN(s)
+      ? '00:00'
+      : `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(
+          Math.floor(s % 60)
+        ).padStart(2, '0')}`;
 
   return (
     <div className="pt-20 pb-8 px-4 md:px-8 min-h-screen bg-background">
@@ -332,8 +339,9 @@ export const MP3Player = () => {
         </AnimatePresence>
         <AudioPlayer
           ref={audioRef}
-          src={`/audio/${currentTrack.filename}`}
+          src={currentTrack.filename}
           preload="none"
+          crossOrigin="anonymous"
           autoPlayAfterSrcChange
           showJumpControls={false}
           showSkipControls={false}
