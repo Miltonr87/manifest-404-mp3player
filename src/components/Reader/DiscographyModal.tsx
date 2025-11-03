@@ -188,24 +188,14 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
               <div className="relative w-full flex justify-center mt-4 mb-3">
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={scrollLeft}
-                    disabled={currentIndex === 0}
-                    className={`player-button p-3 transition-all ${
-                      currentIndex === 0
-                        ? 'opacity-30 cursor-not-allowed'
-                        : 'hover:neon-glow'
-                    }`}
+                    onClick={() => scrollLeft()}
+                    className="player-button p-3 hover:neon-glow transition-all"
                   >
                     <ChevronLeft className="w-5 h-5 text-foreground" />
                   </button>
                   <button
-                    onClick={scrollRight}
-                    disabled={currentIndex === albums.length - 1}
-                    className={`player-button p-3 transition-all ${
-                      currentIndex === albums.length - 1
-                        ? 'opacity-30 cursor-not-allowed'
-                        : 'hover:neon-glow'
-                    }`}
+                    onClick={() => scrollRight()}
+                    className="player-button p-3 hover:neon-glow transition-all"
                   >
                     <ChevronRight className="w-5 h-5 text-foreground" />
                   </button>
