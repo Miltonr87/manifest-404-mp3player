@@ -15,14 +15,14 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
     {
       id: 'saints',
       title: 'Silicon Saints',
-      desc: 'Machine-age prophecy begins here',
-      src: '/assets/siliconSaints/5.jpg',
+      desc: 'The Machine-age prophecy begins here',
+      src: '/albums/SiliconSaints.jpg',
     },
     {
       id: 'firewall',
       title: 'Break the Firewall',
-      desc: 'First campaign of the 404 rebellion',
-      src: '/assets/5.jpg',
+      desc: "Fight against the system's security",
+      src: '/albums/BreakTheFirewall.jpg',
     },
   ];
 
@@ -150,22 +150,26 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
                 {albums.map((album, i) => (
                   <motion.div
                     key={`${album.id}-${album.title}-${album.src}`}
-                    className={`snap-center relative bg-secondary/20 border border-border rounded-xl overflow-hidden cursor-pointer flex-shrink-0 ${
-                      i === currentIndex
-                        ? 'opacity-100 scale-100'
-                        : 'opacity-70 scale-95'
-                    } transition-all duration-300`}
+                    className={`snap-center relative bg-secondary/20 border border-border rounded-xl
+  overflow-hidden cursor-pointer flex-shrink-0
+  w-[85vw] sm:w-[420px] md:w-[540px]  /* ✅ Forces 1 item on desktop */
+  ${
+    i === currentIndex ? 'opacity-100 scale-100' : 'opacity-70 scale-95'
+  } transition-all duration-300`}
                     onClick={() =>
                       setOpenReader(album.id as 'firewall' | 'saints')
                     }
                   >
-                    <img
-                      src={album.src}
-                      alt={album.title}
-                      className="w-auto max-w-[85vw] sm:max-w-[65vw] rounded-xl object-cover max-h-[70vh] sm:max-h-[80vh]"
-                    />
+                    <div className="w-[85vw] max-w-[420px] aspect-square mx-auto bg-black/20 rounded-xl flex items-center justify-center">
+                      <img
+                        src={album.src}
+                        alt={album.title}
+                        className="w-full h-full object-contain rounded-xl"
+                      />
+                    </div>
                     <motion.div
-                      className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-md p-3 text-center border-t border-border"
+                      className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-md p-3
+    text-center border-t border-border"
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6, ease: 'easeOut' }}

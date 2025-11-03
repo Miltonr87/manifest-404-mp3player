@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MiniPlayer } from './MiniPlayer';
-import breakTheFirewallArt from '@/assets/break_the_firewall.jpg';
-import siliconSaintsArt from '@/assets/silicon_saints.jpg';
+import breakTheFirewallArt from '../../../public/albums/BreakTheFirewall.jpg';
+import siliconSaintsArt from '../../../public/albums/SiliconSaints.jpg';
 
 interface Track {
   id: number;
