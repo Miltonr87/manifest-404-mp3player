@@ -125,7 +125,7 @@ const TrackRow = memo(
 
 export const FirewallPlaylist = memo(
   ({ tracks = [], currentTrack, isPlaying, onTrackSelect }: PlaylistProps) => {
-    const [isExpanded, setIsExpanded] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(true);
     const [durations, setDurations] = useState<Record<number, number>>({});
 
     useEffect(() => {
