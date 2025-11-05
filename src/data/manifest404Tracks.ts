@@ -121,3 +121,20 @@ export const saintsTracksInit: Track[] = [
     },
 ];
 
+
+export const bonusTracksInit: Track[] = [
+    {
+        id: 101,
+        title: 'Digital Chains',
+        artist: 'Punk Rock',
+        duration: 169,
+        filename: `${PREFIX}Digital_Chains.mp3`,
+    },
+    {
+        id: 102,
+        title: 'Heart.Exe',
+        artist: 'Eletro / SynthPunk',
+        duration: 199,
+        filename: `${PREFIX}Heart_Exe.mp3`,
+    },
+];

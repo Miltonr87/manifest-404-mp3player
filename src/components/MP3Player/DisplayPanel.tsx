@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MiniPlayer } from './MiniPlayer';
 import breakTheFirewallArt from '../../../public/albums/BreakTheFirewall.jpg';
 import siliconSaintsArt from '../../../public/albums/SiliconSaints.jpg';
+import bonusArt from '../../../public/albums/manifest_404_1024.jpg';
 
 interface Track {
   id: number;
@@ -18,12 +19,15 @@ interface DisplayPanelProps {
   currentTime: string;
   duration: string;
   isPlaying: boolean;
-  album?: 'firewall' | 'saints';
+  album?: 'firewall' | 'saints' | 'bonus';
   onTogglePlay?: () => void;
 }
 
-const getArtwork = (album: 'firewall' | 'saints') =>
-  album === 'saints' ? siliconSaintsArt : breakTheFirewallArt;
+const getArtwork = (album: 'firewall' | 'saints' | 'bonus') => {
+  if (album === 'saints') return siliconSaintsArt;
+  if (album === 'firewall') return breakTheFirewallArt;
+  return bonusArt; // ✅ Bonus cover
+};
 
 const getTheme = () => ({
   border: 'border-primary/30',
@@ -43,8 +47,7 @@ export const DisplayPanel = ({
 }: DisplayPanelProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const theme = getTheme();
-  const artwork = getArtwork(album);
-  const artworkUrl = track?.artwork ?? artwork;
+  const artworkUrl = track?.artwork ?? getArtwork(album);
   const titleRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
