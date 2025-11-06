@@ -34,11 +34,9 @@ export const MP3Player = () => {
   const [activeTrack, setActiveTrack] = useState<{
     album: 'firewall' | 'saints' | 'bonus';
     index: number;
-  }>({
-    album: 'saints',
-    index: 0,
-  });
+  }>({ album: 'saints', index: 0 });
 
+  const [isBonusActive, setIsBonusActive] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -46,6 +44,10 @@ export const MP3Player = () => {
   const [equalizerData, setEqualizerData] = useState<number[]>(
     new Array(10).fill(0)
   );
+
+  useEffect(() => {
+    setIsBonusActive(activeTrack.album === 'bonus');
+  }, [activeTrack.album]);
 
   const getTracks = useCallback(() => {
     if (activeTrack.album === 'firewall') return firewallTracks;
@@ -123,9 +125,6 @@ export const MP3Player = () => {
       updateList(firewallTracks, setFirewallTracks);
     if (activeTrack.album === 'saints')
       updateList(saintsTracks, setSaintsTracks);
-    if (activeTrack.album === 'bonus') {
-      // bonus is static, skip updating state
-    }
   }, [activeTrack, firewallTracks, saintsTracks]);
 
   useEffect(() => {
@@ -247,9 +246,19 @@ export const MP3Player = () => {
         ).padStart(2, '0')}`;
 
   return (
-    <div className="pt-20 pb-8 px-4 md:px-8 min-h-screen bg-background">
+    <div
+      className={`pt-20 pb-8 px-4 md:px-8 min-h-screen bg-background ${
+        isBonusActive ? 'shadow-[0_0_16px_rgba(255,0,150,0.3)]' : ''
+      }`}
+    >
       <div className="max-w-4xl mx-auto space-y-8">
-        <div className="player-panel p-8 space-y-8">
+        <div
+          className={`player-panel p-8 space-y-8 ${
+            isBonusActive
+              ? 'border-pink-500/40 shadow-[0_0_20px_rgba(255,0,150,0.3)]'
+              : ''
+          }`}
+        >
           <DisplayPanel
             track={currentTrack}
             currentTime={formatTime(currentTime)}
@@ -262,8 +271,8 @@ export const MP3Player = () => {
             currentTime={currentTime}
             duration={duration}
             onSeek={handleSeek}
+            album={activeTrack.album}
           />
-
           <div className="flex items-center justify-between gap-6">
             <PlayerControls
               isPlaying={isPlaying}
@@ -271,13 +280,21 @@ export const MP3Player = () => {
               onStop={handleStop}
               onPrevious={handlePrevious}
               onNext={handleNext}
+              album={activeTrack.album}
             />
-            <VolumeControl volume={volume} onVolumeChange={setVolume} />
+            <VolumeControl
+              volume={volume}
+              album={activeTrack.album}
+              onVolumeChange={setVolume}
+            />
           </div>
         </div>
-
         <div className="player-panel p-8">
-          <Equalizer data={equalizerData} isActive={isPlaying} />
+          <Equalizer
+            data={equalizerData}
+            album={activeTrack.album}
+            isActive={isPlaying}
+          />
         </div>
         <div className="flex justify-center items-center gap-0 bg-secondary border border-border rounded-md shadow-[0_0_8px_hsl(var(--glow)/0.2)] w-fit mx-auto overflow-hidden">
           <button
@@ -287,8 +304,7 @@ export const MP3Player = () => {
                 visibleAlbum === 'saints'
                   ? 'text-primary bg-player-panel-dark shadow-[inset_0_0_12px_hsl(var(--glow)/0.6)] border border-primary'
                   : 'text-gray-400 hover:text-primary'
-              }
-            `}
+              }`}
           >
             Silicon Saints
           </button>
@@ -300,8 +316,7 @@ export const MP3Player = () => {
                 visibleAlbum === 'firewall'
                   ? 'text-primary bg-player-panel-dark shadow-[inset_0_0_12px_hsl(var(--glow)/0.6)] border border-primary'
                   : 'text-gray-400 hover:text-primary'
-              }
-            `}
+              }`}
           >
             Break The Firewall
           </button>
@@ -309,16 +324,16 @@ export const MP3Player = () => {
           <button
             onClick={() => setVisibleAlbum('bonus')}
             className={`flex items-center gap-2 px-6 py-2 text-sm font-semibold tracking-wide transition-all duration-300
-    ${
-      visibleAlbum === 'bonus'
-        ? 'text-[hsl(var(--bonus))] bg-player-panel-dark border border-[hsl(var(--bonus))] shadow-[inset_0_0_16px_hsl(var(--bonus)/0.6),0_0_12px_hsl(var(--bonus)/0.5)]'
-        : 'text-gray-400 hover:text-[hsl(var(--bonus))] hover:drop-shadow-[0_0_8px_hsl(var(--bonus)/0.6)]'
-    }
-  `}
+              ${
+                visibleAlbum === 'bonus'
+                  ? 'text-pink-400 bg-player-panel-dark border border-pink-500 shadow-[inset_0_0_16px_rgba(255,0,150,0.5),0_0_12px_rgba(255,0,150,0.5)]'
+                  : 'text-gray-400 hover:text-pink-400 hover:drop-shadow-[0_0_8px_rgba(255,0,150,0.6)]'
+              }`}
           >
             Bonus Tracks
           </button>
         </div>
+
         <AnimatePresence mode="wait">
           <div className="pb-12">
             {visibleAlbum === 'saints' && (
@@ -377,6 +392,7 @@ export const MP3Player = () => {
             )}
           </div>
         </AnimatePresence>
+
         <AudioPlayer
           ref={audioRef}
           src={currentTrack?.filename}

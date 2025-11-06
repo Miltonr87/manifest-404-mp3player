@@ -86,6 +86,8 @@ export const MiniPlayer = ({
     }
   };
 
+  const isBonus = track?.artist?.toLowerCase().includes('bonus');
+
   return (
     <AnimatePresence>
       {visible && (
@@ -105,23 +107,40 @@ export const MiniPlayer = ({
                 key={track.artwork}
                 src={track.artwork}
                 alt={track.title || 'cover'}
-                className="w-10 h-10 rounded-md border border-border object-cover"
+                className={`w-10 h-10 rounded-md object-cover border ${
+                  isBonus
+                    ? 'border-pink-500/60 shadow-[0_0_8px_rgba(255,0,150,0.5)]'
+                    : 'border-border'
+                }`}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3 }}
               />
             )}
             <div className="text-left overflow-hidden">
-              <div className="text-foreground font-semibold text-sm truncate max-w-[180px] md:max-w-[250px]">
+              <div
+                className={`font-semibold text-sm truncate max-w-[180px] md:max-w-[250px] ${
+                  isBonus ? 'text-pink-400' : 'text-foreground'
+                }`}
+              >
                 {track?.title || '—'}
               </div>
-              <div className="text-muted-foreground text-xs">
+              <div
+                className={`text-xs ${
+                  isBonus ? 'text-pink-400/70 italic' : 'text-muted-foreground'
+                }`}
+              >
                 {track?.artist || 'Unknown artist'}
               </div>
             </div>
           </div>
+
           <div className="flex items-center gap-4">
-            <div className="text-xs text-muted-foreground hidden md:block">
+            <div
+              className={`text-xs hidden md:block ${
+                isBonus ? 'text-pink-400/70' : 'text-muted-foreground'
+              }`}
+            >
               {currentTime} / {duration}
             </div>
             <motion.button
@@ -132,9 +151,17 @@ export const MiniPlayer = ({
               whileTap={{ scale: 0.9 }}
             >
               {isPlaying ? (
-                <Pause className="w-4 h-4 text-foreground" />
+                <Pause
+                  className={`w-4 h-4 ${
+                    isBonus ? 'text-pink-400' : 'text-foreground'
+                  }`}
+                />
               ) : (
-                <Play className="w-4 h-4 text-foreground" />
+                <Play
+                  className={`w-4 h-4 ${
+                    isBonus ? 'text-pink-400' : 'text-foreground'
+                  }`}
+                />
               )}
             </motion.button>
             <motion.button
@@ -146,7 +173,11 @@ export const MiniPlayer = ({
               whileTap={{ scale: 0.9 }}
               whileHover={{ scale: 1.1 }}
             >
-              <ArrowUp className="w-4 h-4 text-foreground" />
+              <ArrowUp
+                className={`w-4 h-4 ${
+                  isBonus ? 'text-pink-400' : 'text-foreground'
+                }`}
+              />
             </motion.button>
           </div>
         </motion.div>

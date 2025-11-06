@@ -32,14 +32,14 @@ const getArtwork = (album: 'firewall' | 'saints' | 'bonus') => {
 const getTheme = (album: 'firewall' | 'saints' | 'bonus') => {
   if (album === 'bonus') {
     return {
-      border: 'border-[hsl(var(--bonus))/0.4]',
-      glow: 'shadow-[0_0_10px_hsl(var(--bonus)/0.6)]',
-      title: 'text-[hsl(var(--bonus))] no-underline decoration-none',
-      artist: 'text-[hsl(var(--bonus))/0.7] no-underline decoration-none',
-      pulse: 'from-[hsl(var(--bonus))/0.15] to-[hsl(var(--bonus))/0.05]',
-      ready: 'text-[hsl(var(--bonus))]',
-      scan: 'bg-[hsl(var(--bonus))/0.7]',
-      digit: 'text-[hsl(var(--bonus))]',
+      border: 'border-pink-500/40',
+      glow: 'shadow-[0_0_10px_rgba(255,0,150,0.6)]',
+      title: 'text-pink-400 no-underline decoration-none',
+      artist: 'text-pink-400/70 no-underline decoration-none',
+      pulse: 'from-pink-500/10 to-pink-500/5',
+      ready: 'text-pink-400',
+      scan: 'bg-pink-500/70',
+      digit: 'text-pink-400',
     };
   }
 
@@ -65,7 +65,6 @@ export const DisplayPanel = ({
 }: DisplayPanelProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const theme = getTheme(album);
-
   const artworkUrl = track?.artwork ?? getArtwork(album);
   const titleRef = useRef<HTMLDivElement>(null);
 
@@ -84,7 +83,6 @@ export const DisplayPanel = ({
         id="display-panel"
         className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center w-full max-w-sm md:max-w-4xl mx-auto"
       >
-        {/* TITLE + ARTIST */}
         <div className="space-y-2 text-center md:text-left">
           <div
             ref={titleRef}
@@ -96,8 +94,6 @@ export const DisplayPanel = ({
             {track?.artist || 'No track selected'}
           </div>
         </div>
-
-        {/* ALBUM ART */}
         <div className="flex items-center justify-center">
           <div
             className={`
@@ -157,7 +153,6 @@ export const DisplayPanel = ({
                 />
               )}
             </AnimatePresence>
-
             {!isLoading && (
               <div
                 className={`
@@ -168,19 +163,14 @@ export const DisplayPanel = ({
             )}
           </div>
         </div>
-
-        {/* DIGITAL TIME DISPLAY */}
         <div className="text-center md:text-right space-y-2">
           <div
             className={`digital-display text-3xl md:text-4xl font-bold ${theme.digit}`}
           >
             {currentTime}
           </div>
-          <div className="digital-display text-sm opacity-70">{duration}</div>
         </div>
       </div>
-
-      {/* MINI PLAYER */}
       <div className="mini-player-wrapper">
         <MiniPlayer
           track={{ ...track, artwork: artworkUrl }}
