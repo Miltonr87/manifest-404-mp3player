@@ -65,7 +65,6 @@ const TrackRow = memo(
             </div>
           )}
         </div>
-
         <div className="flex-1 min-w-0">
           <div
             className={`
@@ -79,7 +78,6 @@ const TrackRow = memo(
             {track.artist}
           </div>
         </div>
-
         <div
           className={`digital-display text-sm flex-shrink-0 text-right text-muted-foreground`}
         >
@@ -137,7 +135,6 @@ export const SaintsPlaylist = memo(
             )}
           </button>
         </div>
-
         <div className="space-y-2">
           {(visibleTracks ?? []).map((track, index) => {
             const duration = durations[track.id] || track.duration;

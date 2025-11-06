@@ -65,7 +65,6 @@ const TrackRow = memo(
             </div>
           )}
         </div>
-
         <div className="flex-1 min-w-0">
           <div
             className={`
@@ -83,7 +82,6 @@ const TrackRow = memo(
             {track.artist}
           </div>
         </div>
-
         <div
           className={`digital-display text-sm flex-shrink-0 text-right ${
             isActive ? 'text-pink-400' : 'text-pink-400/60'
@@ -100,7 +98,6 @@ export const BonusPlaylist = memo(
   ({ tracks = [], currentTrack, isPlaying, onTrackSelect }: PlaylistProps) => {
     const [isExpanded, setIsExpanded] = useState(true);
     const [durations, setDurations] = useState<Record<number, number>>({});
-
     useEffect(() => {
       tracks.forEach((track) => {
         if (track.duration === 0 && !durations[track.id]) {
@@ -114,14 +111,12 @@ export const BonusPlaylist = memo(
         }
       });
     }, [tracks, durations]);
-
     const visibleTracks = useMemo(() => {
       if (isExpanded) return tracks ?? [];
       const safeIndex =
         currentTrack >= 0 && currentTrack < tracks.length ? currentTrack : 0;
       return tracks.length ? [tracks[safeIndex]] : [];
     }, [isExpanded, tracks, currentTrack]);
-
     const handleToggle = useCallback(() => setIsExpanded((prev) => !prev), []);
     const handleSelect = useCallback(
       (i: number) => {
@@ -129,7 +124,6 @@ export const BonusPlaylist = memo(
       },
       [onTrackSelect, tracks]
     );
-
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
@@ -147,7 +141,6 @@ export const BonusPlaylist = memo(
             )}
           </button>
         </div>
-
         <div className="space-y-2">
           {(visibleTracks ?? []).map((track, index) => {
             const duration = durations[track.id] || track.duration;

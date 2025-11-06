@@ -63,7 +63,6 @@ export const Equalizer = ({
             ease: 'easeInOut',
           }}
         >
-          {/* Neon glow on top of each bar */}
           {isActive && (
             <motion.div
               className="absolute left-0 right-0 h-2 rounded-sm"

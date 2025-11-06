@@ -26,16 +26,13 @@ export const MP3Player = () => {
   const [firewallTracks, setFirewallTracks] = useState(firewallTracksInit);
   const [saintsTracks, setSaintsTracks] = useState(saintsTracksInit);
   const [bonusTracks] = useState(bonusTracksInit);
-
   const [visibleAlbum, setVisibleAlbum] = useState<
     'saints' | 'firewall' | 'bonus'
   >('saints');
-
-  const [activeTrack, setActiveTrack] = useState<{
-    album: 'firewall' | 'saints' | 'bonus';
-    index: number;
-  }>({ album: 'saints', index: 0 });
-
+  const [activeTrack, setActiveTrack] = useState({
+    album: 'saints' as const,
+    index: 0,
+  });
   const [isBonusActive, setIsBonusActive] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -52,8 +49,7 @@ export const MP3Player = () => {
   const getTracks = useCallback(() => {
     if (activeTrack.album === 'firewall') return firewallTracks;
     if (activeTrack.album === 'saints') return saintsTracks;
-    if (activeTrack.album === 'bonus') return bonusTracks;
-    return [];
+    return bonusTracks;
   }, [activeTrack.album, firewallTracks, saintsTracks, bonusTracks]);
 
   const currentTrack = useMemo(
@@ -62,7 +58,7 @@ export const MP3Player = () => {
   );
 
   const initializeAudioContext = useCallback(async () => {
-    const el = audioRef.current?.audio?.current as HTMLAudioElement | null;
+    const el = audioRef.current?.audio?.current;
     if (!el || audioContextRef.current) return;
     try {
       const AudioCtx =
@@ -71,14 +67,13 @@ export const MP3Player = () => {
       const analyser = ctx.createAnalyser();
       analyser.fftSize = 512;
       analyser.smoothingTimeConstant = 0.8;
-      const src = ctx.createMediaElementSource(el);
-      src.connect(analyser);
-      analyser.connect(ctx.destination);
+      ctx
+        .createMediaElementSource(el)
+        .connect(analyser)
+        .connect(ctx.destination);
       audioContextRef.current = ctx;
       analyserRef.current = analyser;
-    } catch (err) {
-      console.error('Failed to init audio context:', err);
-    }
+    } catch {}
   }, []);
 
   const analyzeAudio = useCallback(() => {
@@ -87,14 +82,12 @@ export const MP3Player = () => {
     analyserRef.current.getByteFrequencyData(buffer);
     const bands = 10;
     const step = Math.floor(buffer.length / bands);
-    const out: number[] = [];
-    for (let i = 0; i < bands; i++) {
-      const avg =
-        buffer.slice(i * step, (i + 1) * step).reduce((a, b) => a + b, 0) /
-        step;
-      out.push(avg / 255);
-    }
-    setEqualizerData(out);
+    const values = Array.from({ length: bands }, (_, i) => {
+      const segment = buffer.slice(i * step, (i + 1) * step);
+      const avg = segment.reduce((a, b) => a + b, 0) / step;
+      return avg / 255;
+    });
+    setEqualizerData(values);
     if (isPlaying)
       animationFrameRef.current = requestAnimationFrame(analyzeAudio);
   }, [isPlaying]);
@@ -108,79 +101,53 @@ export const MP3Player = () => {
     }
   }, [isPlaying, analyzeAudio]);
 
-  const handleLoadedMetadata = useCallback(() => {
-    const el = audioRef.current?.audio?.current;
-    if (!el) return;
-    const dur = el.duration;
-    setDuration(dur);
-
-    const updateList = (list: Track[], setList: any) =>
-      setList(
-        list.map((t, i) =>
+  const updateDurationInList = (dur: number) => {
+    const update = (tracks: Track[], setTracks: any) =>
+      setTracks(
+        tracks.map((t, i) =>
           i === activeTrack.index ? { ...t, duration: dur } : t
         )
       );
-
     if (activeTrack.album === 'firewall')
-      updateList(firewallTracks, setFirewallTracks);
-    if (activeTrack.album === 'saints')
-      updateList(saintsTracks, setSaintsTracks);
-  }, [activeTrack, firewallTracks, saintsTracks]);
+      update(firewallTracks, setFirewallTracks);
+    if (activeTrack.album === 'saints') update(saintsTracks, setSaintsTracks);
+  };
 
-  useEffect(() => {
+  const loadAndPlay = async (src: string) => {
     const el = audioRef.current?.audio?.current;
     if (!el) return;
-
-    const handleTimeUpdate = () => setCurrentTime(el.currentTime);
-    const handleEnded = () => handleNext();
-
-    el.addEventListener('loadedmetadata', handleLoadedMetadata);
-    el.addEventListener('timeupdate', handleTimeUpdate);
-    el.addEventListener('ended', handleEnded);
-
-    return () => {
-      el.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      el.removeEventListener('timeupdate', handleTimeUpdate);
-      el.removeEventListener('ended', handleEnded);
-    };
-  }, [handleLoadedMetadata, activeTrack]);
-
-  useEffect(() => {
-    const el = audioRef.current?.audio?.current;
-    if (el) el.volume = volume;
-  }, [volume]);
-
-  useEffect(() => {
-    if (activeTrack.album !== visibleAlbum) {
-      setActiveTrack({ album: visibleAlbum, index: 0 });
-
-      const list =
-        visibleAlbum === 'firewall'
-          ? firewallTracks
-          : visibleAlbum === 'saints'
-          ? saintsTracks
-          : bonusTracks;
-
-      const el = audioRef.current?.audio?.current;
-      if (el && list[0]) {
-        el.src = list[0].filename;
-        el.load();
-        setCurrentTime(0);
-        setIsPlaying(false);
-      }
+    el.src = src;
+    el.load();
+    await initializeAudioContext();
+    audioContextRef.current?.resume();
+    try {
+      await el.play();
+      setIsPlaying(true);
+    } catch {
+      setIsPlaying(false);
     }
-  }, [
-    visibleAlbum,
-    activeTrack.album,
-    firewallTracks,
-    saintsTracks,
-    bonusTracks,
-  ]);
+  };
+
+  const changeTrack = async (
+    album: 'firewall' | 'saints' | 'bonus',
+    index: number
+  ) => {
+    const list =
+      album === 'firewall'
+        ? firewallTracks
+        : album === 'saints'
+        ? saintsTracks
+        : bonusTracks;
+    const track = list[index];
+    if (!track) return;
+    setActiveTrack({ album, index });
+    setCurrentTime(0);
+    await loadAndPlay(track.filename);
+  };
 
   const handlePlay = async () => {
     const el = audioRef.current?.audio?.current;
     if (!el) return;
-
     if (isPlaying) {
       el.pause();
       setIsPlaying(false);
@@ -190,8 +157,8 @@ export const MP3Player = () => {
       try {
         await el.play();
         setIsPlaying(true);
-      } catch (err: any) {
-        if (err.name !== 'AbortError') console.error('Playback error:', err);
+      } catch {
+        setIsPlaying(false);
       }
     }
   };
@@ -207,32 +174,25 @@ export const MP3Player = () => {
 
   const handleNext = () => {
     const list = getTracks();
-    setActiveTrack((prev) => ({
-      album: prev.album,
-      index: list.length ? (prev.index + 1) % list.length : 0,
-    }));
-    setCurrentTime(0);
+    const next = list.length ? (activeTrack.index + 1) % list.length : 0;
+    changeTrack(activeTrack.album, next);
   };
 
   const handlePrevious = () => {
     const list = getTracks();
-    setActiveTrack((prev) => ({
-      album: prev.album,
-      index: list.length
-        ? prev.index === 0
-          ? list.length - 1
-          : prev.index - 1
-        : 0,
-    }));
-    setCurrentTime(0);
+    const prev = list.length
+      ? activeTrack.index === 0
+        ? list.length - 1
+        : activeTrack.index - 1
+      : 0;
+    changeTrack(activeTrack.album, prev);
   };
 
   const handleSeek = (time: number) => {
     const el = audioRef.current?.audio?.current;
-    if (el) {
-      el.currentTime = time;
-      setCurrentTime(time);
-    }
+    if (!el) return;
+    el.currentTime = time;
+    setCurrentTime(time);
   };
 
   const handleTrackSelect = async (
@@ -240,29 +200,60 @@ export const MP3Player = () => {
     index: number
   ) => {
     handleStop();
-    const selected = getTracks()[index];
-    if (!selected) return;
+    await changeTrack(album, index);
+  };
 
-    setActiveTrack({ album, index });
+  useEffect(() => {
+    const el = audioRef.current?.audio?.current;
+    if (!el) return;
+    const onMeta = () => {
+      setDuration(el.duration);
+      updateDurationInList(el.duration);
+    };
+    const onTime = () => setCurrentTime(el.currentTime);
+    const onEnded = () => handleNext();
+    el.addEventListener('loadedmetadata', onMeta);
+    el.addEventListener('timeupdate', onTime);
+    el.addEventListener('ended', onEnded);
+    return () => {
+      el.removeEventListener('loadedmetadata', onMeta);
+      el.removeEventListener('timeupdate', onTime);
+      el.removeEventListener('ended', onEnded);
+    };
+  }, [activeTrack]);
 
-    setTimeout(async () => {
+  useEffect(() => {
+    const el = audioRef.current?.audio?.current;
+    if (el) el.volume = volume;
+  }, [volume]);
+
+  useEffect(() => {
+    if (activeTrack.album === visibleAlbum) return;
+    const list =
+      visibleAlbum === 'firewall'
+        ? firewallTracks
+        : visibleAlbum === 'saints'
+        ? saintsTracks
+        : bonusTracks;
+    if (list[0]) changeTrack(visibleAlbum, 0);
+  }, [visibleAlbum]);
+
+  useEffect(() => {
+    const autoplay = async () => {
       const el = audioRef.current?.audio?.current;
       if (!el) return;
-      el.src = selected.filename;
-      el.load();
-      el.addEventListener('loadedmetadata', () => setDuration(el.duration), {
-        once: true,
-      });
-      await initializeAudioContext();
       try {
+        await initializeAudioContext();
+        audioContextRef.current?.resume();
+        el.volume = volume;
         await el.play();
         setIsPlaying(true);
-      } catch (err: any) {
-        if (err.name !== 'AbortError') console.error('Playback error:', err);
+      } catch {
         setIsPlaying(false);
       }
-    }, 150);
-  };
+    };
+    autoplay();
+  }, []);
 
   const formatTime = (s: number) =>
     !s || isNaN(s)
@@ -322,39 +313,36 @@ export const MP3Player = () => {
             isActive={isPlaying}
           />
         </div>
-        <div className="flex justify-center items-center gap-0 bg-secondary border border-border rounded-md shadow-[0_0_8px_hsl(var(--glow)/0.2)] w-fit mx-auto overflow-hidden">
+        <div className="flex justify-center items-center gap-0 bg-secondary border border-border rounded-md w-fit mx-auto overflow-hidden">
           <button
             onClick={() => setVisibleAlbum('saints')}
-            className={`flex items-center gap-2 px-6 py-2 text-sm font-semibold tracking-wide transition-all duration-300
-              ${
-                visibleAlbum === 'saints'
-                  ? 'text-primary bg-player-panel-dark shadow-[inset_0_0_12px_hsl(var(--glow)/0.6)] border border-primary'
-                  : 'text-gray-400 hover:text-primary'
-              }`}
+            className={`px-6 py-2 text-sm font-semibold ${
+              visibleAlbum === 'saints'
+                ? 'text-primary bg-player-panel-dark border border-primary'
+                : 'text-gray-400'
+            }`}
           >
             Silicon Saints
           </button>
           <div className="h-6 w-px bg-border" />
           <button
             onClick={() => setVisibleAlbum('firewall')}
-            className={`flex items-center gap-2 px-6 py-2 text-sm font-semibold tracking-wide transition-all duration-300
-              ${
-                visibleAlbum === 'firewall'
-                  ? 'text-primary bg-player-panel-dark shadow-[inset_0_0_12px_hsl(var(--glow)/0.6)] border border-primary'
-                  : 'text-gray-400 hover:text-primary'
-              }`}
+            className={`px-6 py-2 text-sm font-semibold ${
+              visibleAlbum === 'firewall'
+                ? 'text-primary bg-player-panel-dark border border-primary'
+                : 'text-gray-400'
+            }`}
           >
             Break The Firewall
           </button>
           <div className="h-6 w-px bg-border" />
           <button
             onClick={() => setVisibleAlbum('bonus')}
-            className={`flex items-center gap-2 px-6 py-2 text-sm font-semibold tracking-wide transition-all duration-300
-              ${
-                visibleAlbum === 'bonus'
-                  ? 'text-pink-400 bg-player-panel-dark border border-pink-500 shadow-[inset_0_0_16px_rgba(255,0,150,0.5),0_0_12px_rgba(255,0,150,0.5)]'
-                  : 'text-gray-400 hover:text-pink-400 hover:drop-shadow-[0_0_8px_rgba(255,0,150,0.6)]'
-              }`}
+            className={`px-6 py-2 text-sm font-semibold ${
+              visibleAlbum === 'bonus'
+                ? 'text-pink-400 bg-player-panel-dark border border-pink-500'
+                : 'text-gray-400'
+            }`}
           >
             Bonus Track
           </button>
@@ -363,7 +351,6 @@ export const MP3Player = () => {
           <div className="pb-12">
             {visibleAlbum === 'saints' && (
               <motion.div
-                key="album-saints"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -381,7 +368,6 @@ export const MP3Player = () => {
             )}
             {visibleAlbum === 'firewall' && (
               <motion.div
-                key="album-firewall"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -399,7 +385,6 @@ export const MP3Player = () => {
             )}
             {visibleAlbum === 'bonus' && (
               <motion.div
-                key="album-bonus"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}

@@ -29,11 +29,9 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
   useEffect(() => {
     const images = albums.map((a) => a.src);
     let loaded = 0;
-
     images.forEach((src) => {
       const img = new Image();
       img.src = src;
-
       if (img.complete) {
         loaded++;
         if (loaded === images.length) setIsLoading(false);
@@ -117,7 +115,9 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
           </AnimatePresence>
           {!isLoading && (
             <motion.div
-              className="relative w-full max-w-6xl flex flex-col border border-border bg-secondary/10 rounded-2xl overflow-hidden player-panel"
+              className="relative w-full max-w-6xl flex flex-col 
+              bg-secondary/90 backdrop-blur-xl 
+              border border-border/60 rounded-2xl overflow-hidden shadow-lg"
               style={{ maxHeight: 'calc(90vh - 80px)' }}
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
@@ -126,7 +126,10 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
               onClick={(e) => e.stopPropagation()}
             >
               <motion.div
-                className="sticky top-0 z-20 bg-gradient-to-b from-background/95 to-background/60 backdrop-blur-md border-b border-border py-4"
+                className="sticky top-0 z-20 
+                bg-gradient-to-b from-secondary/95 to-secondary/70 
+                backdrop-blur-xl 
+                border-b border-border/60 py-4 shadow-sm"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
@@ -136,11 +139,11 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
                 </h2>
                 <motion.button
                   onClick={onClose}
-                  className="absolute top-3 right-3 p-2 rounded-lg hover:bg-secondary transition-colors"
+                  className="absolute top-3 right-3 p-2 rounded-lg hover:bg-secondary/60 transition-colors"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-5 h-5 text-foreground" />
                 </motion.button>
               </motion.div>
               <div
@@ -150,17 +153,22 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
                 {albums.map((album, i) => (
                   <motion.div
                     key={`${album.id}-${album.title}-${album.src}`}
-                    className={`snap-center relative bg-secondary/20 border border-border rounded-xl
-  overflow-hidden cursor-pointer flex-shrink-0
-  w-[85vw] sm:w-[420px] md:w-[540px]  /* ✅ Forces 1 item on desktop */
-  ${
-    i === currentIndex ? 'opacity-100 scale-100' : 'opacity-70 scale-95'
-  } transition-all duration-300`}
+                    className={`snap-center relative 
+                    bg-secondary/80 backdrop-blur-xl 
+                    border border-border/60 rounded-xl shadow-md
+                    overflow-hidden cursor-pointer flex-shrink-0
+                    w-[85vw] sm:w-[420px] md:w-[540px]
+                    ${
+                      i === currentIndex
+                        ? 'opacity-100 scale-100'
+                        : 'opacity-75 scale-95'
+                    }
+                    transition-all duration-300`}
                     onClick={() =>
                       setOpenReader(album.id as 'firewall' | 'saints')
                     }
                   >
-                    <div className="w-[85vw] max-w-[420px] aspect-square mx-auto bg-black/20 rounded-xl flex items-center justify-center">
+                    <div className="w-[85vw] max-w-[420px] aspect-square mx-auto bg-secondary/50 rounded-xl flex items-center justify-center">
                       <img
                         src={album.src}
                         alt={album.title}
@@ -168,8 +176,9 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
                       />
                     </div>
                     <motion.div
-                      className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-md p-3
-    text-center border-t border-border"
+                      className="absolute bottom-0 left-0 right-0 
+                      bg-secondary/90 backdrop-blur-xl 
+                      p-3 text-center border-t border-border/60 shadow-inner"
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6, ease: 'easeOut' }}

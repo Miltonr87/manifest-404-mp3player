@@ -52,7 +52,6 @@ export const ProgressBar = ({
           }}
         />
       </div>
-
       <div
         className={`flex justify-between text-xs digital-display ${
           isBonus ? 'text-pink-400' : 'text-foreground'

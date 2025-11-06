@@ -18,7 +18,6 @@ export const PlayerControls = ({
   album = 'firewall',
 }: PlayerControlsProps) => {
   const isBonus = album === 'bonus';
-
   const iconColor = isBonus ? 'text-pink-400' : 'text-foreground';
   const hoverEffect = isBonus
     ? 'hover:shadow-[0_0_8px_rgba(255,0,150,0.6)] hover:text-pink-400'
@@ -36,7 +35,6 @@ export const PlayerControls = ({
       >
         <SkipBack className={`w-5 h-5 ${iconColor}`} />
       </button>
-
       <button
         onClick={onPlay}
         className={`player-button p-4 border ${buttonBorder} ${hoverEffect} transition-all`}
@@ -48,7 +46,6 @@ export const PlayerControls = ({
           <Play className={`w-6 h-6 ${iconColor} ml-1`} />
         )}
       </button>
-
       <button
         onClick={onStop}
         className={`player-button p-3 border ${buttonBorder} ${hoverEffect} transition-all`}
@@ -56,7 +53,6 @@ export const PlayerControls = ({
       >
         <Square className={`w-5 h-5 ${iconColor}`} />
       </button>
-
       <button
         onClick={onNext}
         className={`player-button p-3 border ${buttonBorder} ${hoverEffect} transition-all`}

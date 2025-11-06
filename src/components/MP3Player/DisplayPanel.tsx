@@ -1,9 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MiniPlayer } from './MiniPlayer';
-import breakTheFirewallArt from '../../../public/albums/BreakTheFirewall.jpg';
-import siliconSaintsArt from '../../../public/albums/SiliconSaints.jpg';
-import bonusArt from '../../../public/albums/manifest_404_1024.jpg';
 
 interface Track {
   id: number;
@@ -24,9 +21,9 @@ interface DisplayPanelProps {
 }
 
 const getArtwork = (album: 'firewall' | 'saints' | 'bonus') => {
-  if (album === 'saints') return siliconSaintsArt;
-  if (album === 'firewall') return breakTheFirewallArt;
-  return bonusArt;
+  if (album === 'saints') return '/albums/SiliconSaints.jpg';
+  if (album === 'firewall') return '/albums/BreakTheFirewall.jpg';
+  return '/albums/manifest_404_1024.jpg';
 };
 
 const getTheme = (album: 'firewall' | 'saints' | 'bonus') => {
