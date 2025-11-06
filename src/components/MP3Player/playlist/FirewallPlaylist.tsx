@@ -7,7 +7,6 @@ interface Track {
   artist: string;
   duration: number;
   filename: string;
-  bonus?: boolean;
 }
 
 interface PlaylistProps {
@@ -38,8 +37,6 @@ const TrackRow = memo(
     isPlaying: boolean;
     onClick: () => void;
   }) => {
-    const isBonus = track.bonus;
-
     return (
       <div
         onClick={onClick}
@@ -47,11 +44,7 @@ const TrackRow = memo(
           flex items-center gap-4 p-3 rounded-lg cursor-pointer transition-all duration-200
           ${
             isActive
-              ? isBonus
-                ? 'bg-yellow-500/20 border border-yellow-400 shadow-[0_0_15px_rgba(255,215,0,0.8)]'
-                : 'bg-primary/10 border border-primary/30 neon-glow'
-              : isBonus
-              ? 'bg-muted/20 border border-transparent relative overflow-hidden'
+              ? 'bg-primary/10 border border-primary/30 neon-glow'
               : 'bg-muted/20 hover:bg-muted/40 border border-transparent'
           }
         `}
@@ -59,22 +52,12 @@ const TrackRow = memo(
         <div className="flex-shrink-0">
           {isActive && isPlaying ? (
             <div className="w-6 h-6 flex items-center justify-center">
-              <div
-                className={`w-2 h-2 rounded-full ${
-                  isBonus
-                    ? 'bg-yellow-400 animate-pulse-glow'
-                    : 'neon-glow animate-pulse-glow'
-                }`}
-              />
+              <div className="w-2 h-2 rounded-full neon-glow animate-pulse-glow" />
             </div>
           ) : (
             <div
               className={`w-6 h-6 flex items-center justify-center rounded ${
-                isActive
-                  ? isBonus
-                    ? 'text-yellow-400'
-                    : 'text-primary'
-                  : 'text-muted-foreground'
+                isActive ? 'text-primary' : 'text-muted-foreground'
               }`}
             >
               <Play className="w-4 h-4" />
@@ -85,39 +68,18 @@ const TrackRow = memo(
           <div
             className={`
               font-medium leading-snug break-words whitespace-normal
-              ${
-                isActive
-                  ? isBonus
-                    ? 'text-yellow-400 digital-display'
-                    : 'digital-display text-primary'
-                  : isBonus
-                  ? 'text-yellow-300 animate-wave-text'
-                  : 'text-foreground'
-              }
+              ${isActive ? 'digital-display text-primary' : 'text-foreground'}
             `}
           >
             {track.title}
           </div>
-          <div
-            className={`text-sm mt-0.5 ${
-              isBonus ? 'text-yellow-500/80 italic' : 'text-muted-foreground'
-            }`}
-          >
+          <div className="text-sm text-muted-foreground mt-0.5">
             {track.artist}
           </div>
         </div>
-        <div
-          className={`digital-display text-sm flex-shrink-0 text-right ${
-            isBonus ? 'text-yellow-400/90' : 'text-muted-foreground'
-          }`}
-        >
+        <div className="digital-display text-sm flex-shrink-0 text-right text-muted-foreground">
           {formatTime(track.duration)}
         </div>
-        {!isActive && isBonus && (
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute w-full h-full animate-waveform opacity-20 bg-yellow-400" />
-          </div>
-        )}
       </div>
     );
   }
@@ -141,13 +103,13 @@ export const FirewallPlaylist = memo(
         }
       });
     }, [tracks, durations]);
+
     const visibleTracks = useMemo(() => {
       if (isExpanded) return tracks ?? [];
       const safeIndex =
         currentTrack >= 0 && currentTrack < tracks.length ? currentTrack : 0;
       return tracks.length ? [tracks[safeIndex]] : [];
     }, [isExpanded, tracks, currentTrack]);
-
     const handleToggle = useCallback(() => setIsExpanded((prev) => !prev), []);
     const handleSelect = useCallback(
       (index: number) => {
@@ -162,18 +124,16 @@ export const FirewallPlaylist = memo(
           <h3 className="text-lg font-semibold neon-text">
             BREAK THE FIREWALL
           </h3>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={handleToggle}
-              className="player-button px-3 py-2 hover:neon-glow transition-all flex items-center justify-center"
-            >
-              {isExpanded ? (
-                <ChevronUp className="w-4 h-4 text-foreground" />
-              ) : (
-                <ChevronDown className="w-4 h-4 text-foreground" />
-              )}
-            </button>
-          </div>
+          <button
+            onClick={handleToggle}
+            className="player-button px-3 py-2 hover:neon-glow transition-all flex items-center justify-center"
+          >
+            {isExpanded ? (
+              <ChevronUp className="w-4 h-4 text-foreground" />
+            ) : (
+              <ChevronDown className="w-4 h-4 text-foreground" />
+            )}
+          </button>
         </div>
         <div className="space-y-2">
           {(visibleTracks ?? []).map((track, index) => {

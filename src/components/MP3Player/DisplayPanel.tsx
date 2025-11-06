@@ -26,16 +26,34 @@ interface DisplayPanelProps {
 const getArtwork = (album: 'firewall' | 'saints' | 'bonus') => {
   if (album === 'saints') return siliconSaintsArt;
   if (album === 'firewall') return breakTheFirewallArt;
-  return bonusArt; // ✅ Bonus cover
+  return bonusArt;
 };
 
-const getTheme = () => ({
-  border: 'border-primary/30',
-  glow: 'shadow-[0_0_10px_rgba(0,255,200,0.4)]',
-  title: 'text-primary no-underline decoration-none',
-  artist: 'text-muted-foreground no-underline decoration-none',
-  pulse: 'from-primary/20 to-accent/20',
-});
+const getTheme = (album: 'firewall' | 'saints' | 'bonus') => {
+  if (album === 'bonus') {
+    return {
+      border: 'border-[#ff8a00]/40',
+      glow: 'shadow-[0_0_10px_rgba(255,138,0,0.6)]',
+      title: 'text-[#ff8a00] no-underline decoration-none',
+      artist: 'text-[#ffb566] no-underline decoration-none',
+      pulse: 'from-[#ff8a00]/20 to-[#ff2a00]/20',
+      ready: 'text-[#ff8a00]',
+      scan: 'bg-[#ff8a00]/70',
+      digit: 'text-[#ff8a00]',
+    };
+  }
+
+  return {
+    border: 'border-primary/30',
+    glow: 'shadow-[0_0_10px_rgba(0,255,200,0.4)]',
+    title: 'text-primary no-underline decoration-none',
+    artist: 'text-muted-foreground no-underline decoration-none',
+    pulse: 'from-primary/20 to-accent/20',
+    ready: 'text-primary',
+    scan: 'bg-primary/70',
+    digit: 'text-primary',
+  };
+};
 
 export const DisplayPanel = ({
   track,
@@ -46,31 +64,25 @@ export const DisplayPanel = ({
   onTogglePlay,
 }: DisplayPanelProps) => {
   const [isLoading, setIsLoading] = useState(true);
-  const theme = getTheme();
+  const theme = getTheme(album);
+
   const artworkUrl = track?.artwork ?? getArtwork(album);
   const titleRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!track || !duration || duration === '00:00') {
+    if (!track || duration === '00:00') {
       setIsLoading(true);
     } else {
-      const timer = setTimeout(() => setIsLoading(false), 400);
-      return () => clearTimeout(timer);
+      const t = setTimeout(() => setIsLoading(false), 400);
+      return () => clearTimeout(t);
     }
   }, [track, duration]);
-
-  useEffect(() => {
-    if (titleRef.current) titleRef.current.scrollLeft = 0;
-  }, [track?.title]);
 
   return (
     <div className="relative w-full flex flex-col items-center">
       <div
         id="display-panel"
-        className="
-          grid grid-cols-1 md:grid-cols-3 gap-6 items-center
-          w-full max-w-sm md:max-w-4xl mx-auto
-        "
+        className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center w-full max-w-sm md:max-w-4xl mx-auto"
       >
         <div className="space-y-2 text-center md:text-left">
           <div
@@ -100,17 +112,17 @@ export const DisplayPanel = ({
                   className="absolute inset-0 bg-black flex items-center justify-center overflow-hidden"
                 >
                   <motion.div
-                    className="absolute inset-0 bg-[repeating-linear-gradient(0deg,rgba(0,255,200,0.1)_0px,rgba(0,255,200,0.1)_1px,transparent_2px,transparent_4px)]"
-                    animate={{ opacity: [0.2, 0.6, 0.2] }}
+                    className="absolute inset-0 bg-[repeating-linear-gradient(0deg,rgba(255,255,255,0.07)_0px,rgba(255,255,255,0.07)_1px,transparent_2px,transparent_4px)]"
+                    animate={{ opacity: [0.2, 0.5, 0.2] }}
                     transition={{ duration: 0.2, repeat: Infinity }}
                   />
                   <motion.div
                     className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/noise.png')] opacity-30 mix-blend-screen"
-                    animate={{ opacity: [0.1, 0.4, 0.2, 0.5, 0.3] }}
+                    animate={{ opacity: [0.1, 0.45, 0.2, 0.5, 0.3] }}
                     transition={{ duration: 0.3, repeat: Infinity }}
                   />
                   <motion.div
-                    className="absolute top-1/2 left-0 right-0 h-1 bg-primary/70 blur-sm"
+                    className={`absolute top-1/2 left-0 right-0 h-1 ${theme.scan} blur-sm`}
                     animate={{
                       y: ['-40%', '40%', '-30%', '30%', '0%'],
                       opacity: [0.2, 0.8, 0.4, 0.7, 0.2],
@@ -118,7 +130,7 @@ export const DisplayPanel = ({
                     transition={{ duration: 0.6, repeat: Infinity }}
                   />
                   <motion.span
-                    className="text-primary font-semibold tracking-widest text-sm"
+                    className={`${theme.ready} font-semibold tracking-widest text-sm`}
                     animate={{ opacity: [0.3, 1, 0.3] }}
                     transition={{ repeat: Infinity, duration: 1.2 }}
                   >
@@ -138,7 +150,7 @@ export const DisplayPanel = ({
                   transition={{ duration: 0.6, ease: 'easeOut' }}
                   className={`w-full h-full object-cover transition-transform duration-500 ${
                     isPlaying ? 'scale-105' : 'scale-100'
-                  } no-underline decoration-none`}
+                  }`}
                 />
               )}
             </AnimatePresence>
@@ -154,13 +166,11 @@ export const DisplayPanel = ({
         </div>
         <div className="text-center md:text-right space-y-2">
           <div
-            className={`digital-display text-3xl md:text-4xl font-bold ${theme.title}`}
+            className={`digital-display text-3xl md:text-4xl font-bold ${theme.digit}`}
           >
             {currentTime}
           </div>
-          <div className="digital-display text-sm opacity-70 no-underline decoration-none">
-            {duration}
-          </div>
+          <div className="digital-display text-sm opacity-70">{duration}</div>
         </div>
       </div>
       <div className="mini-player-wrapper">
