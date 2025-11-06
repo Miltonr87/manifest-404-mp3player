@@ -134,7 +134,7 @@ export const BonusPlaylist = memo(
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-pink-500 tracking-widest animate-glow">
-            BONUS TRACKS
+            BONUS TRACK
           </h3>
           <button
             onClick={handleToggle}

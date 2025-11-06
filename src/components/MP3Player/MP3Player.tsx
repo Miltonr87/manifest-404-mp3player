@@ -150,6 +150,33 @@ export const MP3Player = () => {
     if (el) el.volume = volume;
   }, [volume]);
 
+  useEffect(() => {
+    if (activeTrack.album !== visibleAlbum) {
+      setActiveTrack({ album: visibleAlbum, index: 0 });
+
+      const list =
+        visibleAlbum === 'firewall'
+          ? firewallTracks
+          : visibleAlbum === 'saints'
+          ? saintsTracks
+          : bonusTracks;
+
+      const el = audioRef.current?.audio?.current;
+      if (el && list[0]) {
+        el.src = list[0].filename;
+        el.load();
+        setCurrentTime(0);
+        setIsPlaying(false);
+      }
+    }
+  }, [
+    visibleAlbum,
+    activeTrack.album,
+    firewallTracks,
+    saintsTracks,
+    bonusTracks,
+  ]);
+
   const handlePlay = async () => {
     const el = audioRef.current?.audio?.current;
     if (!el) return;
@@ -226,7 +253,6 @@ export const MP3Player = () => {
       el.addEventListener('loadedmetadata', () => setDuration(el.duration), {
         once: true,
       });
-
       await initializeAudioContext();
       try {
         await el.play();
@@ -330,10 +356,9 @@ export const MP3Player = () => {
                   : 'text-gray-400 hover:text-pink-400 hover:drop-shadow-[0_0_8px_rgba(255,0,150,0.6)]'
               }`}
           >
-            Bonus Tracks
+            Bonus Track
           </button>
         </div>
-
         <AnimatePresence mode="wait">
           <div className="pb-12">
             {visibleAlbum === 'saints' && (
@@ -392,7 +417,6 @@ export const MP3Player = () => {
             )}
           </div>
         </AnimatePresence>
-
         <AudioPlayer
           ref={audioRef}
           src={currentTrack?.filename}

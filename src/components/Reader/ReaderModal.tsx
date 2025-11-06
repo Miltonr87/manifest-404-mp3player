@@ -64,23 +64,28 @@ const saintsData = [
   },
   {
     src: '/assets/siliconSaints/7.jpg',
-    title: 'Angels In The Stream',
+    title: 'Church Of The Machine',
     lyricsPath: '/lyrics/siliconSaints/7.txt',
   },
   {
     src: '/assets/siliconSaints/8.jpg',
-    title: 'Church Of The Machine',
+    title: 'Angels In The Stream',
     lyricsPath: '/lyrics/siliconSaints/8.txt',
   },
   {
     src: '/assets/siliconSaints/9.jpg',
-    title: 'Ghost In My Feed',
+    title: 'Digital Chains',
     lyricsPath: '/lyrics/siliconSaints/9.txt',
   },
   {
     src: '/assets/siliconSaints/10.jpg',
-    title: 'Soft Reboot',
+    title: 'Ghost In My Feed',
     lyricsPath: '/lyrics/siliconSaints/10.txt',
+  },
+  {
+    src: '/assets/siliconSaints/11.jpg',
+    title: 'Soft Reboot',
+    lyricsPath: '/lyrics/siliconSaints/11.txt',
   },
 ];
 

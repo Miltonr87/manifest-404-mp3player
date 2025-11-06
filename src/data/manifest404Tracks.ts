@@ -93,27 +93,34 @@ export const saintsTracksInit: Track[] = [
     },
     {
         id: 7,
-        title: 'Angels In The Stream',
-        artist: 'Silicon Saints',
-        duration: 187,
-        filename: `${PREFIX}7_Angels_Stream.mp3`,
-    },
-    {
-        id: 8,
         title: 'Church Of The Machine',
         artist: 'Silicon Saints',
         duration: 177,
         filename: `${PREFIX}8_Church_the_Machine.mp3`,
     },
     {
+        id: 8,
+        title: 'Angels In The Stream',
+        artist: 'Silicon Saints',
+        duration: 187,
+        filename: `${PREFIX}7_Angels_Stream.mp3`,
+    },
+    {
         id: 9,
+        title: 'Digital Chains',
+        artist: 'Silicon Saints',
+        duration: 169,
+        filename: `${PREFIX}Digital_Chains.mp3`,
+    },
+    {
+        id: 10,
         title: 'Ghost In My Feed',
         artist: 'Silicon Saints',
         duration: 174,
         filename: `${PREFIX}9_Ghost_in_My_Feed.mp3`,
     },
     {
-        id: 10,
+        id: 11,
         title: 'Soft Reboot',
         artist: 'Silicon Saints',
         duration: 158,
@@ -124,16 +131,9 @@ export const saintsTracksInit: Track[] = [
 
 export const bonusTracksInit: Track[] = [
     {
-        id: 101,
-        title: 'Digital Chains',
-        artist: 'Bonus Tracks',
-        duration: 169,
-        filename: `${PREFIX}Digital_Chains.mp3`,
-    },
-    {
-        id: 102,
+        id: 100,
         title: 'Heart.Exe',
-        artist: 'Bonus Tracks',
+        artist: 'Bonus Track',
         duration: 199,
         filename: `${PREFIX}Heart_Exe.mp3`,
     },
