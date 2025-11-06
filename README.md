@@ -1,6 +1,6 @@
 # 📀 Manifest 404 MP3 Player
 
-![Banner Preview](./public/banner/manifest404.png)
+![Banner Preview](./public/banner/manifest_404.jpg)
 
 **Manifest 404** is a digital punk-rock experiment that fuses  
 hardcore riffs, AI-driven creativity, and cyberpunk aesthetics.  
@@ -31,15 +31,16 @@ every scroll, fade, and glitch moves in rhythm with the songs.
 
 Manifest 404 is a fusion of **music + frontend engineering**, pushing both into expressive art.
 
-| Area          | Technology                | Reason                                                                 |
-| ------------- | ------------------------- | ---------------------------------------------------------------------- |
-| Framework     | **React 18 + TypeScript** | Strict typing and modular component structure                          |
-| Styling       | **TailwindCSS**           | Utility-first styling for rapid prototyping and visual consistency     |
-| Animation     | **Framer Motion**         | Fluid transitions, spring-based physics, and micro-interactions        |
-| Audio Engine  | **Web Audio API**         | Custom playback controls, waveform analysis, and real-time timing sync |
-| Icons         | **Lucide-React**          | Minimalist SVG icons for visual rhythm                                 |
-| State         | **React Hooks**           | Simplicity over heavy global stores; easy track state management       |
-| Design System | Custom HSL palette        | Cyberpunk-inspired gradients, tuned for light/dark balance             |
+| Area          | Technology                | Reason                                                             |
+| ------------- | ------------------------- | ------------------------------------------------------------------ |
+| Framework     | **React 18 + TypeScript** | Strict typing and modular component structure                      |
+| Styling       | **TailwindCSS**           | Utility-first styling for rapid prototyping and visual consistency |
+| Animation     | **Framer Motion**         | Fluid transitions, spring-based physics, and micro-interactions    |
+| Audio Engine  | **React H5 Audio**        | Custom playback controls with real-time timing sync                |
+| MP3 Storage   | **Supabase**              | Audio files are hosted in scalable cloud and streamed via CDNs     |
+| Icons         | **Lucide-React**          | Minimalist SVG icons for visual rhythm                             |
+| State         | **React Hooks**           | Simplicity over heavy global stores; easy track state management   |
+| Design System | Custom HSL palette        | Cyberpunk-inspired gradients, tuned for light/dark balance         |
 
 ### 🧩 Architectural Decisions
 
