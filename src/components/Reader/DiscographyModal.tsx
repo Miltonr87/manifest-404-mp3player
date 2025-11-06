@@ -21,7 +21,7 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
     {
       id: 'firewall',
       title: 'Break the Firewall',
-      desc: "Fight against the system's security",
+      desc: "Awakening against the system's security",
       src: '/albums/BreakTheFirewall.jpg',
     },
   ];
