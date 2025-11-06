@@ -45,55 +45,52 @@ const TrackRow = memo(
           flex items-center gap-4 p-3 rounded-lg cursor-pointer transition-all duration-200 relative
           ${
             isActive
-              ? 'bg-[#331a00]/50 border border-[#ff8a00]/40 shadow-[0_0_12px_rgba(255,138,0,0.8)]'
-              : 'bg-muted/20 hover:bg-muted/40 border border-transparent'
+              ? 'bg-pink-500/10 border border-pink-500/40 shadow-[0_0_12px_rgba(255,0,150,0.6)]'
+              : 'border border-transparent'
           }
         `}
       >
         <div className="flex-shrink-0">
           {isActive && isPlaying ? (
             <div className="w-6 h-6 flex items-center justify-center">
-              <div className="w-2 h-2 rounded-full bg-[#ff8a00] animate-pulse-glow" />
+              <div className="w-2 h-2 rounded-full bg-pink-400 animate-pulse-glow" />
             </div>
           ) : (
             <div
               className={`w-6 h-6 flex items-center justify-center rounded ${
-                isActive ? 'text-[#ff8a00]' : 'text-muted-foreground'
+                isActive ? 'text-pink-400' : 'text-pink-400/70'
               }`}
             >
               <Play className="w-4 h-4" />
             </div>
           )}
         </div>
+
         <div className="flex-1 min-w-0">
           <div
             className={`
               font-medium leading-snug break-words whitespace-normal
               ${
                 isActive
-                  ? 'text-[#ff8a00] digital-display'
-                  : 'text-[#ffb366] animate-wave-text'
+                  ? 'text-pink-400 glow-pulse'
+                  : 'text-pink-400/80 hover:text-pink-300 transition-colors'
               }
             `}
           >
             {track.title}
           </div>
-          <div className="text-sm text-[#ffb366]/80 italic mt-0.5">
+          <div className="text-sm text-pink-400/50 italic mt-0.5">
             {track.artist}
           </div>
         </div>
+
         <div
           className={`digital-display text-sm flex-shrink-0 text-right ${
-            isActive ? 'text-[#ff8a00]' : 'text-[#ffb366]/60'
+            isActive ? 'text-pink-400' : 'text-pink-400/60'
           }`}
         >
           {formatTime(track.duration)}
         </div>
-        {!isActive && (
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute w-full h-full animate-waveform opacity-15 bg-[#ff8a00]" />
-          </div>
-        )}
       </div>
     );
   }
@@ -124,6 +121,7 @@ export const BonusPlaylist = memo(
         currentTrack >= 0 && currentTrack < tracks.length ? currentTrack : 0;
       return tracks.length ? [tracks[safeIndex]] : [];
     }, [isExpanded, tracks, currentTrack]);
+
     const handleToggle = useCallback(() => setIsExpanded((prev) => !prev), []);
     const handleSelect = useCallback(
       (i: number) => {
@@ -135,20 +133,21 @@ export const BonusPlaylist = memo(
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-[#ff8a00] tracking-widest">
+          <h3 className="text-lg font-semibold text-pink-500 tracking-widest animate-glow">
             BONUS TRACKS
           </h3>
           <button
             onClick={handleToggle}
-            className="player-button px-3 py-2 hover:bg-[#331a00]/40 transition-all flex items-center justify-center"
+            className="player-button px-3 py-2 hover:bg-pink-500/10 transition-all flex items-center justify-center rounded-md"
           >
             {isExpanded ? (
-              <ChevronUp className="w-4 h-4 text-[#ff8a00]" />
+              <ChevronUp className="w-4 h-4 text-pink-500" />
             ) : (
-              <ChevronDown className="w-4 h-4 text-[#ff8a00]" />
+              <ChevronDown className="w-4 h-4 text-pink-500" />
             )}
           </button>
         </div>
+
         <div className="space-y-2">
           {(visibleTracks ?? []).map((track, index) => {
             const duration = durations[track.id] || track.duration;

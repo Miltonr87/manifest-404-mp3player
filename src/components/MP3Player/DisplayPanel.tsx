@@ -32,14 +32,14 @@ const getArtwork = (album: 'firewall' | 'saints' | 'bonus') => {
 const getTheme = (album: 'firewall' | 'saints' | 'bonus') => {
   if (album === 'bonus') {
     return {
-      border: 'border-[#ff8a00]/40',
-      glow: 'shadow-[0_0_10px_rgba(255,138,0,0.6)]',
-      title: 'text-[#ff8a00] no-underline decoration-none',
-      artist: 'text-[#ffb566] no-underline decoration-none',
-      pulse: 'from-[#ff8a00]/20 to-[#ff2a00]/20',
-      ready: 'text-[#ff8a00]',
-      scan: 'bg-[#ff8a00]/70',
-      digit: 'text-[#ff8a00]',
+      border: 'border-[hsl(var(--bonus))/0.4]',
+      glow: 'shadow-[0_0_10px_hsl(var(--bonus)/0.6)]',
+      title: 'text-[hsl(var(--bonus))] no-underline decoration-none',
+      artist: 'text-[hsl(var(--bonus))/0.7] no-underline decoration-none',
+      pulse: 'from-[hsl(var(--bonus))/0.15] to-[hsl(var(--bonus))/0.05]',
+      ready: 'text-[hsl(var(--bonus))]',
+      scan: 'bg-[hsl(var(--bonus))/0.7]',
+      digit: 'text-[hsl(var(--bonus))]',
     };
   }
 
@@ -84,6 +84,7 @@ export const DisplayPanel = ({
         id="display-panel"
         className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center w-full max-w-sm md:max-w-4xl mx-auto"
       >
+        {/* TITLE + ARTIST */}
         <div className="space-y-2 text-center md:text-left">
           <div
             ref={titleRef}
@@ -95,6 +96,8 @@ export const DisplayPanel = ({
             {track?.artist || 'No track selected'}
           </div>
         </div>
+
+        {/* ALBUM ART */}
         <div className="flex items-center justify-center">
           <div
             className={`
@@ -154,6 +157,7 @@ export const DisplayPanel = ({
                 />
               )}
             </AnimatePresence>
+
             {!isLoading && (
               <div
                 className={`
@@ -164,6 +168,8 @@ export const DisplayPanel = ({
             )}
           </div>
         </div>
+
+        {/* DIGITAL TIME DISPLAY */}
         <div className="text-center md:text-right space-y-2">
           <div
             className={`digital-display text-3xl md:text-4xl font-bold ${theme.digit}`}
@@ -173,6 +179,8 @@ export const DisplayPanel = ({
           <div className="digital-display text-sm opacity-70">{duration}</div>
         </div>
       </div>
+
+      {/* MINI PLAYER */}
       <div className="mini-player-wrapper">
         <MiniPlayer
           track={{ ...track, artwork: artworkUrl }}

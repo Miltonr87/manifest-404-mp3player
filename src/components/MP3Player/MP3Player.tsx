@@ -311,8 +311,8 @@ export const MP3Player = () => {
             className={`flex items-center gap-2 px-6 py-2 text-sm font-semibold tracking-wide transition-all duration-300
     ${
       visibleAlbum === 'bonus'
-        ? 'text-[#ff8a00] bg-player-panel-dark border border-[#ff8a00] shadow-[inset_0_0_16px_rgba(255,138,0,0.6),0_0_10px_rgba(255,138,0,0.5)]'
-        : 'text-gray-400 hover:text-[#ff8a00] hover:drop-shadow-[0_0_6px_rgba(255,138,0,0.5)]'
+        ? 'text-[hsl(var(--bonus))] bg-player-panel-dark border border-[hsl(var(--bonus))] shadow-[inset_0_0_16px_hsl(var(--bonus)/0.6),0_0_12px_hsl(var(--bonus)/0.5)]'
+        : 'text-gray-400 hover:text-[hsl(var(--bonus))] hover:drop-shadow-[0_0_8px_hsl(var(--bonus)/0.6)]'
     }
   `}
           >
