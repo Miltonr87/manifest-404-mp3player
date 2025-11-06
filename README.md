@@ -1,6 +1,6 @@
 # 📀 Manifest 404 MP3 Player
 
-![Banner Preview](./public/banner/manifest_404.jpg)
+![Banner Preview](./public/banner/manifest404.png)
 
 **Manifest 404** is a digital punk-rock experiment that fuses  
 hardcore riffs, AI-driven creativity, and cyberpunk aesthetics.  
