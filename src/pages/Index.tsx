@@ -6,6 +6,9 @@ import { IntroPage } from './IntroPage';
 
 const Index = () => {
   const [entered, setEntered] = useState(false);
+  const [activeAlbum, setActiveAlbum] = useState<
+    'saints' | 'firewall' | 'bonus'
+  >('saints');
 
   return (
     <AnimatePresence mode="wait">
@@ -18,8 +21,8 @@ const Index = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
-          <Navbar />
-          <MP3Player />
+          <Navbar album={activeAlbum} />
+          <MP3Player onAlbumChange={setActiveAlbum} />
         </motion.div>
       )}
     </AnimatePresence>

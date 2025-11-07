@@ -17,7 +17,11 @@ import {
 } from '../../data/manifest404Tracks';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export const MP3Player = () => {
+interface MP3PlayerProps {
+  onAlbumChange?: (album: 'saints' | 'firewall' | 'bonus') => void;
+}
+
+export const MP3Player = ({ onAlbumChange }: MP3PlayerProps) => {
   const audioRef = useRef<any>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
@@ -41,6 +45,10 @@ export const MP3Player = () => {
   const [equalizerData, setEqualizerData] = useState<number[]>(
     new Array(10).fill(0)
   );
+
+  useEffect(() => {
+    onAlbumChange?.(visibleAlbum);
+  }, [visibleAlbum, onAlbumChange]);
 
   useEffect(() => {
     setIsBonusActive(activeTrack.album === 'bonus');
