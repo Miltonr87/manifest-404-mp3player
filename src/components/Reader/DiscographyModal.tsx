@@ -15,7 +15,7 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
     {
       id: 'saints',
       title: 'Silicon Saints',
-      desc: 'The Machine-age prophecy begins here',
+      desc: 'The Machine-age prophets begins here',
       src: '/albums/SiliconSaints.jpg',
     },
     {
