@@ -175,6 +175,7 @@ export const ReaderModal = ({
   return (
     <AnimatePresence>
       <motion.div
+        key="reader-modal"
         className="fixed inset-0 z-50 flex items-center justify-center p-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -285,6 +286,7 @@ export const ReaderModal = ({
       </motion.div>
       {activeSong && (
         <LyricsModal
+          key="reader-lyrics"
           title={activeSong.title}
           lyrics={activeSong.lyrics}
           onClose={() => setActiveSong(null)}
