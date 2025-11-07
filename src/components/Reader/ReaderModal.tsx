@@ -229,7 +229,7 @@ export const ReaderModal = ({
                       alt={item.title}
                       loading={i === currentIndex ? 'eager' : 'lazy'}
                       decoding="async"
-                      fetchPriority={i === currentIndex ? 'high' : 'low'}
+                      fetchṕriority={i === currentIndex ? 'high' : 'low'}
                       className={`snap-center cursor-pointer rounded-2xl shadow-lg border border-border
                         max-h-[70vh] sm:max-h-[80vh] lg:max-h-[85vh]
                         w-auto max-w-[75vw] sm:max-w-[70vw] lg:max-w-[65vw]
