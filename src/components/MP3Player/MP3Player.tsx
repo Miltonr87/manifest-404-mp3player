@@ -325,12 +325,11 @@ export const MP3Player = ({ onAlbumChange }: MP3PlayerProps) => {
           <button
             onClick={() => setVisibleAlbum('saints')}
             className={`px-6 py-2 text-sm font-semibold rounded-md transition-all
-    ${
-      visibleAlbum === 'saints'
-        ? 'text-primary bg-player-panel-dark border border-primary'
-        : 'text-gray-400 hover:text-primary hover:border hover:border-primary'
-    }
-  `}
+              ${
+                visibleAlbum === 'saints'
+                  ? 'text-primary bg-player-panel-dark border border-primary'
+                  : 'text-gray-400 hover:text-primary hover:border hover:border-primary'
+              }`}
           >
             Silicon Saints
           </button>
@@ -338,12 +337,11 @@ export const MP3Player = ({ onAlbumChange }: MP3PlayerProps) => {
           <button
             onClick={() => setVisibleAlbum('firewall')}
             className={`px-6 py-2 text-sm font-semibold rounded-md transition-all
-    ${
-      visibleAlbum === 'firewall'
-        ? 'text-primary bg-player-panel-dark border border-primary'
-        : 'text-gray-400 hover:text-primary hover:border hover:border-primary'
-    }
-  `}
+              ${
+                visibleAlbum === 'firewall'
+                  ? 'text-primary bg-player-panel-dark border border-primary'
+                  : 'text-gray-400 hover:text-primary hover:border hover:border-primary'
+              }`}
           >
             Break The Firewall
           </button>
@@ -352,12 +350,11 @@ export const MP3Player = ({ onAlbumChange }: MP3PlayerProps) => {
           <button
             onClick={() => setVisibleAlbum('bonus')}
             className={`px-6 py-2 text-sm font-semibold rounded-md transition-all
-    ${
-      visibleAlbum === 'bonus'
-        ? 'text-pink-400 bg-player-panel-dark border border-pink-500'
-        : 'text-gray-400 hover:text-pink-400 hover:border hover:border-pink-500'
-    }
-  `}
+              ${
+                visibleAlbum === 'bonus'
+                  ? 'text-pink-400 bg-player-panel-dark border border-pink-500'
+                  : 'text-gray-400 hover:text-pink-400 hover:border hover:border-pink-500'
+              }`}
           >
             Bonus Track
           </button>
