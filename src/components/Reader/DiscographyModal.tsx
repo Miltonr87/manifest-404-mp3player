@@ -145,7 +145,7 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
               </motion.div>
               <div
                 ref={scrollRef}
-                className="flex-1 overflow-x-hidden snap-x snap-mandatory flex gap-8 p-6 hide-scrollbar"
+                className="flex-1 overflow-x-auto snap-x snap-mandatory flex gap-8 p-6 hide-scrollbar"
               >
                 {albums.map((album, i) => (
                   <motion.div
