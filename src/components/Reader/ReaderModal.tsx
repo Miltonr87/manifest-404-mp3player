@@ -89,6 +89,8 @@ const saintsData = [
   },
 ];
 
+type Item = { src: string; title: string; lyricsPath: string };
+
 export const ReaderModal = ({
   onClose,
   albumType = 'firewall',
@@ -96,7 +98,7 @@ export const ReaderModal = ({
   onClose: () => void;
   albumType?: 'firewall' | 'saints';
 }) => {
-  const images = useMemo(
+  const images = useMemo<Item[]>(
     () => (albumType === 'firewall' ? firewallData : saintsData),
     [albumType]
   );
@@ -110,6 +112,7 @@ export const ReaderModal = ({
   const [isLoading, setIsLoading] = useState(true);
 
   const scrollRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<HTMLImageElement[]>([]);
   const singleImage = images.length === 1;
 
   useEffect(() => {
@@ -119,18 +122,17 @@ export const ReaderModal = ({
 
   useEffect(() => {
     let loaded = 0;
-    const handleLoaded = () => {
+    const done = () => {
       loaded++;
       if (loaded === images.length) setIsLoading(false);
     };
-
-    images.forEach((item) => {
+    images.forEach((it) => {
       const img = new Image();
-      img.src = item.src;
-      if (img.complete) handleLoaded();
+      img.src = it.src;
+      if (img.complete) done();
       else {
-        img.onload = handleLoaded;
-        img.onerror = handleLoaded;
+        img.onload = done;
+        img.onerror = done;
       }
     });
   }, [images]);
@@ -140,10 +142,11 @@ export const ReaderModal = ({
     behavior: ScrollBehavior = 'smooth'
   ) => {
     const container = scrollRef.current;
-    if (!container) return;
-    const childWidth =
-      container.firstElementChild?.getBoundingClientRect().width ?? 0;
-    container.scrollTo({ left: index * (childWidth + 32), behavior });
+    const target = itemRefs.current[index];
+    if (!container || !target) return;
+    const left =
+      target.offsetLeft - (container.clientWidth - target.clientWidth) / 2;
+    container.scrollTo({ left, behavior });
     setCurrentIndex(index);
   };
 
@@ -152,8 +155,8 @@ export const ReaderModal = ({
       const res = await fetch(item.lyricsPath);
       const text = await res.text();
       setActiveSong({ title: item.title, lyrics: text });
-    } catch (err) {
-      console.error('Error loading lyrics:', err);
+    } catch (e) {
+      console.error('Error loading lyrics:', e);
     }
   };
 
@@ -162,17 +165,16 @@ export const ReaderModal = ({
     currentIndex < images.length - 1 && scrollToIndex(currentIndex + 1);
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
+    const t = setTimeout(() => {
       scrollToIndex(0, 'auto');
       setIsReady(true);
-    }, 200);
-    return () => clearTimeout(timeout);
+    }, 120);
+    return () => clearTimeout(t);
   }, [images]);
 
   return (
     <AnimatePresence>
       <motion.div
-        key="reader-loader"
         className="fixed inset-0 z-50 flex items-center justify-center p-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -180,33 +182,6 @@ export const ReaderModal = ({
         onClick={onClose}
       >
         <motion.div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
-        <AnimatePresence>
-          {isLoading && (
-            <motion.div
-              key="reader-loader"
-              className="absolute inset-0 flex flex-col items-center justify-center gap-6 text-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <motion.div
-                className="relative w-20 h-20"
-                animate={{ rotate: 360 }}
-                transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
-              >
-                <div className="absolute inset-0 rounded-full border-4 border-primary/40" />
-                <div className="absolute inset-0 rounded-full border-t-4 border-primary" />
-              </motion.div>
-              <motion.p
-                className="text-primary text-lg font-semibold tracking-widest neon-text"
-                animate={{ opacity: [0.3, 1, 0.3] }}
-                transition={{ repeat: Infinity, duration: 1.5 }}
-              >
-                Loading Album...
-              </motion.p>
-            </motion.div>
-          )}
-        </AnimatePresence>
         {!isLoading && (
           <motion.div
             className={`relative w-full ${
@@ -248,11 +223,12 @@ export const ReaderModal = ({
                   {images.map((item, i) => (
                     <motion.img
                       key={`${albumType}-${item.title}-${i}`}
+                      ref={(el) => el && (itemRefs.current[i] = el)}
                       src={item.src}
                       alt={item.title}
                       loading={i === currentIndex ? 'eager' : 'lazy'}
                       decoding="async"
-                      fetchpriority={i === currentIndex ? 'high' : 'low'}
+                      fetchPriority={i === currentIndex ? 'high' : 'low'}
                       className={`snap-center cursor-pointer rounded-2xl shadow-lg border border-border
                         max-h-[70vh] sm:max-h-[80vh] lg:max-h-[85vh]
                         w-auto max-w-[75vw] sm:max-w-[70vw] lg:max-w-[65vw]
@@ -261,7 +237,9 @@ export const ReaderModal = ({
                             ? 'opacity-100 scale-100'
                             : 'opacity-70 scale-95'
                         }
-                        transition-all duration-300 ease-in-out`}
+                        transition-all duration-300 ease-in-out
+                        ${i === images.length - 1 ? 'mr-[120vw] sm:mr-0' : ''}
+                      `}
                       onClick={() => openSong(item)}
                       style={{
                         willChange: 'transform, opacity',
