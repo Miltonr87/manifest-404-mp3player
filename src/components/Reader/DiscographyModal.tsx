@@ -150,12 +150,12 @@ export const DiscographyModal = ({ onClose }: { onClose: () => void }) => {
                 {albums.map((album, i) => (
                   <motion.div
                     key={`${album.id}-${album.title}-${album.src}`}
-                    className={`snap-center relative bg-secondary/20 border border-border rounded-xl
-  overflow-hidden cursor-pointer flex-shrink-0
-  w-[85vw] sm:w-[420px] md:w-[540px]  /* ✅ Forces 1 item on desktop */
-  ${
-    i === currentIndex ? 'opacity-100 scale-100' : 'opacity-70 scale-95'
-  } transition-all duration-300`}
+                    className={`snap-center relative bg-secondary/20 border border-border overflow-hidden cursor-pointer flex-shrink-0 w-[85vw] sm:w-[420px] md:w-[540px]
+                    ${
+                      i === currentIndex
+                        ? 'opacity-100 scale-100'
+                        : 'opacity-70 scale-95'
+                    } transition-all duration-300`}
                     onClick={() =>
                       setOpenReader(album.id as 'firewall' | 'saints')
                     }

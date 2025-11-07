@@ -321,36 +321,43 @@ export const MP3Player = ({ onAlbumChange }: MP3PlayerProps) => {
             isActive={isPlaying}
           />
         </div>
-        <div className="flex justify-center items-center gap-0 bg-secondary border border-border rounded-md w-fit mx-auto overflow-hidden">
+        <div className="flex justify-center items-center gap-0 bg-secondary border border-border rounded-md w-fit mx-auto ">
           <button
             onClick={() => setVisibleAlbum('saints')}
-            className={`px-6 py-2 text-sm font-semibold ${
-              visibleAlbum === 'saints'
-                ? 'text-primary bg-player-panel-dark border border-primary'
-                : 'text-gray-400'
-            }`}
+            className={`px-6 py-2 text-sm font-semibold rounded-md transition-all
+    ${
+      visibleAlbum === 'saints'
+        ? 'text-primary bg-player-panel-dark border border-primary'
+        : 'text-gray-400 hover:text-primary hover:border hover:border-primary'
+    }
+  `}
           >
             Silicon Saints
           </button>
           <div className="h-6 w-px bg-border" />
           <button
             onClick={() => setVisibleAlbum('firewall')}
-            className={`px-6 py-2 text-sm font-semibold ${
-              visibleAlbum === 'firewall'
-                ? 'text-primary bg-player-panel-dark border border-primary'
-                : 'text-gray-400'
-            }`}
+            className={`px-6 py-2 text-sm font-semibold rounded-md transition-all
+    ${
+      visibleAlbum === 'firewall'
+        ? 'text-primary bg-player-panel-dark border border-primary'
+        : 'text-gray-400 hover:text-primary hover:border hover:border-primary'
+    }
+  `}
           >
             Break The Firewall
           </button>
+
           <div className="h-6 w-px bg-border" />
           <button
             onClick={() => setVisibleAlbum('bonus')}
-            className={`px-6 py-2 text-sm font-semibold ${
-              visibleAlbum === 'bonus'
-                ? 'text-pink-400 bg-player-panel-dark border border-pink-500'
-                : 'text-gray-400'
-            }`}
+            className={`px-6 py-2 text-sm font-semibold rounded-md transition-all
+    ${
+      visibleAlbum === 'bonus'
+        ? 'text-pink-400 bg-player-panel-dark border border-pink-500'
+        : 'text-gray-400 hover:text-pink-400 hover:border hover:border-pink-500'
+    }
+  `}
           >
             Bonus Track
           </button>
