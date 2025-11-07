@@ -231,9 +231,7 @@ export const ReaderModal = ({
             </motion.button>
             {singleImage ? (
               <motion.img
-                key={`${albumType}-${images[0].title || 'no-title'}-${
-                  images[0].src || 'no-src'
-                }`}
+                key={`${albumType}-${images[0].title}-${images[0].src}`}
                 src={images[0].src}
                 alt={images[0].title}
                 loading="eager"
@@ -249,9 +247,7 @@ export const ReaderModal = ({
                 >
                   {images.map((item, i) => (
                     <motion.img
-                      key={`${albumType}-${item.title || 'no-title'}-${
-                        item.src || 'no-src'
-                      }-${i}`}
+                      key={`${albumType}-${item.title}-${i}`}
                       src={item.src}
                       alt={item.title}
                       loading={i === currentIndex ? 'eager' : 'lazy'}
