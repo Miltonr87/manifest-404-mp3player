@@ -137,4 +137,11 @@ export const bonusTracksInit: Track[] = [
         duration: 199,
         filename: `${PREFIX}Heart_Exe.mp3`,
     },
+    {
+        id: 101,
+        title: 'Big In Japan (Cover)',
+        artist: 'Bonus Track',
+        duration: 199,
+        filename: `${PREFIX}Big_In_Japan.mp3`,
+    },
 ];
