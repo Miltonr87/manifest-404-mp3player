@@ -81,7 +81,7 @@ export const saintsTracksInit: Track[] = [
         id: 5,
         title: 'Silicon Saints',
         artist: 'Silicon Saints',
-        duration: 195,
+        duration: 163,
         filename: `${PREFIX}5_SiliconSaints.mp3`,
     },
     {
