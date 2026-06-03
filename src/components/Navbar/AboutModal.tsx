@@ -11,8 +11,9 @@ export const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
   useEffect(() => {
     if (!isOpen) return;
 
-    const audioCtx = new (window.AudioContext ||
-      (window as any).webkitAudioContext)();
+    const audioCtx = new (
+      window.AudioContext || (window as any).webkitAudioContext
+    )();
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
 
@@ -68,15 +69,19 @@ export const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
               About
             </h2>
             <br />
-            <p>
+            <p className="text-center md:text-left">
               <b className="text-1xl font-bold neon-text mb-2">Manifest 404</b>{' '}
-              is a Punk Rock digital band made with AI which blends the spirit
-              of melodic hardcore with cyberpunk aesthetics.
+              is an experimental digital punk rock project that merges the raw
+              intensity of hardcore riffs with the aesthetics of cyberpunk
+              culture. Its songs explore themes of control, rebellion,
+              addiction, and liberation in a hyper-connected world.
             </p>
           </div>
           <div className="mb-8">
-            <h3 className="text-xl font-semibold mb-4">Project Tech Stack</h3>
-            <div className="flex flex-wrap gap-2">
+            <h3 className="text-xl font-semibold mb-4 text-center md:text-left">
+              Project Tech Stack
+            </h3>
+            <div className="flex flex-wrap gap-2 justify-center md:justify-start">
               {[
                 'React',
                 'React H5 Audio',
